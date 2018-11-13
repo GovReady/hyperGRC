@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="static-page-content" class="container" style="width: 760px; margin-left: 0px; background-color: rgb(223, 227, 230); padding: 0 30px 10px 30px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee; height: 90%; opacity: 0.95;">
+    <div class="row">
+    	<div class="col-md-12" style="color: black; margin-bottom: 1.5em;">
+      		<h3 style="border-bottom: 0.5px solid #999;">Your {{ project }} documents</h3>
+    	</div>
+    </div>
+	<div class="row" style="max-height: 90%; overflow-y: auto;">
+		{% for document in documents %}
+		<div class="col-md-3" style="color: black; margin-bottom: 20px;">
+			<div style="font-size: 4em; text-align: center; margin-bottom: 8px;"><a href="/{{ organization }}/{{ project }}/documents/{{ document.name }}" style="color: black;"><span class="glyphicon glyphicon-file" style="color: #444;"></span></a></div>
+			<div> {{ document.name|truncate(20, True) }}</div>
+		</div>
+		{% endfor %}
+	</div>
+
+    	<div class="col-md-12" style="color: black; margin-bottom: 1.5em;">
+        	<p>&nbsp;</p>
+        </div>
+
+</div>
+{% endblock %}

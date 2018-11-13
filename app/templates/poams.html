@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="width: 760px; margin-left: 0px; background-color: rgb(223, 227, 230); padding: 0 30px 10px 30px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee; height: 90%; opacity: 0.95;">
+  <div class="row" style="">
+    <div class="col-md-12" style="color: black; margin-bottom: 1.5em;">
+      <h3 style="border-bottom: 0.5px solid #999;">Your {{ project }} POA&amp;Ms</h3>
+    </div>
+  </div>
+  <div class="row" style="color: black; margin-bottom: 20px;font-weight: bold;">
+    <div class="col-md-1">ID</div>
+    <div class="col-md-5">Description</div>
+    <div class="col-md-6">Status</div>
+  </div>
+  {% for poam in [{"id": 1, 
+                "name": "Acquire SOC Services",
+                "related_controls": ["AU-03", "AU-05"]
+                },
+                {"id": 2, 
+                "name": "Track training records",
+                "related_controls": ["AT-02"]
+                }
+               ]%}
+  <div class="row" style="color: black; margin-bottom: 20px;">
+    <div class="col-md-1">{{ poam.id }}</div>
+    <div class="col-md-5">
+       <a href="/{{ organization }}/{{ project }}/poams" style="color: black;">{{ poam.name }}</a><br />
+       Related controls: 
+       {% for rc in poam.related_controls %}
+        <a href="/{{ organization }}/{{ project }}/800-53r4/control/{{ rc }}" style="color: black;">{{ rc }}</a>&nbsp;
+       {% endfor %}
+    </div>
+    <div class="col-md-6">
+      <div class="progress" style="height: 10px; width: 80%;">
+        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ range(0, 100) | random }}%; background-color: green;" aria-valuenow="{{ range(0, 100) | random }}" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+    <div class="row" style="color: black; margin-bottom: 20px;">
+      <div class="col-md-12" style="color: black;">
+        + Add POA&amp;M
+      </div>
+    </div>
+</div>
+{% endblock %}

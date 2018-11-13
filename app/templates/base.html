@@ -1,0 +1,72 @@
+<html>
+    <head>
+      <title>{% if control_number %}GovReady - {{ control_number }}{% else %}GovReady {% endif %}</title>
+
+      <!-- Load jQuery library first -->
+      
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" crossorigin="anonymous"></script>
+      <!-- Latest compiled and minified Bootstrap CSS -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+      <!-- Optional theme -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+      <!-- Latest compiled and minified JavaScript -->
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+      <!-- Popper JS -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" crossorigin="anonymous"></script>
+      
+      <link rel="stylesheet" type="text/css" href="/static/css/base.css">
+      <style>
+        body {
+          /*background-color: white;*/
+          background-color: #78909C;
+          /*background: url("/static/img/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed; 
+          -webkit-background-size: cover;
+          -moz-background-size: cover;
+          -o-background-size: cover;
+          background-size: cover;*/
+        }
+      </style>
+
+    </head>
+    <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top" style=" opacity: 0.45; ">
+      <div class="container-fluid" style="height: 60px;padding-top: 8px;background-color: rgb(223, 227, 230);">
+        <div class="row">
+          <div class="col-md-3">
+            <button type="button" class="btn btn-link btn-lg" style="opacity: 1.0; color: black;"><b>{{ organization }} &gt; {{ project }}</b></button>
+          </div>
+
+          <div class="col-md-7">
+            <!-- button for source of content -->
+            <a href="{{ cfg.src_repo }}" target="_blank"><button type="button" class="btn btn-link btn-lg" style="opacity: 1.0; color: black;margin-left:48px"><b>source: {{ cfg.src_repo }}</b></button></a>
+          </div>
+      </div>
+    </nav>
+
+      <div id="sidebar-wrapper">
+        <div id="sidebar">
+          <p><a href="/{{ organization }}/{{ project }}/index" title="Menu"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/index" title="Home"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></p><br/>
+          <!-- <p><a href="/login" title="Login"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span><br/>login</a></p><br/> -->
+          <p><a href="/{{ organization }}/{{ project }}/team" title="Team"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/components" title="Components"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/800-53-r4/controls" title="Controls"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/documents" title="Documents"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/assessments" title="Assessments"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/poams" title="POA&amp;Ms"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/settings" title="Settings"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></p>
+        </div>
+      </div>
+
+      <!-- <td style="height:95%; padding-left: 12px; position: relative; display: inline; float: left; vertical-align: top;"> -->
+      <div class="container" style="width:100%; margin: 75px 12px 10px 72px;">
+        <div class="row">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+
+    {% block scripts %}{% endblock %}
+
+    </body>
+</html>

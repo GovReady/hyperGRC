@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="width: 760px; margin-left: 0px; background-color: rgb(223, 227, 230); padding: 0 30px 10px 30px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee; height: 90%; opacity: 0.95;">
+  <div class="row">
+    <div class="col-md-12" style="color: black; margin-bottom: 1.5em;">
+        <h3 style="border-bottom: 0.5px solid #999;">Your {{ project }} controls</h3>
+    </div>
+    <div class="col-md-12 ctl-btns" style="color: black; margin-bottom: 1.5em;">
+
+      <h4>HIPAA 164</h4>
+
+      <a href="/{{ organization }}/{{ project }}/hipaa/control/164.308(a)(1)(i)"><button type="button" class="btn btn-default" style="width:140px; margin: 8px; opacity: 1.0; color: black;">164.308(a)(1)(i)</button></a>
+      <a href="/{{ organization }}/{{ project }}/hipaa/control/164.308(a)(1)(i)(A)"><button type="button" class="btn btn-default" style="width:140px; margin: 8px; opacity: 1.0; color: black;">164.308(a)(1)(i)(A)</button></a>
+      <a href="/{{ organization }}/{{ project }}/hipaa/control/164.308(a)(1)(i)(B)"><button type="button" class="btn btn-default" style="width:140px; margin: 8px; opacity: 1.0; color: black;">164.308(a)(1)(i)(B)</button></a>
+      <a href="/{{ organization }}/{{ project }}/hipaa/control/164.308(a)(1)(i)(C)"><button type="button" class="btn btn-default" style="width:140px; margin: 8px; opacity: 1.0; color: black;">164.308(a)(1)(i)(C)</button></a>
+      <br />
+      <a href="/{{ organization }}/{{ project }}/hipaa/control/164.310(a)(1)"><button type="button" class="btn btn-default" style="width:140px; margin: 8px; opacity: 1.0; color: black;">164.310(a)(1)</button></a>
+      <a href="/{{ organization }}/{{ project }}/hipaa/control/164.310(a)(2)(i)"><button type="button" class="btn btn-default" style="width:140px; margin: 8px; opacity: 1.0; color: black;">164.310(a)(2)(i)</button></a>
+      <a href="/{{ organization }}/{{ project }}/hipaa/control/164.310(a)(2)(ii)"><button type="button" class="btn btn-default" style="width:140px; margin: 8px; opacity: 1.0; color: black;">164.310(a)(2)(ii)</button></a>
+      <a href="/{{ organization }}/{{ project }}/hipaa/control/164.310(b)"><button type="button" class="btn btn-default" style="width:140px; margin: 8px; opacity: 1.0; color: black;">164.310(b)</button></a>
+      <br />
+      
+
+
+        <!-- Sample loop
+        {% for component in components %}
+        <div>
+          <p><b><a href="/{{ organization }}/{{ project }}/hipaa/component/{{ component.name }}" style="font-size: 1.5em; color: black; text-decoration: none;">{{ component.name }}<a></b></p>
+        </div>
+      {% endfor %} -->
+      <!-- <div style="color: black;">
+        <b>+ Add component</b>
+      </div>  -->
+
+    </div>
+  </div>    
+</div>
+{% endblock %}

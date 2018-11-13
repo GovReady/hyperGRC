@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div style="width:340px; min-height:100px; max-height: 94%; overflow-y: auto;background-color: #cdcdcd; margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
+  <h4 style="min-height:2em; margin-top: -8px;">Control {{ control_number }} - {{ control_name}}</h4>
+
+  <!-- button row -->
+  <div class="row">
+    <div class="col-md-4">
+      <button type="button" class="btn btn-outline-secondary" style="margin-bottom: 8px;">Guide me</button>
+    </div>
+    <div class="col-md-4">
+      {% if 'control' in request.path.split('/') and 'combined' not in request.path.split('/') %}
+        <a href="/{{ organization }}/{{ project }}/800-53r4/control/{{ control_number }}/combined" style="color: black;"><button type="button" class="btn btn-outline-secondary" style="opacity: 1.0; color: black;">Show combined</button></a>
+      {% endif %}
+      {% if 'control' in request.path.split('/') and 'combined' in request.path.split('/') %}
+        <a href="/{{ organization }}/{{ project }}/800-53r4/control/{{ control_number }}" style="color: black;"><button type="button" class="btn btn-link" style="opacity: 1.0; color: black;">Show columns</button></a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- control guidance -->
+  <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; border-radius: 5px;">
+    <span style="color: #999;font-weight: bold;">Guidance</span><br/>
+    <div style="max-height: 40%; overflow-y: auto;">{{ control_description | nl2br | safe  }}</div>
+  </div>
+
+  <!-- assessment links -->
+  <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; border-radius: 5px;">
+    <span style="color: #999;font-weight: bold;">{{ control_number }} assessment</span><br/>
+    <div style="max-height: 10%; overflow-y: auto;">Assessment summary here</div>
+  </div>
+</div>
+
+<div class="container" style="width: 760px; margin-left: 18px; background-color: white; padding: 0 30px 10px 30px;border-radius: 5px;max-height: 95%; overflow-y: auto; opacity: 0.97;">
+  <div class="row" style="">
+    <div id="narrative" style="">
+      <h2>Control {{ control_number }} - {{ control_name}} </h2>
+      <h3 style="border-bottom: 0.5px solid #999;">Description</h3>
+      <p>{{ control_description | nl2br | safe  }}</p>
+
+      <h3 style="border-bottom: 0.5px solid #999;">Implementation Narrative</h3>
+
+        <!-- Track current_part in counter array & list of control parts to mitigate Jinja reseting variables for each iteration -->
+        {% set count = [0] %}
+        {% set part = 'z' %}
+        {% set parts = ['z', '', 'a', 'a(1)', 'a(2)', 'a(3)',
+                        'b', 'b(1)', 'b(2)', 'b(3)', 'c', 'c(1)', 'c(2)', 'c(3)',
+                        'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'] %}
+        <!-- Loop through components for our control -->
+        {% for control_family,
+               control_key,
+               part,
+               control_name,
+               component_order,
+               component_name,
+               security_control_type,
+               implementation_status,
+               summary,
+               narrative
+           in ssp
+        %}
+
+          {% if parts[count[0]] != part %}
+            {% if count.append(count.pop() + 1) %}{% endif %} {# increment count by 1 #}
+            {% if part %} <!-- # there are null parts meaning the whole control, not a part -->
+              <div style="margin: 20px auto 8px auto;"><b>Part {{ part }})</b></div>
+            {% endif %}
+            <!-- <br/>part {{ part }}; count: {{ count[0] }} -->
+          {% endif %}
+
+          {% if component_name %}
+            <div style='margin: auto auto 8px auto;'>{{ component_name }}</div>
+            <!-- <div style='margin: auto auto 8px auto;'>{% if summary %}{{ summary }}{% else %}(No summary){% endif %}</div> -->
+          {% endif %}
+
+          <div style='margin: auto auto 8px auto;'>{{ narrative | nl2br | safe }}</div>
+        {% endfor %}
+
+    </div><!-- /narrative -->
+  </div><!-- /row -->
+</div><!-- /containter -->
+{% endblock %}

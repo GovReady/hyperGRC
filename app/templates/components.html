@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="width: 760px; margin-left: 0px; background-color: rgb(223, 227, 230); padding: 0 30px 10px 30px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee; height: 90%; opacity: 0.95;">
+  <div class="row" style="">
+    <div class="col-md-12" style="color: black; margin-bottom: 1.5em;">
+      <h3 style="border-bottom: 0.5px solid #999;">Your {{ project }} components</h3>
+    </div>
+    {% for component in components %}
+      <div class="col-md-12" style="color: black;">
+        <p><a href="/{{ organization }}/{{ project }}/800-53r4/component/{{ component.name }}" style="color: black;"><span class="glyphicon glyphicon-link"></span> {{ component.name }}<a></p>
+      </div>
+    {% endfor %}
+    <div class="col-md-12" style="color: black;">
+      + Add component
+    </div>
+  </div>
+</div>
+{% endblock %}

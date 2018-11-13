@@ -1,0 +1,9 @@
+controls/
+inputs/
+outputs/\~\$*
+
+# Python, virtual env
+venv
+*.pyc
+.pyc
+__pycache__

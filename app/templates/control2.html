@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="components" style="overflow: auto; width: 3600px; overflow: auto;">
+
+<div style="width:340px; min-height:100px; max-height: 94%; overflow-y: auto;background-color: #cdcdcd; margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
+  <h4 style="min-height:2em; margin-top: -8px;">Control {{ control_number }} - {{ control_name}}</h4>
+
+   <!-- button row -->
+  <div class="row">
+    <div class="col-md-4">
+      <button type="button" class="btn btn-outline-secondary" style="margin-bottom: 8px;">Guide me</button>
+    </div>
+    <div class="col-md-4">
+      {% if 'control' in request.path.split('/') and 'combined' not in request.path.split('/') %}
+        <a href="/{{ organization }}/{{ project }}/800-53r4/control/{{ control_number }}/combined" style="color: black;"><button type="button" class="btn btn-link" style="opacity: 1.0; color: black;">Show combined</button></a>
+      {% endif %}
+      {% if 'control' in request.path.split('/') and 'combined' in request.path.split('/') %}
+        <a href="/{{ organization }}/{{ project }}/800-53r4/control/{{ control_number }}" style="color: black;"><button type="button" class="btn btn-link" style="opacity: 1.0; color: black;">Show combined</button></a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- control guidance -->
+  <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; border-radius: 5px;">
+    <span style="color: #999;font-weight: bold;">Guidance</span><br/>
+    <div style="max-height: 40%; overflow-y: auto;">{{ control_description | nl2br | safe  }}</div>
+  </div>
+
+  <!-- assessment links -->
+  <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; border-radius: 5px;">
+    <span style="color: #999;font-weight: bold;">{{ control_number }} assessment</span><br/>
+    <div style="max-height: 10%; overflow-y: auto;">Assessment summary here</div>
+  </div>
+</div>
+
+{% for component_selected in component_names %}
+  {% if component_selected %}
+    <div style="width:340px; min-height:100px; background-color: rgb(223, 227, 230); margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
+
+      <h4 style="height:2em; margin-top: -8px;">{{ component_selected }} {{ control_number }} related</h4>
+      <button type="button" class="btn btn-outline-secondary" style="margin-bottom: 8px;">Guide me</button>
+
+      {% for component_order, component_name, control_family, control_key, control_name, part, security_control_type, implementation_status, summary, narrative in ssp %}
+
+        {% if component_name == component_selected %}
+          <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; height: 62px; overflow-y: hidden; border-radius: 5px;">
+
+            <div class="container" style="width:100%;">
+              <div class="row">
+                <div class="col-sm-8" style="padding-left: 0px;">
+                  <a href="" style="color: #999;" class="" data-toggle="modal" data-target="#myModal-{{ component_name | replace(' ', '_') }}{{ part | replace('(','') | replace(')','') }}" tabindex="-1"><span style="color: #999; font-weight: bold;" title="{{ control_name }}">{{ control_number }} {% if part %}{{ part }}{% endif %} {{ component_selected | truncate(8, false, "") }}</span></a>
+                </div>
+                <div class="col-sm-2" style="text-align: right;color: #999;">
+                  {% if implementation_status == "In Place" or implementation_status == "Implemented" or implementation_status == "Partially in Place" %}
+                    <span class="glyphicon glyphicon glyphicon-check" style="color: green;" title="{{ implementation_status }}"></span>
+                  {% elif implementation_status.lower() == "Not applicable".lower() %}
+                    <span class="glyphicon glyphicon glyphicon-ban-circle" style="" title="{{ implementation_status }}"></span>
+                  {% elif implementation_status == "Planned" %}
+                    <span class="glyphicon glyphicon glyphicon-info-sign" style="color: orange;" title="{{ implementation_status }}"></span>
+                  {% else %}
+                    <span class="glyphicon glyphicon glyphicon-alert" style="color: red;" title="{{ implementation_status }}"></span>
+                  {% endif %}
+                </div>
+                <div class="col-sm-1" style="text-align: right;color: #999;">
+                  <span class="glyphicon glyphicon glyphicon-option-vertical"></span>
+                </div>
+              </div>
+            </div>
+            
+            <div style="margin-top: 8px; cursor: default;" title="{{ narrative }}">
+              {% if narrative %}{{ narrative | truncate(40, true, "") }}...{% else %}Add description...{% endif %}
+            </div>
+          </div>
+
+          <!-- Modal -->
+          <div id="myModal-{{ component_name | replace(' ', '_') }}{{ part | replace('(','') | replace(')','') }}" class="modal" role="dialog">
+            <div class="modal-dialog modal-lg" style="height: 600px;">
+
+
+              <!-- Modal content-->
+              <div class="modal-content">
+                
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-sm-10">
+                      <h4 class="modal-title"><b>{{ control_number }} {% if part %}{{ part }}{% endif %} - {{ component_name }}</b></h4>
+                    </div>
+                    <div class="col-sm-2" style="text-align: right;">
+                      <button type="button" class="btn btn-link glyphicon glyphicon-remove-circle" data-dismiss="modal"
+                    style="font-size:2em; color: #777;"></button>
+                    </div>
+                  </div>
+                  
+                  <b>Summary</b><br/>
+                  <input style="width: 98%; padding: 8px;" value="{% if summary %}{{ summary }}{% endif %}" placeholder="Write something short for spreadsheets..."><br/><br/>
+
+                  <b>Implementation description</b></br/>
+                  <textarea style="width: 98%; height:160px; padding: 8px; margin-bottom:20px;" placeholder="Describe what {{ component_name }} contributes to the control...">{% if narrative %}{{ narrative }}{% endif %}</textarea>
+
+                  <b>Implementation status</b></br/>
+                  <input class="implementation_status-input" style="width: 98%; padding: 8px;" value="{% if implementation_status %}{{ implementation_status }}{% endif %}" placeholder="Unknown"><br/><br/>
+
+                  <br />
+                  <div style="color: #666;">
+                    <br/><span class="glyphicon glyphicon-check"></span> {{ range(1, 6) | random }} assessments
+                    <br/><span class="glyphicon glyphicon-time"></span> {{ range(1, 14) | random }} versions
+                    <br/><span class="glyphicon glyphicon-bookmark"></span> upstream source
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <!-- /Modal -->
+        {% endif %}
+
+
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endfor %}
+ 
+    <div style="width:340px; height:40px; background-color: #fff; border:2px dashed #aaa; margin-right: 12px; float: left; padding: 18px; border-radius: 5px; color: #999; opacity: 0.6;">
+        <h4 style="height:2em; margin-top: -8px;">+ Add another column</h4>
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Modal Header</h4>
+      </div>
+      <div class="modal-body">
+        <p>Some text in the modal.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

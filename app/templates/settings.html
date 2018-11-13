@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div  id="static-page-content" class="container" style="width: 760px; margin-left: 0px; background-color: rgb(223, 227, 230); padding: 0 30px 10px 30px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee; height: 90%; opacity: 0.95;">
+	<div class="row">
+		<div class="col-md-12" style="color: black; margin-bottom: 1.5em;">
+			<h3 style="border-bottom: 0.5px solid #999;">Your {{ project }} project settings</h3>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-wrench"></span></div>
+			<div class="col-md-3">Mode</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ cfg.mode }}</a></div>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-user"></span></div>
+			<div class="col-md-3">Who are you?</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{% if cfg.user_name %}{{ cfg.user_name }}{% else %}--{% endif %}</a></div>
+		</div>
+		<div class="row col-md-12">
+			<p>&nbsp;</p>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-link"></span></div>
+			<div class="col-md-3">Project repo</div>
+			<div class="col-md-8"><a href="{{ src_repo }}" style="color: black;" target=”_blank”>{{ src_repo }}</a></div>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-link"></span></div>
+			<div class="col-md-3">Build tool</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>--</a></div>
+		</div>
+		<div class="row col-md-12">
+			<p>&nbsp;</p>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
+			<div class="col-md-3">hyperGRC version</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ cfg.hgrc_version }}</a></div>
+		</div>
+	</div>
+</div>
+{% endblock %}
