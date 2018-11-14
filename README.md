@@ -1,3 +1,81 @@
+hyperGRC is a lightweight tool for managing component-to-control mappings for Compliance As Code written in Python and Flask.
+
+hyperGRC provides a very friendly, kanban-style GUI for reading and writing YAML files representing control implementation content associated with system components.
+
+The plan is for hyperGRC to support multiple underlying data formats. The goal is to make the world's most loved and hyper-useful IT GRC tool.
+
+
+# How It Works
+
+hyperGRC is a web application for workstation or server that reads a `.govready` or `opencontrol.yaml` and presents a GUI environment for editing system compliance based on component security plans.
+
+hyperGRC reads the `.govready` configuration file, then reads the YAML files describing the controls provided by components, to generate web pages for making it easier to read and write reusable control implementation content.
+
+
+# The .govready file
+
+Here's a sample .govready file:
+
+```
+
+ ```
+
+
+# Supported Data Formats:
+
+### OpenControl
+
+(content to be added)
+
+### "Fen" Format
+
+```
+name: Acquia-ACE
+family: ACCESS CONTROL
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: AC-01
+  control_key_part: a
+  control_name: ACCESS CONTROL POLICY AND PROCEDURES
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Hybrid
+  implementation_status: In Place
+  narrative: >
+    The system partially inherits this control from the FedRAMP Provisional ATO granted
+    to the Acquia Cloud Cloud Service Provider dated 17 March 2016 and documented
+    in their SSP v1.16 18 September 2018.
+  summary: Partially inherited from ACE and AWS (FedRAMP).
+  responsibile_entities:
+  - entity: Acquia-ACE
+  - entity: System Owner
+- control_key: AC-01
+  control_key_part: b
+  control_name: ACCESS CONTROL POLICY AND PROCEDURES
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Hybrid
+  implementation_status: In Place
+  narrative: >
+    The system partially inherits this control from the FedRAMP Provisional ATO granted
+    to the Acquia Cloud Cloud Service Provider dated 17 March 2016 and documented
+    in their SSP v1.16 18 September 2018.
+  summary: Partially inherited from ACE and AWS (FedRAMP).
+  responsibile_entities:
+  - entity: Acquia-ACE
+  - entity: System Owner
+ ```
+
+### GovReady Compliance Apps
+
+(content coming soon)
+
+
+### GovReady SSP Parser
+
+(content coming soon)
+
 # Launching
 
 ### Installing virtualenv
