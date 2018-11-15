@@ -110,11 +110,7 @@ satisfies:
 cd hypergrc
 virtualenv venv
 source venv/bin/activate
-pip install flask
-pip install python-dotenv
-pip install flask_wtf
-pip install rtyaml
-pip install Flask-Testing
+pip install -r requirements.txt
 export FLASK_APP=hypergrc.py
 export GOVREADY_FILE=/abs/path/to/.govready
 
