@@ -42,7 +42,7 @@
       <h4 style="height:2em; margin-top: -8px;">{{ component_selected }} {{ control_number }} related</h4>
       <button type="button" class="btn btn-outline-secondary" style="margin-bottom: 8px;">Guide me</button>
 
-      {% for component_order, component_name, control_family, control_key, control_name, part, security_control_type, implementation_status, summary, narrative in ssp %}
+      {% for control_family, control_key, part, control_name, component_order, component_name, security_control_type, implementation_status, summary, narrative in ssp %}
 
         {% if component_name == component_selected %}
           <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:8px; height: 32px; overflow-y: hidden; border-radius: 5px;">

@@ -109,6 +109,67 @@ def blockquote(s):
   return "\n".join((" " + line) for line in s.strip().split("\n")) + "\n"
 app.jinja_env.filters['blockquote'] = blockquote
 
+#############################
+# Model
+#############################
+
+
+def load_components(cfg):
+    # Get the set of components by reading all of the controls,
+    # so we keep the code simple and don't repeat logic, although
+    # it might be faster if we didn't have to read all of the
+    # control narrative data files.
+    component_names = { entry[5] for entry in load_component_controls(cfg) }
+    components = [
+      { "name": component_name }
+      for component_name in component_names ]
+    components.sort(key = lambda component : component['name'])
+    return components
+
+def load_component_controls(cfg, filter_control_number=None, filter_component_name=None):
+    # Read in all of the components and their control narratives.
+    # Return a generator that iterates over control narrative records.
+    components_glob = os.path.join(cfg["components_dir"], "*")
+    for component_dir in glob.glob(components_glob):
+        if not os.path.isdir(component_dir):
+          continue
+
+        component_name = os.path.basename(component_dir)
+
+        # Apply the control name filter.
+        if filter_component_name and component_name.lower() != filter_component_name.lower():
+          continue
+
+        for control_family_fn in glob.glob(os.path.join(component_dir, "*.yaml")):
+          with open(control_family_fn) as f:
+            data = rtyaml.load(f)
+
+            # Read out each control and store it in memory as a tuple
+            # that holds the information we need to sort all of the
+            # items into the right order for the SSP.
+            for control in data["satisfies"]:
+              # Prepare control description text and fix spacing before parenthesis for subcontrols
+              # TODO: clean up this regex, but it works.
+              control_id = control["control_key"].replace("-0", "-")
+
+              # Apply the control number filter.
+              if filter_control_number and control_id != filter_control_number:
+                continue
+
+              yield (
+                control.get("control_key").split("-", 1)[0], # extract control family from control number
+                control.get("control_key"),
+                control.get("control_key_part") or "",
+                control.get("control_name"),
+                None, # component order
+                component_name,
+                control.get("security_control_type"),
+                control.get("implementation_status"),
+                control.get("summary", None),
+                control.get("narrative", None)
+                # control["control_description"],
+              )
+
 
 #############################
 # Routes
@@ -182,21 +243,11 @@ def poams(organization, project):
 
 @app.route('/<organization>/<project>/components')
 def components(organization, project):
-    components_dir = cfg["components_dir"]
-
-    components = []
-    components_glob = components_dir.rstrip('/') + "/*"
-    # Read in all of the components' control implementation texts.
-    for component_dir in glob.glob(components_glob):
-        if os.path.isdir(component_dir):
-          components.append({'name': os.path.basename(component_dir)})
-
-    components.sort()
     return render_template('components.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
-                            components=components)
+                            components=load_components(cfg))
 
 @app.route('/<organization>/<project>/team')
 def team(organization, project):
@@ -244,44 +295,9 @@ def control_legacy(organization, project, control_number):
     ssp = []
     control_components = {}
 
-    components = []
-    components_glob = components_dir.rstrip('/') + "/*"
-    # Read in all of the components' control implementation texts.
-    for component_dir in glob.glob(components_glob):
-        if os.path.isdir(component_dir):
-          components.append({'name': os.path.basename(component_dir)})
-        component_controls = []
-
-        for control_family_fn in glob.glob(os.path.join(component_dir, "*.yaml")):
-          with open(control_family_fn) as f:
-            component_controlfam_data = rtyaml.load(f)
-
-            # Read out each control and store it in memory as a tuple
-            # that holds the information we need to sort all of the
-            # items into the right order for the SSP.
-            for control in component_controlfam_data["satisfies"]:
-              # Prepare control description text and fix spacing before parenthesis for subcontrols
-              # TODO: clean up this regex, but it works.
-              control_id = control["control_key"].replace("-0", "-")
-        
-              if control_id != control_number:
-                continue
-
-              ssp.append((
-                component_controlfam_data["family"],
-                control.get("control_key"),
-                control.get("control_key_part") or "",
-                control.get("control_name"),
-                component_order[component_controlfam_data["name"]],
-                component_names[component_controlfam_data["name"]],
-                control.get("security_control_type"),
-                control.get("implementation_status"),
-                control.get("summary", None),
-                control.get("narrative", None)
-                # control["control_description"],
-              ))
-
+    ssp = list(load_component_controls(cfg, filter_control_number=control_number))
     ssp.sort()
+
     return render_template('control.html',
                             cfg=cfg,
                             organization=organization,
@@ -302,58 +318,16 @@ def control(organization, project, control_number):
     control_name = standard_controls_data[control_number]["name"]
     control_description = standard_controls_data[control_number]["description"]
 
-    components_dir = cfg["components_dir"]
-
-    # The map component directory names back to long names. Use an
-    # OrderedDict to maintain a preferred component order.
-    component_names = cfg["component_names"]
-    component_order = collections.OrderedDict([(component, i) for i, component in enumerate(component_names)])
-    ssp = []
-    components_involved = []
-    control_components = {}
-
-    components = []
-    components_glob = components_dir.rstrip('/') + "/*"
-    # Read in all of the components' control implementation texts.
-    for component_dir in glob.glob(components_glob):
-        if os.path.isdir(component_dir):
-          components.append({'name': os.path.basename(component_dir)})
-        component_controls = []
-
-        for control_family_fn in glob.glob(os.path.join(component_dir, "*.yaml")):
-          with open(control_family_fn) as f:
-            component_controlfam_data = rtyaml.load(f)
-
-            # Read out each control and store it in memory as a tuple
-            # that holds the information we need to sort all of the
-            # items into the right order for the SSP.
-            for control in component_controlfam_data["satisfies"]:
-              # Prepare control description text and fix spacing before parenthesis for subcontrols
-              # TODO: clean up this regex, but it works.
-              control_id = control["control_key"].replace("-0", "-")
-        
-              if control_id != control_number:
-                continue
-
-              ssp.append((
-                component_order[component_controlfam_data["name"]],
-                component_names[component_controlfam_data["name"]],
-                component_controlfam_data["family"],
-                control.get("control_key"),
-                control.get("control_name"),
-                control.get("control_key_part") or "",
-                control.get("security_control_type"),
-                control.get("implementation_status"),
-                control.get("summary", None),
-                control.get("narrative", None)
-                # control["control_description"],
-              ))
-
-              if component_controlfam_data["name"] not in components_involved:
-                components_involved.append(component_controlfam_data["name"])
-
+    # Load control narratives.
+    ssp = list(load_component_controls(cfg, filter_control_number=control_number))
     ssp.sort()
-    components_involved.sort() # sort involved components to order columns alphabetically
+
+    # Make set of components.
+    components_involved = set()
+    for entry in ssp:
+      components_involved.add(entry[5])
+    components_involved = sorted(components_involved)
+
     return render_template('control2.html',
                             cfg=cfg,
                             organization=organization,
@@ -368,70 +342,23 @@ def control(organization, project, control_number):
 
 @app.route('/<organization>/<project>/800-53r4/component/<component_name>')
 def component(organization, project, component_name):
+    # Load control narratives.
     component_name = component_name.lower()
-    standard_controls_data = get_standard_controls_data()
-
-    components_dir = cfg["components_dir"]
-
-    # The map component directory names back to long names. Use an
-    # OrderedDict to maintain a preferred component order.
-    component_names = cfg["component_names"]
-    component_order = { component: i for i, component in enumerate(component_names) }
-    ssp = []
-    control_families_fn = set([])
-
-    components = []
-    components_glob = components_dir.rstrip('/') + "/*"
-    # Read in all of the components' control implementation texts.
-    for component_dir in glob.glob(components_glob):
-        if os.path.isdir(component_dir):
-          components.append({'name': os.path.basename(component_dir)})
-        component_controls = []
-
-        for control_family_fn in glob.glob(os.path.join(component_dir, "*.yaml")):
-          with open(control_family_fn) as f:
-            component_controlfam_data = rtyaml.load(f)
-
-            # Read out each control and store it in memory as a tuple
-            # that holds the information we need to sort all of the
-            # items into the right order for the SSP.
-            for control in component_controlfam_data["satisfies"]:
-              # Prepare control description text and fix spacing before parenthesis for subcontrols
-              # TODO: clean up this regex, but it works.
-              control_id = control["control_key"].replace("-0", "-")
-
-              # Ignore components we are not looking for
-              if component_controlfam_data["name"].lower() != component_name:
-                continue
-
-              # Now that we have component...
-              # Track found families
-              control_families_fn.add(component_controlfam_data["family"])
-
-              component_id = os.path.basename(component_dir)
-              ssp.append((
-                component_id,
-                component_controlfam_data["family"],
-                component_order[component_controlfam_data["name"]],
-                component_names[component_controlfam_data["name"]],
-                control.get("control_key"),
-                control.get("control_name"),
-                control.get("control_key_part") or "",
-                control.get("security_control_type"),
-                control.get("implementation_status"),
-                control.get("summary", None),
-                control.get("narrative", None),
-                # control["control_description"],
-              ))
-
+    ssp = list(load_component_controls(cfg, filter_component_name=component_name))
     ssp.sort()
+
+    # Make set of control families.
+    control_families = set()
+    for entry in ssp:
+      control_families.add(entry[0])
+    control_families = sorted(control_families)
 
     return render_template('component2.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
                             component_name=component_name,
-                            control_families_fn=control_families_fn,
+                            control_families=control_families,
                             ssp=ssp,
                           )
 
