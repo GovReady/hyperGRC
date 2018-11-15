@@ -17,7 +17,33 @@ hyperGRC reads the `.govready` configuration file, then reads the YAML files des
 Here's a sample .govready file:
 
 ```
-
+hgrc_version: 0.3.0
+mode: local workstation
+standard_controls_dir: standards
+components_dir: components
+organization:
+  name: Department of Sobriety
+system:
+  name: DOS.gov
+  src_repo: https://git.vendorco.net/dos/ssp-csv-to-yaml
+  primary_standard: 800-53r4
+standards:
+- standard: 800-53r4
+  standard_file: nist-800-53-rev4.yaml
+components:
+- name: VendorCo
+  directory: VendorCo
+- name: Drupal
+  directory: Drupal
+- name: Department of Sobriety
+  directory: DOS
+- name: Acquia-ACE
+  directory: Acquia-ACE
+- name: AWS
+  directory: AWS
+team:
+  user:
+    name: Anonymous (workstation mode)
  ```
 
 
