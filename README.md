@@ -111,13 +111,6 @@ cd hypergrc
 virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
-export FLASK_APP=hypergrc.py
-export GOVREADY_FILE=/abs/path/to/.govready
-
-# Force reload upon code changes
-export FLASK_DEBUG=1
-
-flask run
 ```
 
 ### Running Flask server
