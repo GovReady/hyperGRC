@@ -10,24 +10,6 @@
   </div>
 </div>
 
-<!-- % for control_family_selected in ['ACCESS CONTROL',
-                                   'AUDIT AND ACCOUNTABILITY',
-                                   'CONFIGURATION MANAGEMENT',
-                                   'CONTIGENCY PLANNING',
-                                   'IDENTIFICATION AND AUTHENTICATION',
-                                   'INCIDENT RESPONSE',
-                                   'MAINTENANCE',
-                                   'MEDIA PROTECTION',
-                                   'PERSONNEL SECURITY',
-                                   'PHYSICAL AND ENVIRONMENTAL PROTECTION',
-                                   'PLANNING',
-                                   'PROGRAM MANAGEMENT',
-                                   'RISK ASSESSMENT',
-                                   'SECURITY ASSESSMENT AND AUTHORIZATION',
-                                   'SYSTEM AND COMMUNICATIONS PROTECTION',
-                                   'SYSTEM AND INFORMATION INTEGRITY',
-                                   'SYSTEM AND SERVICES ACQUISITION'
-                                   ] % -->
   {% for control_family_selected in control_families_fn %}
   {% if control_family_selected %}
     <div style="width:340px; min-height:100px; max-height: 94%;background-color: rgb(223, 227, 230); margin-right: 12px; float: left; padding: 18px; border-radius: 5px; overflow-y: auto;">
@@ -40,20 +22,18 @@
       {% for component_id, control_family, component_order, component_name, control_key, control_name, part, security_control_type, implementation_status, summary, narrative in ssp %}
 
         {% if control_family == control_family_selected %}
-          <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; height: 62px; overflow-y: hidden; border-radius: 5px;">
+          <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:8px; height: 32px; overflow-y: hidden; border-radius: 5px;">
 
 
           <div class="container" style="width:100%;">
             <div class="row">
-              <a href="" style="color: #999; font-weight: bold;" class="" data-toggle="modal" data-target="#myModal-{{ control_family | replace(' ', '_') }}-{{ control_key }}{{ part | replace('(','') | replace(')','') }}">
-                <div class="col-sm-8" style="padding-left: 0px;" title="{{ control_name }}">
-                {{ control_key }} {% if part %}<span style="">Part {{ part }}</span>
-                                  {% else %}<span style="color: #999;">&nbsp;</span>
-                                  {% endif %}
-                {{ component_name | truncate(6, true, "") }}
+              <a href="" style="color: #333; font-weight: normal;" class="card-control" data-toggle="modal" data-target="#myModal-{{ control_family | replace(' ', '_') }}-{{ control_key }}{{ part | replace('(','') | replace(')','') }}">
+                <div class="col-sm-12" style="padding-left: 0px;" title="{{ component_name }}: {{ narrative }}">
+                {{ control_key }} {% if part %}<span style="">Part {{ part }} </span>{% endif %}{{ control_name | truncate(30, true, "") }}
                 </div>
               </a>
-              <div class="col-sm-2" style="text-align: right;color: #999;">
+              <!-- Eventually, move status information to bottom of card -->
+              <!-- <div class="col-sm-2" style="text-align: right;color: #999;">
                 {% if implementation_status == "In Place" or implementation_status == "Implemented" or implementation_status == "Partially in Place" %}
                   <span class="glyphicon glyphicon glyphicon-check" style="color: green;" title="{{ implementation_status }}"></span>
                 {% elif implementation_status.lower() == "Not applicable".lower() %}
@@ -63,16 +43,13 @@
                 {% else %}
                   <span class="glyphicon glyphicon glyphicon-alert" style="color: red;" title="{{ implementation_status }}"></span>
                 {% endif %}
-              </div>
-              <div class="col-sm-1" style="text-align: right;color: #999;">
-                <span class="glyphicon glyphicon glyphicon-option-vertical"></span>
-              </div>
+              </div> -->
             </div>
           </div>
 
-            <div style="margin-top: 8px; cursor: default;" title="{{ narrative }}">
+            <!-- <div style="margin-top: 8px; cursor: default;" title="{{ narrative }}">
               {% if narrative %}{{ narrative | truncate(40, true, "") }}...{% else %}Add description...{% endif %}
-            </div>
+            </div> -->
           </div>
 
 

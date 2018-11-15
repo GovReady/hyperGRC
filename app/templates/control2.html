@@ -45,32 +45,14 @@
       {% for component_order, component_name, control_family, control_key, control_name, part, security_control_type, implementation_status, summary, narrative in ssp %}
 
         {% if component_name == component_selected %}
-          <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; height: 62px; overflow-y: hidden; border-radius: 5px;">
+          <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:8px; height: 32px; overflow-y: hidden; border-radius: 5px;">
 
             <div class="container" style="width:100%;">
               <div class="row">
-                <div class="col-sm-8" style="padding-left: 0px;">
-                  <a href="" style="color: #999;" class="" data-toggle="modal" data-target="#myModal-{{ component_name | replace(' ', '_') }}{{ part | replace('(','') | replace(')','') }}" tabindex="-1"><span style="color: #999; font-weight: bold;" title="{{ control_name }}">{{ control_number }} {% if part %}{{ part }}{% endif %} {{ component_selected | truncate(8, false, "") }}</span></a>
-                </div>
-                <div class="col-sm-2" style="text-align: right;color: #999;">
-                  {% if implementation_status == "In Place" or implementation_status == "Implemented" or implementation_status == "Partially in Place" %}
-                    <span class="glyphicon glyphicon glyphicon-check" style="color: green;" title="{{ implementation_status }}"></span>
-                  {% elif implementation_status.lower() == "Not applicable".lower() %}
-                    <span class="glyphicon glyphicon glyphicon-ban-circle" style="" title="{{ implementation_status }}"></span>
-                  {% elif implementation_status == "Planned" %}
-                    <span class="glyphicon glyphicon glyphicon-info-sign" style="color: orange;" title="{{ implementation_status }}"></span>
-                  {% else %}
-                    <span class="glyphicon glyphicon glyphicon-alert" style="color: red;" title="{{ implementation_status }}"></span>
-                  {% endif %}
-                </div>
-                <div class="col-sm-1" style="text-align: right;color: #999;">
-                  <span class="glyphicon glyphicon glyphicon-option-vertical"></span>
+                <div class="col-sm-12" style="padding-left: 0px;">
+                  <a href="" style="color: #333;" class="" data-toggle="modal" data-target="#myModal-{{ component_name | replace(' ', '_') }}{{ part | replace('(','') | replace(')','') }}" tabindex="-1"><span style="color: #333; font-weight: normal;" title="{{ component_name }}: {{ narrative }}">{{ control_number }} {% if part %}{{ part }} {% endif %}{{ control_name | truncate(30, false, "") }}</span></a>
                 </div>
               </div>
-            </div>
-            
-            <div style="margin-top: 8px; cursor: default;" title="{{ narrative }}">
-              {% if narrative %}{{ narrative | truncate(40, true, "") }}...{% else %}Add description...{% endif %}
             </div>
           </div>
 

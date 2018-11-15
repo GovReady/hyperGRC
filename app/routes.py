@@ -36,7 +36,8 @@ cfg = {"organization": gr_cfg["organization"]["name"],
        "mode": gr_cfg["mode"],
        "hgrc_version": gr_cfg["hgrc_version"],
        "user_name": gr_cfg["team"]["user"]["name"],
-       "components_dir" : os.path.join(os.path.dirname(os.path.abspath(GOVREADY_FILE)), gr_cfg["components_dir"])
+       "components_dir": os.path.join(os.path.dirname(os.path.abspath(GOVREADY_FILE)), gr_cfg["components_dir"]),
+       "document_dirs": ""
 }
 
 
@@ -61,6 +62,15 @@ for item in gr_cfg["standards"]:
 print(standards)
 standard_file = standards[primary_standard]
 cfg["standard_file"] = standard_file
+
+# Get document directories
+document_dirs = {}
+for item in gr_cfg["documents"]:
+  document_dirs[item["name"]] = {"directory": item["directory"],
+                                  "description": item["description"]}
+print("document_dirs ", document_dirs)
+cfg["document_dirs"] = document_dirs
+
 
 # Set components ordered dict
 _component_names = collections.OrderedDict([(None, None)])
@@ -122,13 +132,16 @@ def login():
 def documents(organization, project):
     """Read and list documents in documents directory"""
     docs = []
-    docs_dir = '../outputs'
-    if not os.path.isdir(docs_dir):
-      message = "No 'outputs' directory found in repository files."
-    else:
-      docs_glob = docs_dir.rstrip('/') + "/*"
-      # Read in all of the docs directory files.
-      for doc in glob.glob(docs_glob):
+    message = ""
+    for doc_dir in cfg["document_dirs"].keys():
+      print("doc_dir: ", doc_dir)
+      doc_dir_path = os.path.join(os.path.dirname(os.path.abspath(GOVREADY_FILE)), doc_dir)
+
+      if not os.path.isdir(doc_dir_path):
+        message += "<br /> Directory {} not found in repository files".format(doc_dir_path)
+      else:
+        docs_glob = doc_dir_path.rstrip('/') + "/*"
+        for doc in glob.glob(docs_glob):
           if os.path.isfile(doc):
             docs.append({'name': os.path.basename(doc)})
       docs.sort()
