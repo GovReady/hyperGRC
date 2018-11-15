@@ -4,13 +4,13 @@
 *******************************/
 
 body {
-  background-color: #78909C;
-  /*background: url("https://upload.wikimedia.org/wikipedia/commons/f/f7/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed; */
-/*  background: url("/static/img/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed; 
+  /*background-color: #78909C;*/
+  background: url("https://upload.wikimedia.org/wikipedia/commons/f/f7/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed; 
+  /*background: url("/static/img/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed; */
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  background-size: cover;*/
+  background-size: cover;
   margin: 40px 0 0 0;
   font-family: helvetica, sans-serif;
 }
@@ -93,15 +93,15 @@ body {
 #sidebar-wrapper {
   position: fixed;
   left: 0px;
-  top: 75px;
-  height: 96%;
+  top: 0px;
+  height: 100%;
   z-index: 100;
   background-color: #333;
   color: white;
   opacity: 1.0;
   width: 40px;
   padding: 22px 8px 8px 8px;
-  margin: -14px 20px 0 0;
+  margin: 0 0 0 0;
   vertical-align: top;
   text-align: center;
   font-size: 1.5em;

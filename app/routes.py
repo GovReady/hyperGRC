@@ -1,12 +1,13 @@
 # This Python file uses the following encoding: utf-8
 
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 from app import app
 from app.forms import LoginForm
 
 import collections
 import glob
 import os.path
+import os
 import rtyaml
 import sys
 
@@ -38,6 +39,11 @@ cfg = {"organization": gr_cfg["organization"]["name"],
        "components_dir" : os.path.join(os.path.dirname(os.path.abspath(GOVREADY_FILE)), gr_cfg["components_dir"])
 }
 
+
+# Set path info in local workstation mode
+if cfg['mode'] == "local workstation":
+  pass
+
 # Check components and standards directories exist
 if not os.path.isdir(cfg["components_dir"]):
     print("Can't find directory:", cfg["components_dir"])
@@ -48,6 +54,13 @@ if not os.path.isdir(cfg["standard_controls_dir"]):
     sys.exit()
 
 # To Do: Check standard file exists
+primary_standard = gr_cfg["system"]["primary_standard"]
+standards = {}
+for item in gr_cfg["standards"]:
+  standards[item["standard"]] = item["standard_file"]
+print(standards)
+standard_file = standards[primary_standard]
+cfg["standard_file"] = standard_file
 
 # Set components ordered dict
 _component_names = collections.OrderedDict([(None, None)])
@@ -91,10 +104,9 @@ app.jinja_env.filters['blockquote'] = blockquote
 # Routes
 #############################
 @app.route('/')
-@app.route('/<organization>/<project>/index')
-def index(organization, project):
-    organization = organization
-    project =  project
+def index():
+    organization = cfg["organization"]
+    project =  cfg["project"]
     return render_template('index.html',
                             cfg=cfg,
                             organization=organization,
@@ -109,25 +121,23 @@ def login():
 @app.route('/<organization>/<project>/documents')
 def documents(organization, project):
     """Read and list documents in documents directory"""
-
+    docs = []
     docs_dir = '../outputs'
     if not os.path.isdir(docs_dir):
-        print("Can't find directory:", docs_dir)
-        sys.exit()
-
-    docs = []
-    docs_glob = docs_dir.rstrip('/') + "/*"
-    # Read in all of the docs directory files.
-    for doc in glob.glob(docs_glob):
-        if os.path.isfile(doc):
-          docs.append({'name': os.path.basename(doc)})
-
-    docs.sort()
+      message = "No 'outputs' directory found in repository files."
+    else:
+      docs_glob = docs_dir.rstrip('/') + "/*"
+      # Read in all of the docs directory files.
+      for doc in glob.glob(docs_glob):
+          if os.path.isfile(doc):
+            docs.append({'name': os.path.basename(doc)})
+      docs.sort()
     return render_template('documents.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
                             src_repo=cfg["src_repo"],
+                            message=message,
                             documents=docs
                           )
 
@@ -144,7 +154,8 @@ def settings(organization, project):
     return render_template('settings.html',
                             cfg=cfg,
                             organization=organization,
-                            project=project
+                            project=project,
+                            govready_file=GOVREADY_FILE
                           )
 
 @app.route('/<organization>/<project>/poams')
@@ -561,3 +572,28 @@ def update_control():
 
     # The control was not found in the data files.
     return "NOTFOUND"
+
+@app.route('/update-govready-file', methods=['POST'])
+def update_govready_file():
+    # Change the repo files we are seeing by reading a different govready file
+    # Get the .govready file path user input.
+    govready_file_new = request.form["govready_file_new"]
+    print("processing update_govready_file ", govready_file_new)
+
+    message = ""
+    if not os.path.isfile(govready_file_new):
+      message = "{} file not found.".format(govready_file_new)
+    else:
+      os.environ['GOVREADY_FILE'] = govready_file_new
+      app.config['GOVREADY_FILE'] = os.environ['GOVREADY_FILE']
+
+      GOVREADY_FILE = app.config['GOVREADY_FILE']
+      print("env GOVREADY_FILE now ", os.environ.get('GOVREADY_FILE'))
+      message = "GOVREADY_FILE changed to {}.".format(GOVREADY_FILE)
+      # Return OK, we're good.
+      # redirect(url_for('settings', organization="DNFSB", project="project"))
+      redirect(url_for('index'))
+      return "OK"
+
+    # The control was not found in the data files.
+    return "NOTFOUND {}".format(message)
