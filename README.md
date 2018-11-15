@@ -44,7 +44,11 @@ components:
 team:
   user:
     name: Anonymous (workstation mode)
- ```
+documents:
+- name: outputs
+  directory: outputs
+  description: Default output directory
+```
 
 
 # Supported Data Formats:
@@ -111,6 +115,24 @@ cd hypergrc
 virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
+```
+
+### Fetching standards data
+
+```
+mkdir standards
+curl https://raw.githubusercontent.com/GovReady/NIST-800-53r4-Standards/master/NIST-800-53r4.yaml > standards/nist-800-53-rev4.yaml
+```
+
+### Adding components
+
+To use existing component YAML files, place them in files named like so:
+
+```
+components/Component1/controlset1.yaml
+components/Component1/controlset2.yaml
+components/Component2/controlset1.yaml
+components/Component2/controlset2.yaml
 ```
 
 ### Running Flask server
