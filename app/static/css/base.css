@@ -118,11 +118,11 @@ body {
 *******************************/
 
 .card-control {
-
+  background-color: #fff;
 }
 
 .card-control :hover {
-  background-color: pink;
+  background-color: #eee;
 }
 
 /*******************************

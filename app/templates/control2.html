@@ -74,12 +74,12 @@
                     style="font-size:2em; color: #777;"></button>
                     </div>
                   </div>
+
+                  <b>Implementation narrative</b></br/>
+                  <textarea style="width: 98%; height:160px; padding: 8px; margin-bottom:20px;" placeholder="Describe what {{ component_name }} contributes to the control...">{% if narrative %}{{ narrative }}{% endif %}</textarea>
                   
                   <b>Summary</b><br/>
                   <input style="width: 98%; padding: 8px;" value="{% if summary %}{{ summary }}{% endif %}" placeholder="Write something short for spreadsheets..."><br/><br/>
-
-                  <b>Implementation description</b></br/>
-                  <textarea style="width: 98%; height:160px; padding: 8px; margin-bottom:20px;" placeholder="Describe what {{ component_name }} contributes to the control...">{% if narrative %}{{ narrative }}{% endif %}</textarea>
 
                   <b>Implementation status</b></br/>
                   <input class="implementation_status-input" style="width: 98%; padding: 8px;" value="{% if implementation_status %}{{ implementation_status }}{% endif %}" placeholder="Unknown"><br/><br/>
