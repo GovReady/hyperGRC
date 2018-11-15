@@ -19,7 +19,7 @@
 		{% for document in documents %}
 		<div class="col-md-3" style="color: black; margin-bottom: 20px;">
 			<div style="font-size: 4em; text-align: center; margin-bottom: 8px;"><a href="/{{ organization }}/{{ project }}/documents/{{ document.name }}" style="color: black;"><span class="glyphicon glyphicon-file" style="color: #444;"></span></a></div>
-			<div> {{ document.name|truncate(20, True) }}</div>
+			<div style="text-align: center;"> {{ document.name|truncate(20, True) }}</div>
 		</div>
 		{% endfor %}
 	</div>
