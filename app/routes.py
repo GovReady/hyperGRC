@@ -135,6 +135,7 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
           continue
 
         component_name = os.path.basename(component_dir)
+        component_order = None
 
         # Apply the control name filter.
         if filter_component_name and component_name.lower() != filter_component_name.lower():
@@ -147,7 +148,10 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
             # Read out each control and store it in memory as a tuple
             # that holds the information we need to sort all of the
             # items into the right order for the SSP.
-            for control in data["satisfies"]:
+
+            # If the data file has a "satisfies" key, then it is in
+            # an OpenControl-like format.
+            for control in data.get("satisfies", []):
               # Prepare control description text and fix spacing before parenthesis for subcontrols
               # TODO: clean up this regex, but it works.
               control_id = control["control_key"].replace("-0", "-")
@@ -157,11 +161,11 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
                 continue
 
               yield (
-                control.get("control_key").split("-", 1)[0], # extract control family from control number
-                control.get("control_key"),
+                control["control_key"].split("-", 1)[0], # extract control family from control number
+                control["control_key"],
                 control.get("control_key_part") or "",
                 control.get("control_name"),
-                None, # component order
+                component_order,
                 component_name,
                 control.get("security_control_type"),
                 control.get("implementation_status"),
@@ -170,6 +174,26 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
                 # control["control_description"],
               )
 
+            # If the data file has a "controls" key, then it is in
+            # a GovReady-parsed SSP format.
+            for control in data.get("controls", []):
+              # Apply the control number filter.
+              if filter_control_number and control["control"] != filter_control_number:
+                continue
+
+              yield (
+                control["control"].split("-", 1)[0], # extract control family from control number
+                control["control"],
+                None, # TODO, no part
+                control["control-name"],
+                component_order,
+                component_name,
+                control.get("security_control_type"),
+                control.get("implementation_status") or "Unknown",
+                control.get("summary", None),
+                control.get("control-narrative", None)
+                # control["control_description"],
+              )
 
 #############################
 # Routes
