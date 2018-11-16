@@ -29,7 +29,7 @@
             <div class="row">
               <a href="" style="color: #333; font-weight: normal;" class="" data-toggle="modal" data-target="#myModal-{{ control_family | replace(' ', '_') }}-{{ control_key }}{{ part | replace('(','') | replace(')','') }}">
                 <div class="col-sm-12" style="padding-left: 0px;" title="{{ component_name }}: {{ narrative }}">
-                {{ control_key }} {% if part %}<span style="">Part {{ part }} </span>{% endif %}{{ control_name | truncate(30, true, "") }}
+                {{ control_key }} {% if part %}<span style="">Part {{ part }} </span>{% endif %}{% if control_name %}{{ control_name | truncate(30, true, "") }}{% endif %}
                 </div>
               </a>
               <!-- Eventually, move status information to bottom of card -->
@@ -75,7 +75,7 @@
                   <br/>
                   
                   <b>Implementation narrative</b></br/>
-                  <textarea class="narrative-input" style="width: 98%; height:160px; padding: 8px; margin-bottom:20px;" placeholder="Describe what {{ component_name }} contributes to the control...">{% if narrative %}{{ narrative }}{% endif %}</textarea>
+                  <textarea class="narrative-input" style="width: 98%; height:{% if narrative %}{{ narrative | length / 122 * 22 + 18 |int }}{% endif %}px; padding: 8px; margin-bottom:20px;" placeholder="Describe what {{ component_name }} contributes to the control...">{% if narrative %}{{ narrative }}{% endif %}</textarea>
 
                   <b>Summary</b><br/>
                   <input class="summary-input" style="width: 98%; padding: 8px;" value="{% if summary %}{{ summary }}{% endif %}" placeholder="Write something short for spreadsheets..."><br/><br/>
@@ -138,5 +138,9 @@ $(function() {
     });
   })
 });
+</script>
+
+<script>
+  autosize($('textarea'));
 </script>
 {% endblock %}
