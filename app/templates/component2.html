@@ -10,7 +10,7 @@
   </div>
 </div>
 
-  {% for control_family_selected in control_families_fn %}
+  {% for control_family_selected in control_families %}
   {% if control_family_selected %}
     <div style="width:340px; min-height:100px; max-height: 94%;background-color: rgb(223, 227, 230); margin-right: 12px; float: left; padding: 18px; border-radius: 5px; overflow-y: auto;">
 
@@ -19,7 +19,7 @@
       <div class="containerx" style="">
         <div class="row" style="overflow-x: auto; margin-left:2px; margin-right: 2px;">
 
-      {% for component_id, control_family, component_order, component_name, control_key, control_name, part, security_control_type, implementation_status, summary, narrative in ssp %}
+      {% for control_family, control_key, part, control_name, component_order, component_name, security_control_type, implementation_status, summary, narrative in ssp %}
 
         {% if control_family == control_family_selected %}
           <div class="card-control" style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:8px; height: 32px; overflow-y: hidden; border-radius: 5px;">
@@ -27,7 +27,7 @@
 
           <div class="container" style="width:100%;">
             <div class="row">
-              <a href="" style="color: #333; font-weight: normal;" class="" data-toggle="modal" data-target="#myModal-{{ control_family | replace(' ', '_') }}-{{ control_key }}{{ part | replace('(','') | replace(')','') }}">
+              <a href="" style="color: #333; font-weight: normal;" class="" data-toggle="modal" data-target="#control-modal-{{loop.index}}">
                 <div class="col-sm-12" style="padding-left: 0px;" title="{{ component_name }}: {{ narrative }}">
                 {{ control_key }} {% if part %}<span style="">Part {{ part }} </span>{% endif %}{% if control_name %}{{ control_name | truncate(30, true, "") }}{% endif %}
                 </div>
@@ -54,7 +54,7 @@
 
 
           <!-- Modal -->
-          <div id="myModal-{{ control_family | replace(' ', '_') }}-{{ control_key }}{{ part | replace('(','') | replace(')','') }}" class="modal control-modal" role="dialog" data-path="{{component_id}}/{{control_key}}/{{part}}">
+          <div id="control-modal-{{loop.index}}" class="modal control-modal" role="dialog" data-path="{{component_id}}/{{control_key}}/{{part}}">
             <div class="modal-dialog modal-lg" style="height: 600px;">
 
               <!-- Modal content-->

@@ -44,7 +44,11 @@ components:
 team:
   user:
     name: Anonymous (workstation mode)
- ```
+documents:
+- name: outputs
+  directory: outputs
+  description: Default output directory
+```
 
 
 # Supported Data Formats:
@@ -110,18 +114,25 @@ satisfies:
 cd hypergrc
 virtualenv venv
 source venv/bin/activate
-pip install flask
-pip install python-dotenv
-pip install flask_wtf
-pip install rtyaml
-pip install Flask-Testing
-export FLASK_APP=hypergrc.py
-export GOVREADY_FILE=/abs/path/to/.govready
+pip install -r requirements.txt
+```
 
-# Force reload upon code changes
-export FLASK_DEBUG=1
+### Fetching standards data
 
-flask run
+```
+mkdir standards
+curl https://raw.githubusercontent.com/GovReady/NIST-800-53r4-Standards/master/NIST-800-53r4.yaml > standards/nist-800-53-rev4.yaml
+```
+
+### Adding components
+
+To use existing component YAML files, place them in files named like so:
+
+```
+components/Component1/controlset1.yaml
+components/Component1/controlset2.yaml
+components/Component2/controlset1.yaml
+components/Component2/controlset2.yaml
 ```
 
 ### Running Flask server
