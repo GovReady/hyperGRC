@@ -38,9 +38,11 @@
       <div class="container-fluid" style="height: 60px;padding-top: 8px;">
         <div class="row">
           <div class="col-md-3">
-            <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230);"><b>{{ organization }} &gt; {{ project }}</b></button>
+            <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230);">
+              <span class="glyphicon glyphicon-home"></span>
+              {% if organization %}<b> / {{ organization }} / {{ project }}</b>{% endif %}
+              </button>
           </div>
-
           <div class="col-md-7">
             <!-- button for source of content -->
             <a href="{{ cfg.src_repo }}" target="_blank"><button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230); margin-left:48px;"><b>source: {{ cfg.src_repo }}</b></button></a>

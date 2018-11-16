@@ -15,6 +15,37 @@ import re
 from jinja2 import evalcontextfilter, Markup, escape
 
 #############################
+# Find available repos
+#############################
+REPO_FILE = ".hypergrc_repos"
+if not os.path.isfile(REPO_FILE):
+  raise ValueError('You must set ".hypergrc_repos" file')
+
+REPO_LIST = []
+with open(REPO_FILE, 'r') as f:
+  for line in f:
+    REPO_LIST.append(line.strip())
+
+print(REPO_LIST)
+
+# Digest .govready files from repos
+cfgs = []
+for govready_file in REPO_LIST:
+
+  if not os.path.isfile(govready_file):
+    raise ValueError("Could not find indicated file {} locally.".format(govready_file))
+
+  with open(govready_file, 'r') as f:
+    gr_cfg = rtyaml.load(f)
+
+  cfgs.append({"organization": gr_cfg["organization"]["name"],
+               "project": gr_cfg["system"]["name"],
+               "src_repo": gr_cfg["system"]["src_repo"]
+              })
+  print(cfgs)
+
+
+#############################
 # Read in congfig files
 #############################
 GOVREADY_FILE = app.config['GOVREADY_FILE']
@@ -202,12 +233,13 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
 #############################
 @app.route('/')
 def index():
+    repo_list = REPO_LIST
     organization = cfg["organization"]
     project =  cfg["project"]
     return render_template('index.html',
                             cfg=cfg,
-                            organization=organization,
-                            project=project
+                            repo_list=repo_list,
+                            cfgs=cfgs
                           )
 
 @app.route('/login')

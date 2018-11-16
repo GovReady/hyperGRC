@@ -1,6 +1,7 @@
 controls/
 inputs/
 outputs/\~\$*
+.hypergrc_repos
 
 # Python, virtual env
 venv
