@@ -71,7 +71,9 @@ for item in gr_cfg["documents"]:
 print("document_dirs ", document_dirs)
 cfg["document_dirs"] = document_dirs
 
-
+# Get certification
+# Let's hardcode to FedRAMP Low for feature MVP
+cfg["certification_file"] = "ref/certifications/fisma-low-impact.yaml"
 # Set components ordered dict
 _component_names = collections.OrderedDict([(None, None)])
 for cn in gr_cfg["components"]:
@@ -219,11 +221,24 @@ def team(organization, project):
 @app.route('/<organization>/<project>/controls')
 @app.route('/<organization>/<project>/800-53-r4/controls')
 def controls(organization, project):
+    # Read in control list from certification file
+    certification_file = cfg["certification_file"]
+    if not os.path.isfile(certification_file):
+      raise ValueError('Certification file {} not found.'.format(certification_file))
+
+    with open(certification_file) as f:
+      certification_controls = rtyaml.load(f)
+
+    standard_controls = get_standard_controls_data()
+
+    # if certification['']
 
     return render_template('controls.html',
                             cfg=cfg,
                             organization=organization,
-                            project=project
+                            project=project,
+                            certification_controls=certification_controls,
+                            standard_controls=standard_controls
                           )
 
 @app.route('/<organization>/<project>/800-53r4/control/<control_number>/combined')

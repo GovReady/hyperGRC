@@ -1,59 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container" style="width: 760px; margin-left: 0px; background-color: rgb(223, 227, 230); padding: 0 30px 10px 30px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee; height: 90%; opacity: 0.95;">
+<div class="container" style="width: 960px; margin-left: 0px; background-color: rgb(223, 227, 230); padding: 0 30px 10px 30px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee; height: 90%; opacity: 0.95;">
   <div class="row">
     <div class="col-md-12" style="color: black; margin-bottom: 1.5em;">
         <h3 style="border-bottom: 0.5px solid #999;">Your {{ project }} controls</h3>
     </div>
     <div class="col-md-12 ctl-btns" style="color: black; margin-bottom: 1.5em;">
 
-      <h4>800-53 rev 4</h4>
-
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/AC-1"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">AC-1</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/AC-2"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">AC-2</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/AC-3"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">AC-3</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/AC-4"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">AC-4</button></a>
-      <br />
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/AT-1"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">AT-1</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/AT-2"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">AT-2</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/AT-3"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">AT-3</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/AT-4"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">AT-4</button></a>
-      <br />
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/AU-1"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">AU-1</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/AU-2"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">AU-2</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/AU-3"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">AU-3</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/AU-4"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">AU-4</button></a>
-      <br />
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/CM-1"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">CM-1</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/CM-2"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">CM-2</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/CM-3"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">CM-3</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/CM-4"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">CM-4</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/CM-5"><button type="button" class="btn btn-default disabled" style="width:70px; margin: 8px; opacity: 1.0; color: black;">CM-5</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/CM-6"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">CM-6</button></a>
- 
-      <br />
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/IA-1"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">IA-1</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/IA-2"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">IA-2</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/IA-3"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">IA-3</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/IA-4"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">IA-4</button></a>
-      <br />
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/IR-1"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">IR-1</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/IR-2"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">IR-2</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/IR-3"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">IR-3</button></a>
-      <a href="/{{ organization }}/{{ project }}/800-53r4/control/IR-4"><button type="button" class="btn btn-default" style="width:70px; margin: 8px; opacity: 1.0; color: black;">IR-4</button></a>
-      <br />
-
-
-        <!-- Sample loop
-        {% for component in components %}
+        {% for standard in certification_controls.standards %}
         <div>
-          <p><b><a href="/{{ organization }}/{{ project }}/800-53r4/component/{{ component.name }}" style="font-size: 1.5em; color: black; text-decoration: none;">{{ component.name }}<a></b></p>
+          <h4>{{ standard }}</h4>
+          <br/>
+
+          {% for control in certification_controls.standards[standard] %}
+
+            <a href="/{{ organization }}/{{ project }}/800-53r4/control/{{ control }}"><button type="button" class="btn btn-default" style="width:76px; margin: 8px; opacity: 1.0; color: black;">{{ control }}</button></a>
+          {% endfor %}
+
         </div>
-      {% endfor %} -->
-      <!-- <div style="color: black;">
-        <b>+ Add component</b>
-      </div>  -->
+        {% endfor %}
+
+        <!-- % for standard in certification_controls.standards %}
+        <div>
+          <h4>{{ standard }}</h4>
+          <br/>
+
+          {% for control in certification_controls.standards[standard] %}
+
+            <a href="/{{ organization }}/{{ project }}/800-53r4/control/{{ control }}"><button type="button" class="btn btn-default" style="width:76px; margin: 8px; opacity: 1.0; color: black;">{{ control }}</button></a>
+          {% endfor %}
+
+        </div>
+        % endfor %}  -->
 
     </div>
   </div>    
