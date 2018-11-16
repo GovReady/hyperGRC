@@ -27,7 +27,7 @@
 
           <div class="container" style="width:100%;">
             <div class="row">
-              <a href="" style="color: #333; font-weight: normal;" class="" data-toggle="modal" data-target="#myModal-{{ control_family | replace(' ', '_') }}-{{ control_key }}{{ part | replace('(','') | replace(')','') }}">
+              <a href="" style="color: #333; font-weight: normal;" class="" data-toggle="modal" data-target="#control-modal-{{loop.index}}">
                 <div class="col-sm-12" style="padding-left: 0px;" title="{{ component_name }}: {{ narrative }}">
                 {{ control_key }} {% if part %}<span style="">Part {{ part }} </span>{% endif %}{{ control_name | truncate(30, true, "") }}
                 </div>
@@ -54,7 +54,7 @@
 
 
           <!-- Modal -->
-          <div id="myModal-{{ control_family | replace(' ', '_') }}-{{ control_key }}{{ part | replace('(','') | replace(')','') }}" class="modal control-modal" role="dialog" data-path="{{component_id}}/{{control_key}}/{{part}}">
+          <div id="control-modal-{{loop.index}}" class="modal control-modal" role="dialog" data-path="{{component_id}}/{{control_key}}/{{part}}">
             <div class="modal-dialog modal-lg" style="height: 600px;">
 
               <!-- Modal content-->
