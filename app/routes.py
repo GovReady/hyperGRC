@@ -14,113 +14,115 @@ import sys
 import re
 from jinja2 import evalcontextfilter, Markup, escape
 
-#############################
-# Find available repos
-#############################
-REPO_FILE = ".hypergrc_repos"
-if not os.path.isfile(REPO_FILE):
-  raise ValueError('You must set ".hypergrc_repos" file')
-
-REPO_LIST = []
-with open(REPO_FILE, 'r') as f:
-  for line in f:
-    REPO_LIST.append(line.strip())
-
-print(REPO_LIST)
-
-# Digest .govready files from repos
-cfgs = []
-for govready_file in REPO_LIST:
-
-  if not os.path.isfile(govready_file):
-    raise ValueError("Could not find indicated file {} locally.".format(govready_file))
-
-  with open(govready_file, 'r') as f:
-    gr_cfg = rtyaml.load(f)
-
-  cfgs.append({"organization": gr_cfg["organization"]["name"],
-               "project": gr_cfg["system"]["name"],
-               "src_repo": gr_cfg["system"]["src_repo"]
-              })
-  print(cfgs)
-
-
-#############################
-# Read in congfig files
-#############################
-GOVREADY_FILE = app.config['GOVREADY_FILE']
-if not GOVREADY_FILE:
-  raise ValueError('You must set "GOVREADY_FILE" environment variable')
-
-if not os.path.isfile(GOVREADY_FILE):
-  raise ValueError('You must have ".govready" file and "GOVREADY_FILE" environment variable')
-
-with open(GOVREADY_FILE, 'r') as f:
-    gr_cfg = rtyaml.load(f)
-
-cfg = {"organization": gr_cfg["organization"]["name"],
-       "project": gr_cfg["system"]["name"],
-       "standard": gr_cfg["system"]["primary_standard"],
-       "standard_file": "nist-800-53-rev4.yaml",
-       "standard_controls_dir": os.path.join(os.path.dirname(os.path.abspath(GOVREADY_FILE)), gr_cfg["standard_controls_dir"]),
-       "src_repo": gr_cfg["system"]["src_repo"],
-       "mode": gr_cfg["mode"],
-       "hgrc_version": gr_cfg["hgrc_version"],
-       "user_name": gr_cfg["team"]["user"]["name"],
-       "components_dir": os.path.join(os.path.dirname(os.path.abspath(GOVREADY_FILE)), gr_cfg["components_dir"]),
-       "document_dirs": ""
-}
-
-
-# Set path info in local workstation mode
-if cfg['mode'] == "local workstation":
-  pass
-
-# Check components and standards directories exist
-if not os.path.isdir(cfg["components_dir"]):
-    print("Can't find directory:", cfg["components_dir"])
-    sys.exit()
-
-if not os.path.isdir(cfg["standard_controls_dir"]):
-    print("Can't find directory:", cfg["standard_controls_dir"])
-    sys.exit()
-
-# To Do: Check standard file exists
-primary_standard = gr_cfg["system"]["primary_standard"]
-standards = {}
-for item in gr_cfg["standards"]:
-  standards[item["standard"]] = item["standard_file"]
-print(standards)
-standard_file = standards[primary_standard]
-cfg["standard_file"] = standard_file
-
-# Get document directories
-document_dirs = {}
-for item in gr_cfg["documents"]:
-  document_dirs[item["name"]] = {"directory": item["directory"],
-                                  "description": item["description"]}
-print("document_dirs ", document_dirs)
-cfg["document_dirs"] = document_dirs
-
-# Get certification
-# Let's hardcode to FedRAMP Low for feature MVP
-cfg["certification_file"] = "ref/certifications/fisma-low-impact.yaml"
-# Set components ordered dict
-_component_names = collections.OrderedDict([(None, None)])
-for cn in gr_cfg["components"]:
-  _component_names[cn["name"]] = cn["directory"]
-
-cfg["component_names"] = _component_names
-
 
 #############################
 # Helpers
 #############################
-def get_standard_controls_data():
+
+def get_config_file(cfg_file):
+  """Read the .govready file and return values"""
+  if not os.path.isfile(cfg_file):
+    raise ValueError("Could not find indicated file {} locally.".format(cfg_file))
+
+  with open(cfg_file, 'r') as f:
+    gr_cfg = rtyaml.load(f)
+    cfg = {"organization": gr_cfg["organization"]["name"],
+           "system":       gr_cfg["system"],
+           "standards":    gr_cfg["standards"],
+           "project":      gr_cfg["system"]["name"],
+           "standard":     gr_cfg["system"]["primary_standard"],
+           "standard_file": "nist-800-53-rev4.yaml",
+           "standard_controls_dir": os.path.join(os.path.dirname(os.path.abspath(cfg_file)), gr_cfg["standard_controls_dir"]),
+           "src_repo":     gr_cfg["system"]["src_repo"],
+           "mode":         gr_cfg["mode"],
+           "hgrc_version": gr_cfg["hgrc_version"],
+           "user_name":    gr_cfg["team"]["user"]["name"],
+           "components":   gr_cfg["components"],
+           "components_dir": os.path.join(os.path.dirname(os.path.abspath(cfg_file)), gr_cfg["components_dir"]),
+           "documents":     gr_cfg["documents"],
+           "document_dirs": ""
+          }
+  return cfg
+
+def set_cfg_values(cfg_file):
+  """Set all the cfg values for a specific .govready file"""
+
+  # Set the values available in the config yaml file
+  cfg = get_config_file(cfg_file)
+
+  # Set path info in local workstation mode
+  if cfg['mode'] == "local workstation":
+    pass
+
+  # Check components and standards directories exist
+  if not os.path.isdir(cfg["components_dir"]):
+      print("Can't find directory:", cfg["components_dir"])
+      sys.exit()
+
+  if not os.path.isdir(cfg["standard_controls_dir"]):
+      print("Can't find directory:", cfg["standard_controls_dir"])
+      sys.exit()
+
+  # To Do: Check standard file exists
+  primary_standard = cfg["system"]["primary_standard"]
+  standards = {}
+  for item in cfg["standards"]:
+    standards[item["standard"]] = item["standard_file"]
+  # print(standards)
+  standard_file = standards[primary_standard]
+  cfg["standard_file"] = standard_file
+
+  # Get document directories
+  document_dirs = {}
+  for item in cfg["documents"]:
+    document_dirs[item["name"]] = {"directory": item["directory"],
+                                    "description": item["description"]}
+  print("document_dirs ", document_dirs)
+  cfg["document_dirs"] = document_dirs
+
+  # Get certification
+  # Let's hardcode to FedRAMP Low for feature MVP
+  cfg["certification_file"] = "ref/certifications/fisma-low-impact.yaml"
+  # Set components ordered dict
+  _component_names = collections.OrderedDict([(None, None)])
+  for cn in cfg["components"]:
+    _component_names[cn["name"]] = cn["directory"]
+
+  cfg["component_names"] = _component_names
+
+  return cfg
+
+def get_cfg_from_org_and_project(organization, project):
+  """ Given organization and project find .govredy file """
+
+  REPO_FILE = ".hypergrc_repos"
+  if not os.path.isfile(REPO_FILE):
+    raise ValueError('You must set ".hypergrc_repos" file')
+
+  repo_list = []
+  with open(REPO_FILE, 'r') as f:
+    for line in f:
+      repo_list.append(line.strip())
+
+  # Digest .govready files from repos
+  for govready_file in repo_list:
+    cfg_test = get_config_file(govready_file)
+    if cfg_test["organization"] == organization and cfg_test["project"] == project:
+      break
+
+  cfg = set_cfg_values(govready_file)
+  return cfg
+
+def get_standard_controls_data(cfg):
   # Read in all the controls
   with open(os.path.join(cfg["standard_controls_dir"], cfg["standard_file"])) as f:
     standard_controls_data = rtyaml.load(f)
   return standard_controls_data
+
+
+#############################
+# Jinja Helpers
+#############################
 
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
@@ -142,10 +144,10 @@ def blockquote(s):
   return "\n".join((" " + line) for line in s.strip().split("\n")) + "\n"
 app.jinja_env.filters['blockquote'] = blockquote
 
+
 #############################
 # Model
 #############################
-
 
 def load_components(cfg):
     # Get the set of components by reading all of the controls,
@@ -228,12 +230,33 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
                 # control["control_description"],
               )
 
+
 #############################
 # Routes
 #############################
+
+# Home route
+
 @app.route('/')
 def index():
-    repo_list = REPO_LIST
+    REPO_FILE = ".hypergrc_repos"
+    if not os.path.isfile(REPO_FILE):
+      raise ValueError('You must set ".hypergrc_repos" file')
+
+    repo_list = []
+    with open(REPO_FILE, 'r') as f:
+      for line in f:
+        repo_list.append(line.strip())
+
+    print(repo_list)
+
+    # Digest .govready files from repos
+    cfgs = []
+    for govready_file in repo_list:
+      cfgs.append(get_config_file(govready_file))
+
+    cfg = set_cfg_values(govready_file)
+
     organization = cfg["organization"]
     project =  cfg["project"]
     return render_template('index.html',
@@ -247,8 +270,11 @@ def login():
     form = LoginForm()
     return render_template('login.html', title='Sign In', form=form)
 
+# Project general routes
+
 @app.route('/<organization>/<project>/documents')
 def documents(organization, project):
+    cfg = get_cfg_from_org_and_project(organization, project)
     """Read and list documents in documents directory"""
     docs = []
     message = ""
@@ -275,6 +301,7 @@ def documents(organization, project):
 
 @app.route('/<organization>/<project>/assessments')
 def assessments(organization, project):
+    cfg = get_cfg_from_org_and_project(organization, project)
     return render_template('assessments.html',
                             cfg=cfg,
                             organization=organization,
@@ -283,15 +310,16 @@ def assessments(organization, project):
 
 @app.route('/<organization>/<project>/settings')
 def settings(organization, project):
+    cfg = get_cfg_from_org_and_project(organization, project)
     return render_template('settings.html',
                             cfg=cfg,
                             organization=organization,
-                            project=project,
-                            govready_file=GOVREADY_FILE
+                            project=project
                           )
 
 @app.route('/<organization>/<project>/poams')
 def poams(organization, project):
+    cfg = get_cfg_from_org_and_project(organization, project)
     components_dir = cfg["components_dir"]
     return render_template('poams.html',
                             cfg=cfg,
@@ -301,6 +329,7 @@ def poams(organization, project):
 
 @app.route('/<organization>/<project>/components')
 def components(organization, project):
+    cfg = get_cfg_from_org_and_project(organization, project)
     return render_template('components.html',
                             cfg=cfg,
                             organization=organization,
@@ -309,6 +338,7 @@ def components(organization, project):
 
 @app.route('/<organization>/<project>/team')
 def team(organization, project):
+    cfg = get_cfg_from_org_and_project(organization, project)
     components_dir = cfg["components_dir"]
 
     components = []
@@ -325,9 +355,11 @@ def team(organization, project):
                             components=components)
 
 # 800-53
+
 @app.route('/<organization>/<project>/controls')
 @app.route('/<organization>/<project>/800-53-r4/controls')
 def controls(organization, project):
+    cfg = get_cfg_from_org_and_project(organization, project)
     # Read in control list from certification file
     certification_file = cfg["certification_file"]
     if not os.path.isfile(certification_file):
@@ -336,9 +368,7 @@ def controls(organization, project):
     with open(certification_file) as f:
       certification_controls = rtyaml.load(f)
 
-    standard_controls = get_standard_controls_data()
-
-    # if certification['']
+    standard_controls = get_standard_controls_data(cfg)
 
     return render_template('controls.html',
                             cfg=cfg,
@@ -350,8 +380,9 @@ def controls(organization, project):
 
 @app.route('/<organization>/<project>/800-53r4/control/<control_number>/combined')
 def control_legacy(organization, project, control_number):
+    cfg = get_cfg_from_org_and_project(organization, project)
     control_number = control_number.upper()
-    standard_controls_data = get_standard_controls_data()
+    standard_controls_data = get_standard_controls_data(cfg)
 
     # Pass along key values
     control_name = standard_controls_data[control_number]["name"]
@@ -382,8 +413,9 @@ def control_legacy(organization, project, control_number):
 
 @app.route('/<organization>/<project>/800-53r4/control/<control_number>')
 def control(organization, project, control_number):
+    cfg = get_cfg_from_org_and_project(organization, project)
     control_number = control_number.upper().replace("-0", "-")
-    standard_controls_data = get_standard_controls_data()
+    standard_controls_data = get_standard_controls_data(cfg)
 
     # Pass along key values
     control_name = standard_controls_data[control_number]["name"]
@@ -413,6 +445,7 @@ def control(organization, project, control_number):
 
 @app.route('/<organization>/<project>/800-53r4/component/<component_name>')
 def component(organization, project, component_name):
+    cfg = get_cfg_from_org_and_project(organization, project)
     # Load control narratives.
     component_name = component_name.lower()
     ssp = list(load_component_controls(cfg, filter_component_name=component_name))
@@ -433,9 +466,11 @@ def component(organization, project, component_name):
                             ssp=ssp,
                           )
 
-# HIPAA
+# HIPAA routes
+
 @app.route('/<organization>/<project>/hipaa/controls')
 def hipaa_controls(organization, project):
+    cfg = get_cfg_from_org_and_project(organization, project)
 
     return render_template('controls_hipaa.html',
                             cfg=cfg,
@@ -445,6 +480,7 @@ def hipaa_controls(organization, project):
 
 @app.route('/<organization>/<project>/hipaa/control/<control_number>')
 def hipaa_control(organization, project, control_number):
+    cfg = get_cfg_from_org_and_project(organization, project)
     # control_number = control_number.upper().replace("-0", "-")
 
     standard_file = "hipaa-draft.yaml"
@@ -526,9 +562,13 @@ def hipaa_control(organization, project, control_number):
                             ssp=ssp
                           )
 
-    
+# Update data routes
+
 @app.route('/update-control', methods=['POST'])
 def update_control():
+    # cfg = get_cfg_from_org_and_project(organization, project)
+    # BROKEN - THIS MAY NEED REVISION
+
     # Split the 'path' variable to get the component, control, and control path.
     # TODO: The front-end should pass these as separate parameters.
     component, control, part = request.form["path"].split("/")
@@ -583,28 +623,3 @@ def update_control():
 
     # The control was not found in the data files.
     return "NOTFOUND"
-
-@app.route('/update-govready-file', methods=['POST'])
-def update_govready_file():
-    # Change the repo files we are seeing by reading a different govready file
-    # Get the .govready file path user input.
-    govready_file_new = request.form["govready_file_new"]
-    print("processing update_govready_file ", govready_file_new)
-
-    message = ""
-    if not os.path.isfile(govready_file_new):
-      message = "{} file not found.".format(govready_file_new)
-    else:
-      os.environ['GOVREADY_FILE'] = govready_file_new
-      app.config['GOVREADY_FILE'] = os.environ['GOVREADY_FILE']
-
-      GOVREADY_FILE = app.config['GOVREADY_FILE']
-      print("env GOVREADY_FILE now ", os.environ.get('GOVREADY_FILE'))
-      message = "GOVREADY_FILE changed to {}.".format(GOVREADY_FILE)
-      # Return OK, we're good.
-      # redirect(url_for('settings', organization="DNFSB", project="project"))
-      redirect(url_for('index'))
-      return "OK"
-
-    # The control was not found in the data files.
-    return "NOTFOUND {}".format(message)

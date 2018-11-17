@@ -20,16 +20,6 @@
 			<p>&nbsp;</p>
 		</div>
 		<div class="row col-md-12">
-			<div class="col-md-1"><span class="glyphicon glyphicon-wrench"></span></div>
-			<div class="col-md-3">.govready file</div>
-			<div class="col-md-7 info-govreadyfile"><input class="govreadyfile-input" style="width:100%; padding: 0px;" value="{% if govready_file %}{{ govready_file }}{% endif %}" placeholder=""></div>
-			<div class="col-md-1">
-				<button type="button" class="btn btn-default control-update-govready-file">
-					<span class="glyphicon glyphicon-refresh"></span>
-				</button>
-			</div>
-		</div>
-		<div class="row col-md-12">
 			<div class="col-md-1"><span class="glyphicon glyphicon-link"></span></div>
 			<div class="col-md-3">Project repo</div>
 			<div class="col-md-8"><a href="{{ src_repo }}" style="color: black;" target=”_blank”>{{ cfg.src_repo }}</a></div>
@@ -58,16 +48,5 @@
 		</div>
 	</div>
 </div>
-
-{% block scripts %}
-<script>
-$(function() {
-	$('.control-update-govready-file').on("click", function() {
-		$('.info-govreadyfile').html('{{ govready_file }} \n<pre>'+ "To change repos (Linux): \n1. Switch to terminal running Flask\n2. Terminate flask (CTL+c)\n3. Enter:\nexport GOVREADY_FILE=" + $('#static-page-content').find('.govreadyfile-input').val() + "\nflask run" + "</pre>")
-		evt.stopImmediatePropagation();
-	});
-});
-</script>
-{% endblock %}
 
 {% endblock %}

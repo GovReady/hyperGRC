@@ -12,9 +12,20 @@ hyperGRC is a web application for workstation or server that reads a `.govready`
 hyperGRC reads the `.govready` configuration file, then reads the YAML files describing the controls provided by components, to generate web pages for making it easier to read and write reusable control implementation content.
 
 
+# The .hypergrc_repos file
+
+Copy the `.hypergrc_repos_example` file to your `.hypergrc_repos` file and edit to list the paths to `.govready` files in the compliance as code repositories on your workstation. List the paths one per line. Note that your local `.hypergrc_repos` file is gitignored. 
+
+hyperGRC reads the `.hypergc_repos` file on start up for a list of local compliance as code to navigate between. This list will be displayed on hyperGRC's home page.
+
+Example `.hypergrc_repos` file:
+
+`/codedata/code/civicactions/Dept-of-Sobriety/dos.gov/.govready`
+`/codedata/code/civicactions/democracy/citizenapp/.govready`
+
 # The .govready file
 
-Here's a sample .govready file:
+Here's a sample .govready file for each repo:
 
 ```
 hgrc_version: 0.3.0
@@ -55,7 +66,7 @@ documents:
 
 ### OpenControl
 
-(content to be added)
+(Coming soon - content to be added)
 
 ### "Fen" Format
 
@@ -95,16 +106,16 @@ satisfies:
   responsibile_entities:
   - entity: Acquia-ACE
   - entity: System Owner
- ```
+```
 
 ### GovReady Compliance Apps
 
-(content coming soon)
+(Coming soon - content to be added)
 
 
 ### GovReady SSP Parser
 
-(content coming soon)
+(Working - content to be added)
 
 # Launching
 
@@ -126,7 +137,7 @@ curl https://raw.githubusercontent.com/GovReady/NIST-800-53r4-Standards/master/N
 
 ### Adding components
 
-To use existing component YAML files, place them in files named like so:
+To use existing component YAML files, cplace them in files named like so inside the target system repo (not hyperGRC repo):
 
 ```
 components/Component1/controlset1.yaml
@@ -147,9 +158,6 @@ export FLASK_APP=hypergrc.py
 
 # Force reload upon code changes
 export FLASK_DEBUG=1
-
-# Path to .govready file
-export GOVREADY_FILE=/abs/path/to/.govready
 
 flask run
 ```
