@@ -26,7 +26,8 @@ def get_config_file(cfg_file):
 
   with open(cfg_file, 'r') as f:
     gr_cfg = rtyaml.load(f)
-    cfg = {"organization": gr_cfg["organization"]["name"],
+    cfg = {"repo_dir":     os.path.dirname(os.path.abspath(cfg_file)),
+           "organization": gr_cfg["organization"]["name"],
            "system":       gr_cfg["system"],
            "standards":    gr_cfg["standards"],
            "project":      gr_cfg["system"]["name"],
@@ -50,7 +51,7 @@ def set_cfg_values(cfg_file):
   # Set the values available in the config yaml file
   cfg = get_config_file(cfg_file)
 
-  # Set path info in local workstation mode
+  # Set mode info in local workstation mode
   if cfg['mode'] == "local workstation":
     pass
 
@@ -77,7 +78,6 @@ def set_cfg_values(cfg_file):
   for item in cfg["documents"]:
     document_dirs[item["name"]] = {"directory": item["directory"],
                                     "description": item["description"]}
-  print("document_dirs ", document_dirs)
   cfg["document_dirs"] = document_dirs
 
   # Get certification
@@ -280,7 +280,7 @@ def documents(organization, project):
     message = ""
     for doc_dir in cfg["document_dirs"].keys():
       print("doc_dir: ", doc_dir)
-      doc_dir_path = os.path.join(os.path.dirname(os.path.abspath(GOVREADY_FILE)), doc_dir)
+      doc_dir_path = os.path.join(cfg["repo_dir"], doc_dir)
 
       if not os.path.isdir(doc_dir_path):
         message += "<br /> Directory {} not found in repository files".format(doc_dir_path)
