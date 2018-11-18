@@ -43,10 +43,16 @@
               {% if organization %}<b> / {{ organization }} / {{ project }}</b>{% endif %}
               </button>
           </div>
-          <div class="col-md-7">
+          <div class="col-md-3">
+            <!-- button for source of content -->
+            <a href="/"><button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230); margin-left:48px;"><b>hyperGRC</b></button></a>
+          </div>
+          {% if organization and project %}
+          <div class="col-md-3">
             <!-- button for source of content -->
             <a href="{{ cfg.src_repo }}" target="_blank"><button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230); margin-left:48px;"><b>source: {{ cfg.src_repo }}</b></button></a>
           </div>
+          {% endif %}
       </div>
     </nav>
 
@@ -55,6 +61,7 @@
           <!-- <p><a href="/{{ organization }}/{{ project }}/index" title="Menu"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span></a></p><br/> -->
           <p><a href="/" title="Home"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></p><br/>
           <!-- <p><a href="/login" title="Login"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span><br/>login</a></p><br/> -->
+          {% if organization and project %}
           <p><a href="/{{ organization }}/{{ project }}/components" title="Components"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a></p><br/>
           <p><a href="/{{ organization }}/{{ project }}/800-53-r4/controls" title="Controls"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p><br/>
           <p><a href="/{{ organization }}/{{ project }}/documents" title="Documents"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a></p><br/>
@@ -62,6 +69,7 @@
           <p><a href="/{{ organization }}/{{ project }}/poams" title="POA&amp;Ms"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a></p><br/>
           <p><a href="/{{ organization }}/{{ project }}/team" title="Team"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></p><br/>
           <p><a href="/{{ organization }}/{{ project }}/settings" title="Settings"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></p>
+          {% endif %}
         </div>
       </div>
 
