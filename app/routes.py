@@ -195,8 +195,13 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
               if filter_control_number and control_id != filter_control_number:
                 continue
 
+              if "control_family" in control:
+                control_group = control["control_family"]
+              else:
+                control_group = control["control_key"].split("-", 1)[0]
+
               yield (
-                control["control_key"].split("-", 1)[0], # extract control family from control number
+                control_group,
                 control["control_key"],
                 control.get("control_key_part") or "",
                 control.get("control_name"),
