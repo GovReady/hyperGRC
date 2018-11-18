@@ -382,7 +382,7 @@ def team(organization, project):
 # 800-53
 
 @app.route('/<organization>/<project>/controls')
-@app.route('/<organization>/<project>/800-53-r4/controls')
+@app.route('/<organization>/<project>/controls')
 def controls(organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     # Read in control list from certification file
@@ -403,7 +403,7 @@ def controls(organization, project):
                             standard_controls=standard_controls
                           )
 
-@app.route('/<organization>/<project>/800-53r4/control/<control_number>/combined')
+@app.route('/<organization>/<project>/control/<control_number>/combined')
 def control_legacy(organization, project, control_number):
     cfg = get_cfg_from_org_and_project(organization, project)
     control_number = control_number.upper()
@@ -436,7 +436,7 @@ def control_legacy(organization, project, control_number):
                             ssp=ssp
                           )
 
-@app.route('/<organization>/<project>/800-53r4/control/<control_number>')
+@app.route('/<organization>/<project>/control/<control_number>')
 def control(organization, project, control_number):
     cfg = get_cfg_from_org_and_project(organization, project)
     control_number = control_number.upper().replace("-0", "-")
@@ -468,7 +468,7 @@ def control(organization, project, control_number):
                             ssp=ssp
                           )
 
-@app.route('/<organization>/<project>/800-53r4/component/<component_name>')
+@app.route('/<organization>/<project>/component/<component_name>')
 def component(organization, project, component_name):
     cfg = get_cfg_from_org_and_project(organization, project)
     # Load control narratives.
