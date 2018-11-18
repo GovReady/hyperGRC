@@ -1,18 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div id="components" style="overflow: auto; width: 6800px; overflow: auto;">
+<div id="components" style="overflow: auto; width: {{ (stats.control_families_total+1) * 360 + 50 |int }}px; overflow: auto;">
 
 <div style="width:340px; min-height:100px; max-height: 94%; overflow-y: auto; background-color: #cdcdcd; margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
   <h4 style="height:2em; margin-top: -8px;">{{ component_name | upper }}</h4>
   <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; min-height: 82px; overflow-y: auto; border-radius: 5px;">
-    description here
+    <!-- <p>description here</p> -->
+    <div style="text-decoration: underline;">{{ component_name | title }} relevant to:</div>
+    <div>{{ stats.controls_total }} controls</div>
+    <div>{{ stats.controlparts_total }} control-parts</div>
+    <div>{{ stats.control_families_total }} control groups</div>
+
+    <br/>
+    <div style="text-decoration: underline;">Current status:</div>
+    {% for status in stats.controlparts_status_totals %}
+      <div>{{ status[1] }} control-parts {{ status[0] }}</div>
+    {% endfor %}
+
+    <br/>
+    <div style="text-decoration: underline;">FWIW:</div>
+    <div>{{ "{:,}".format(stats.controlparts_words_total) }} total words</div>
+    <div>{{ "{:,}".format(stats.controlparts_words_avg) }} average words per control-part</div>
+
+
   </div>
 </div>
 
   {% for control_family_selected in control_families %}
   {% if control_family_selected %}
-    <div style="width:340px; min-height:100px; max-height: 94%;background-color: rgb(223, 227, 230); margin-right: 12px; float: left; padding: 18px; border-radius: 5px; overflow-y: auto;">
+    <div style="width:340px; min-height:100px; max-height: 94%;background-color: rgb(223, 227, 230); margin-right: 12px; margin-bottom:20px; float: left; padding: 18px; border-radius: 5px; overflow-y: auto;">
 
       <h4 style="height:2em; margin-top: -8px;">{{ control_family_selected }}</h4>
 

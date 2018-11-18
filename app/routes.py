@@ -230,6 +230,26 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
                 # control["control_description"],
               )
 
+def get_component_stats(ssp):
+  """Get basic stats on component"""
+  control_families_total = len(set([ctl[0] for ctl in ssp]))
+  controls_total = len(set([ctl[1] for ctl in ssp]))
+  controlparts_total = len(set(["{} {}".format(ctl[1],ctl[2]) for ctl in ssp]))
+
+  controlparts_words_total = sum([len(ctl[9].split()) for ctl in ssp])
+  controlparts_words_avg = controlparts_words_total / controlparts_total
+  controlparts_status_totals = [(status, len([ctl[7] for ctl in ssp if ctl[7]==status])) for status in set([ctl[7] for ctl in ssp])]
+
+  stats={
+          "control_families_total": control_families_total,
+          "controls_total": controls_total,
+          "controlparts_total": controlparts_total,
+          "controlparts_words_total": controlparts_words_total,
+          "controlparts_words_avg": controlparts_words_avg,
+          "controlparts_status_totals": controlparts_status_totals
+        }
+  return stats
+
 
 #############################
 # Routes
@@ -450,6 +470,7 @@ def component(organization, project, component_name):
     component_name = component_name.lower()
     ssp = list(load_component_controls(cfg, filter_component_name=component_name))
     ssp.sort()
+    stats = get_component_stats(ssp)
 
     # Make set of control families.
     control_families = set()
@@ -464,6 +485,7 @@ def component(organization, project, component_name):
                             component_name=component_name,
                             control_families=control_families,
                             ssp=ssp,
+                            stats=stats
                           )
 
 # HIPAA routes
