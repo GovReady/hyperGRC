@@ -7,18 +7,16 @@
 <div style="width:340px; min-height:100px; max-height: 94%; overflow-y: auto;background-color: #cdcdcd; margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
   <h4 style="min-height:2em; margin-top: -8px;">Control {{ control_number }} - {{ control_name}}</h4>
 
-   <!-- button row -->
-  <div class="row">
+  <!-- button row -->
+  <div class="row" style="margin-bottom: 8px;">
     <div class="col-md-4">
-      <button type="button" class="btn btn-outline-secondary" style="margin-bottom: 8px;">Guide me</button>
+      <!-- <button type="button" class="btn btn-outline-secondary" style="">Guide me</button> -->
+    </div>
+    <div class="col-md-2">
+      &nbsp;
     </div>
     <div class="col-md-4">
-      {% if 'control' in request.path.split('/') and 'combined' not in request.path.split('/') %}
-        <a href="/{{ organization }}/{{ project }}/control/{{ control_number }}/combined" style="color: black;"><button type="button" class="btn btn-link" style="opacity: 1.0; color: black;">Show combined</button></a>
-      {% endif %}
-      {% if 'control' in request.path.split('/') and 'combined' in request.path.split('/') %}
-        <a href="/{{ organization }}/{{ project }}/control/{{ control_number }}" style="color: black;"><button type="button" class="btn btn-link" style="opacity: 1.0; color: black;">Show combined</button></a>
-      {% endif %}
+      <a href="/{{ organization }}/{{ project }}/control/{{ control_number }}/combined" style="color: black;"><button type="button" class="btn btn-link" style="opacity: 1.0; color: black;">Show combined</button></a>
     </div>
   </div>
 
