@@ -16,7 +16,7 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" crossorigin="anonymous"></script>
       <!-- Autoresize -->
       <script src='/static/js/autosize.js'></script>
-
+      <!-- TODO: better solution for invalidating browser css cache for static css pages -->
       <link rel="stylesheet" type="text/css" href="/static/css/base.css/?r={{ range(0, 100000) | random }}">
     </head>
     <body>
@@ -50,24 +50,40 @@
           <!-- <p><a href="/login" title="Login"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span><br/>login</a></p><br/> -->
           {% if organization and project %}
           <hr>
-          <p><a href="/{{ organization }}/{{ project }}/components" title="Components"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization }}/{{ project }}/controls" title="Controls"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization }}/{{ project }}/documents" title="Documents"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization }}/{{ project }}/assessments" title="Assessments"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization }}/{{ project }}/poams" title="POA&amp;Ms"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization }}/{{ project }}/team" title="Team"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization }}/{{ project }}/settings" title="Settings"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></p>
+          <p><a href="/{{ organization }}/{{ project }}/components" title="Components" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/controls" title="Controls" onclick="loading();"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/documents" title="Documents" onclick="loading();"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/assessments" title="Assessments" onclick="loading();"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/poams" title="POA&amp;Ms" onclick="loading();"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/team" title="Team" onclick="loading();"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization }}/{{ project }}/settings" title="Settings" onclick="loading();"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></p>
           {% endif %}
         </div>
       </div>
 
-      <!-- <td style="height:95%; padding-left: 12px; position: relative; display: inline; float: left; vertical-align: top;"> -->
-      <div class="container" style="width:100%; margin: 75px 12px 10px 92px;">
+      <div id="loading">
+        <div class="spinner">
+          <div class="rect1"></div>
+          <div class="rect2"></div>
+          <div class="rect3"></div>
+          <div class="rect4"></div>
+          <div class="rect5"></div>
+        </div>
+      </div>
+
+      <div id="workspace" class="container" style="width:100%; margin: 75px 12px 10px 92px;">
         <div class="row">
           {% block content %}{% endblock %}
         </div>
       </div>
-
+      <script type="text/javascript">// <![CDATA[
+        function loading(){
+          setTimeout(function(){
+            $("#workspace").hide();
+            $("#loading").show();
+          }, 200);
+        }
+// ]]></script>
     {% block scripts %}{% endblock %}
 
     </body>

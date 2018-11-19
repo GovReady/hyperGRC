@@ -8,7 +8,7 @@
 		</div>
 		<div class="col-md-12">
 			{% for g in cfgs %}
-				<h4><span class="glyphicon glyphicon-link"></span> <a href="{{ g['organization'] }}/{{ g['project'] }}/components" style="color: black;">{{ g['organization'] }} / {{ g['project'] }}</a></h4>
+				<h4><span class="glyphicon glyphicon-link"></span> <a href="{{ g['organization'] }}/{{ g['project'] }}/components" style="color: black;" onclick="loading();">{{ g['organization'] }} / {{ g['project'] }}</a></h4>
 			{% endfor %}
 		</div>
 	</div>

@@ -15,7 +15,7 @@
 
           {% for control in certification_controls.standards[standard] %}
 
-            <a href="/{{ organization }}/{{ project }}/control/{{ control }}/combined"><button type="button" class="btn btn-default" style="width:76px; margin: 8px; opacity: 1.0; color: black;">{{ control }}</button></a>
+            <a href="/{{ organization }}/{{ project }}/control/{{ control }}/combined" onclick="loading();"><button type="button" class="btn btn-default" style="width:76px; margin: 8px; opacity: 1.0; color: black;">{{ control }}</button></a>
           {% endfor %}
 
         </div>
