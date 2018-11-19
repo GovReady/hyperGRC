@@ -382,7 +382,6 @@ def team(organization, project):
 # 800-53
 
 @app.route('/<organization>/<project>/controls')
-@app.route('/<organization>/<project>/controls')
 def controls(organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     # Read in control list from certification file

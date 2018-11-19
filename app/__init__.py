@@ -6,7 +6,8 @@ import rtyaml
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# Banish flask's 50 page jinja cache template limit to speed performance
+# app.jinja_env.cache = {}
+
 from app import routes
 
-GOVREADY_FILE = app.config['GOVREADY_FILE']
-print("   .govready file: {}".format(GOVREADY_FILE))
