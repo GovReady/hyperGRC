@@ -1,17 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<div  id="static-page-content" class="container" style="width: 1260px; margin-left: 0px;">
+<div  id="static-page-content-panels" class="container" style="width: 1260px; margin-left: 0px;">
     <div class="row">
 
     	<div class="col-md-6" style="">
 			<div  id="static-page-content" class="container" style="width: 96%; margin-left: 0px; background-color: rgb(223, 227, 230); padding: 0 30px 10px 30px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee; height: 90%; opacity: 0.95;">
 			    <div class="row">
-			    	<div class="col-md-12" style="color: black; margin-bottom: 1.5em;">
-			      		<h3 style="border-bottom: 0.5px solid #999;">Your {{ project }} team</h3>
+			    	<div class="col-md-12">
+			      		<h3>Your {{ project }} team</h3>
 			    	</div>
-			    	<div class="col-md-12" style="color: black; margin-bottom: 1.5em;">
+			    	<div class="col-md-12">
 			        	<p>&nbsp;</p>
 			        </div>
 			    </div>
@@ -21,8 +20,8 @@
 		<div class="col-md-6" style="">
 			<div  id="static-page-content" class="container" style="width: 96%; margin-left: 0px; background-color: rgb(223, 227, 230); padding: 0 30px 10px 30px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #eee; height: 90%; opacity: 0.95;">
 			    <div class="row">
-			    	<div class="col-md-12" style="color: black; margin-bottom: 1.5em;">
-			      		<h3 style="border-bottom: 0.5px solid #999;">Your {{ project }} roles</h3>
+			    	<div class="col-md-12">
+			      		<h3>Your {{ project }} roles</h3>
 			    	</div>
 			    <div class="row col-md-12">
 					<div class="col-md-1"><span class="glyphicon glyphicon-user"></span></div>
@@ -61,5 +60,4 @@
 
     </div>
 </div>
-
 {% endblock %}

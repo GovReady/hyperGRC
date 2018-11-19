@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-
 <div style="width:340px; min-height:100px; max-height: 94%; overflow-y: auto;background-color: #cdcdcd; margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
   <h4 style="min-height:2em; margin-top: -8px;">Control {{ control_number }} - {{ control_name}}</h4>
 
@@ -36,10 +34,10 @@
   <div class="row" style="">
     <div id="narrative" style="">
       <h2>Control {{ control_number }} - {{ control_name}} </h2>
-      <h3 style="border-bottom: 0.5px solid #999;">Description</h3>
+      <h3>Description</h3>
       <p>{{ control_description | nl2br | safe  }}</p>
 
-      <h3 style="border-bottom: 0.5px solid #999;">Implementation Narrative</h3>
+      <h3>Implementation Narrative</h3>
 
         <!-- Track current_part in counter array & list of control parts to mitigate Jinja reseting variables for each iteration -->
         {% set count = [0] %}

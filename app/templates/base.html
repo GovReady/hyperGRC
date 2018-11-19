@@ -1,7 +1,6 @@
 <html>
     <head>
-      <title>{% if control_number %}GovReady - {{ control_number }}{% else %}GovReady {% endif %}</title>
-
+      <title>{% if control_number %}GovReady - {{ control_number }}{% else %}hyperGRC {% endif %}</title>
       <!-- Load jQuery library first -->
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" crossorigin="anonymous"></script>
       <!-- Latest compiled and minified Bootstrap CSS -->
@@ -18,23 +17,11 @@
       <!-- Autoresize -->
       <script src='/static/js/autosize.js'></script>
 
-      <link rel="stylesheet" type="text/css" href="/static/css/base.css">
-      <style>
-        body {
-          /*background-color: white;*/
-          /*background-color: #78909C;*/
-          /*background: url("/static/img/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed; 
-          -webkit-background-size: cover;
-          -moz-background-size: cover;
-          -o-background-size: cover;
-          background-size: cover;*/
-        }
-      </style>
-
+      <link rel="stylesheet" type="text/css" href="/static/css/base.css/?r={{ range(0, 100000) | random }}">
     </head>
     <body>
 
-    <nav class="navbar navbar-fixed-top navbar-dark bg-transparent" style=" opacity: 1.0;margin-left: 60px; ">
+    <nav class="navbar navbar-fixed-top navbar-dark bg-transparent" style=" opacity: 1.0;margin-left: 80px; ">
       <div class="container-fluid" style="height: 60px;padding-top: 8px;">
         <div class="row">
           <div class="col-md-3">
@@ -75,7 +62,7 @@
       </div>
 
       <!-- <td style="height:95%; padding-left: 12px; position: relative; display: inline; float: left; vertical-align: top;"> -->
-      <div class="container" style="width:100%; margin: 75px 12px 10px 72px;">
+      <div class="container" style="width:100%; margin: 75px 12px 10px 92px;">
         <div class="row">
           {% block content %}{% endblock %}
         </div>

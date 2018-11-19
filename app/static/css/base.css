@@ -15,81 +15,28 @@ body {
   font-family: helvetica, sans-serif;
 }
 
-/*******************************
-* MODAL AS LEFT/RIGHT SIDEBAR
-* Add "left" or "right" in modal parent div, after class="modal".
-* Get free snippets on bootpen.com
-*******************************/
-  .modal.left .modal-dialog,
-  .modal.right .modal-dialog {
-    position: fixed;
-    margin: auto;
-    width: 740px;
-    /*height: 800px;*/
-    -webkit-transform: translate3d(0%, 0, 0);
-        -ms-transform: translate3d(0%, 0, 0);
-         -o-transform: translate3d(0%, 0, 0);
-            transform: translate3d(0%, 0, 0);
-  }
+#static-page-content {
+  width: 760px;
+  margin-left: 0px;
+  background-color: rgb(245, 245, 245);
+  padding: 0 30px 10px 30px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+  min-height: 160px;
+  opacity: 0.95;
+}
 
-  .modal.left .modal-content,
-  .modal.right .modal-content {
-    height: 100%;
-    overflow-y: auto;
-  }
-  
-  .modal.left .modal-body,
-  .modal.right .modal-body {
-    padding: 15px 15px 80px;
-  }
-
-/*Left*/
-  .modal.left.fade .modal-dialog{
-    left: -320px;
-    -webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
-       -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
-         -o-transition: opacity 0.3s linear, left 0.3s ease-out;
-            transition: opacity 0.3s linear, left 0.3s ease-out;
-  }
-  
-  .modal.left.fade.in .modal-dialog{
-    left: 0;
-  }
-        
-/*Right*/
-  .modal.right.fade .modal-dialog {
-    right: -520px;
-    -webkit-transition: opacity 0.3s linear, right 0.1s ease-out;
-       -moz-transition: opacity 0.3s linear, right 0.1s ease-out;
-         -o-transition: opacity 0.3s linear, right 0.1s ease-out;
-            transition: opacity 0.3s linear, right 0.1s ease-out;
-  }
-  
-  .modal.right.fade.in .modal-dialog {
-    right: 0;
-  }
-
-/* ----- MODAL STYLE ----- */
-  .modal-content {
-    border-radius: 1;
-    border: none;
-    background-color: rgb(223, 227, 230);
-    font-style: 1.2em;
-  }
-
-  .modal-header {
-    border-bottom-color: #EEEEEE;
-    background-color: #FAFAFA;
-  }
-
-  .modal-content textarea, .modal-content input {
-    border: 0px solid #bbb;
-    background-color: rgb(223, 227, 230)
-  }
+#static-page-content h3 {
+  color: black;
+  margin-bottom: 1.5em;
+  border-bottom: 0.5px solid #999;
+}
 
 /*******************************
 /* sidebar 
 *******************************/
+
 #sidebar-wrapper {
   position: fixed;
   left: 0px;
@@ -99,7 +46,7 @@ body {
   background-color: #333;
   color: white;
   opacity: 1.0;
-  width: 40px;
+  width: 60px;
   padding: 22px 8px 8px 8px;
   margin: 0 0 0 0;
   vertical-align: top;
@@ -126,8 +73,82 @@ body {
 }
 
 /*******************************
+* MODAL AS LEFT/RIGHT SIDEBAR
+* Add "left" or "right" in modal parent div, after class="modal".
+* Get free snippets on bootpen.com
+*******************************/
+
+.modal.left .modal-dialog,
+.modal.right .modal-dialog {
+  position: fixed;
+  margin: auto;
+  width: 740px;
+  /*height: 800px;*/
+  -webkit-transform: translate3d(0%, 0, 0);
+      -ms-transform: translate3d(0%, 0, 0);
+       -o-transform: translate3d(0%, 0, 0);
+          transform: translate3d(0%, 0, 0);
+}
+
+.modal.left .modal-content,
+.modal.right .modal-content {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.modal.left .modal-body,
+.modal.right .modal-body {
+  padding: 15px 15px 80px;
+}
+
+/*Left*/
+.modal.left.fade .modal-dialog{
+  left: -320px;
+  -webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+     -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+       -o-transition: opacity 0.3s linear, left 0.3s ease-out;
+          transition: opacity 0.3s linear, left 0.3s ease-out;
+}
+
+.modal.left.fade.in .modal-dialog{
+  left: 0;
+}
+
+/*Right*/
+.modal.right.fade .modal-dialog {
+  right: -520px;
+  -webkit-transition: opacity 0.3s linear, right 0.1s ease-out;
+     -moz-transition: opacity 0.3s linear, right 0.1s ease-out;
+       -o-transition: opacity 0.3s linear, right 0.1s ease-out;
+          transition: opacity 0.3s linear, right 0.1s ease-out;
+}
+
+.modal.right.fade.in .modal-dialog {
+  right: 0;
+}
+
+/* ----- MODAL STYLE ----- */
+.modal-content {
+  border-radius: 1;
+  border: none;
+  background-color: rgb(223, 227, 230);
+  font-style: 1.2em;
+}
+
+.modal-header {
+  border-bottom-color: #EEEEEE;
+  background-color: #FAFAFA;
+}
+
+.modal-content textarea, .modal-content input {
+  border: 0px solid #bbb;
+  background-color: rgb(223, 227, 230)
+}
+
+/*******************************
 /* misc
 *******************************/
+
 .ctl-btns > .btn {
   font-family: monospace;
   width: 100px;
