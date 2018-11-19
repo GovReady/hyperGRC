@@ -28,7 +28,7 @@
             <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230);">
               <span class="glyphicon glyphicon-home"></span>
               {% if organization %}<b> / {{ organization }} / {{ project }}</b>{% endif %}
-              </button>
+            </button>
           </div>
           <div class="col-md-3">
             <!-- button for source of content -->
@@ -62,13 +62,18 @@
       </div>
 
       <div id="loading">
-        <div class="spinner">
-          <div class="rect1"></div>
-          <div class="rect2"></div>
-          <div class="rect3"></div>
-          <div class="rect4"></div>
-          <div class="rect5"></div>
-        </div>
+
+        <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230);">
+          <div class="spinner">
+            <div class="rect1"></div>
+            <div class="rect2"></div>
+            <div class="rect3"></div>
+            <div class="rect4"></div>
+            <div class="rect5"></div>
+          </div>
+        </button>
+
+        
       </div>
 
       <div id="workspace" class="container" style="width:100%; margin: 75px 12px 10px 92px;">
