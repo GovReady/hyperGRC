@@ -52,13 +52,17 @@ components:
   directory: Acquia-ACE
 - name: AWS
   directory: AWS
-team:
-  user:
-    name: Anonymous (workstation mode)
 documents:
 - name: outputs
   directory: outputs
   description: Default output directory
+team:
+- name: Jane Doe
+  role: ISSO
+  phone: (202) 555-5555
+  email: jane.doe@dos.gov
+users:
+- name: Anonymous (workstation mode)
 ```
 
 

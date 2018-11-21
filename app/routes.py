@@ -37,7 +37,7 @@ def get_config_file(cfg_file):
            "src_repo":     gr_cfg["system"]["src_repo"],
            "mode":         gr_cfg["mode"],
            "hgrc_version": gr_cfg["hgrc_version"],
-           "user_name":    gr_cfg["team"]["user"]["name"],
+           "team":         gr_cfg["team"],
            "components":   gr_cfg["components"],
            "components_dir": os.path.join(os.path.dirname(os.path.abspath(cfg_file)), gr_cfg["components_dir"]),
            "documents":     gr_cfg["documents"],
