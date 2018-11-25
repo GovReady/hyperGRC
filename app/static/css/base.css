@@ -26,6 +26,8 @@ body {
   border: 1px solid #eee;
   min-height: 160px;
   opacity: 0.95;
+  height: 90%;
+  overflow: auto;
 }
 
 #static-page-content h3, h3 {
