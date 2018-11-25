@@ -20,6 +20,7 @@ from jinja2 import evalcontextfilter, Markup, escape
 #############################
 
 def get_config_file(cfg_file):
+  print(cfg_file)
   """Read the .govready file and return values"""
   if not os.path.isfile(cfg_file):
     raise ValueError("Could not find indicated file {} locally.".format(cfg_file))
@@ -30,6 +31,7 @@ def get_config_file(cfg_file):
            "organization": gr_cfg["organization"]["name"],
            "system":       gr_cfg["system"],
            "standards":    gr_cfg["standards"],
+           "certifications": gr_cfg["certifications"],
            "project":      gr_cfg["system"]["name"],
            "standard":     gr_cfg["system"]["primary_standard"],
            "standard_file": "nist-800-53-rev4.yaml",
@@ -38,8 +40,10 @@ def get_config_file(cfg_file):
            "mode":         gr_cfg["mode"],
            "hgrc_version": gr_cfg["hgrc_version"],
            "team":         gr_cfg["team"],
+           "users":        gr_cfg["users"],
            "components":   gr_cfg["components"],
            "components_dir": os.path.join(os.path.dirname(os.path.abspath(cfg_file)), gr_cfg["components_dir"]),
+           "certifications_dir": os.path.join(os.path.dirname(os.path.abspath(cfg_file)), gr_cfg["certifications_dir"]),
            "documents":     gr_cfg["documents"],
            "document_dirs": ""
           }
@@ -81,8 +85,15 @@ def set_cfg_values(cfg_file):
   cfg["document_dirs"] = document_dirs
 
   # Get certification
-  # Let's hardcode to FedRAMP Low for feature MVP
-  cfg["certification_file"] = "ref/certifications/fisma-low-impact.yaml"
+  primary_certification = cfg["system"]["primary_certification"]
+  certifications = {}
+  # print(rtyaml.dump(cfg))
+  for item in cfg["certifications"]:
+    certifications[item["name"]] = item["certification_file"]
+  # print(certifications)
+  certification_file = certifications[primary_certification]
+  cfg["certification_file"] = certification_file
+
   # Set components ordered dict
   _component_names = collections.OrderedDict([(None, None)])
   for cn in cfg["components"]:
@@ -385,7 +396,7 @@ def team(organization, project):
 def controls(organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     # Read in control list from certification file
-    certification_file = cfg["certification_file"]
+    certification_file = os.path.join(cfg["certifications_dir"], cfg["certification_file"])
     if not os.path.isfile(certification_file):
       raise ValueError('Certification file {} not found.'.format(certification_file))
 

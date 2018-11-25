@@ -31,6 +31,7 @@ Here's a sample .govready file for each repo:
 hgrc_version: 0.3.0
 mode: local workstation
 standard_controls_dir: standards
+certifications_dir: certifications
 components_dir: components
 organization:
   name: Department of Sobriety
@@ -38,9 +39,13 @@ system:
   name: DOS.gov
   src_repo: https://git.vendorco.net/dos/ssp-csv-to-yaml
   primary_standard: 800-53r4
+  primary_certification: FISMA Low Impact
 standards:
 - standard: 800-53r4
   standard_file: nist-800-53-rev4.yaml
+certifications:
+- name: FISMA Low Impact
+  certification_file: fisma-low-impact.yaml
 components:
 - name: VendorCo
   directory: VendorCo
