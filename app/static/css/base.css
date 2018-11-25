@@ -5,6 +5,7 @@
 
 body {
   background-color: #78909C;
+  /*background-color: rgb(247, 247, 247);*/
   /*background: url("https://upload.wikimedia.org/wikipedia/commons/f/f7/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed; */
   /*background: url("/static/img/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed; */
   -webkit-background-size: cover;
@@ -27,7 +28,7 @@ body {
   opacity: 0.95;
 }
 
-#static-page-content h3 {
+#static-page-content h3, h3 {
   color: black;
   margin-bottom: 1.5em;
   border-bottom: 0.5px solid #999;
