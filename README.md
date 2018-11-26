@@ -132,7 +132,7 @@ satisfies:
 
 ```
 cd hypergrc
-virtualenv venv
+virtualenv venv -ppython3
 source venv/bin/activate
 pip install -r requirements.txt
 ```
