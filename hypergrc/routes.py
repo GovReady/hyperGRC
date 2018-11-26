@@ -1,26 +1,48 @@
 # This Python file uses the following encoding: utf-8
 
-from flask import render_template, request, redirect, url_for
-from app import app
-from app.forms import LoginForm
-
 import collections
 import glob
 import os.path
 import os
 import rtyaml
-import sys
 
 import re
-from jinja2 import evalcontextfilter, Markup, escape
 
+from .render import render_template
+
+ROUTES = []
 
 #############################
 # Helpers
 #############################
 
+# Define a decorator to build up a routing table.
+def route(path, methods=["GET"]):
+  def decorator(route_function):
+    # path looks something like:
+    #   /<organization>/<project>/documents
+    # Brackets denote variables holding filename-like characters only.
+    # Everything else is a literal character.
+
+    # Convert the route path into a regular expression with named groups, e.g. into:
+    # /(?P<organization>\w+)/(?P<project>\w+)/(?P<documents>\w+)
+
+    import re, string
+    ALLOWED_PATH_CHARS = string.ascii_letters + string.digits + '_.~' + '%+' + '-' # put - at the end because of re
+    def replacer(m):
+      if m.group(0).startswith("<"):
+        # Substitute <var> with (?P<var>\w+).
+        return r"(?P<{}>[{}]+)".format(m.group(1), ALLOWED_PATH_CHARS)
+      else:
+        # Substitute other characters with their re-escaped string.
+        return re.escape(m.group(0))
+    path1 = re.sub(r"<([a-z_]+?)>|.", replacer, path)
+    path1 = re.compile(path1 + "$")
+
+    ROUTES.append((methods, path1, route_function))
+  return decorator
+
 def get_config_file(cfg_file):
-  print(cfg_file)
   """Read the .govready file and return values"""
   if not os.path.isfile(cfg_file):
     raise ValueError("Could not find indicated file {} locally.".format(cfg_file))
@@ -61,12 +83,10 @@ def set_cfg_values(cfg_file):
 
   # Check components and standards directories exist
   if not os.path.isdir(cfg["components_dir"]):
-      print("Can't find directory:", cfg["components_dir"])
-      sys.exit()
+      raise ValueError("Can't find directory:", cfg["components_dir"])
 
   if not os.path.isdir(cfg["standard_controls_dir"]):
-      print("Can't find directory:", cfg["standard_controls_dir"])
-      sys.exit()
+      raise ValueError("Can't find directory:", cfg["standard_controls_dir"])
 
   # To Do: Check standard file exists
   primary_standard = cfg["system"]["primary_standard"]
@@ -134,32 +154,6 @@ def get_standard_controls_data(cfg):
   with open(os.path.join(cfg["standard_controls_dir"], cfg["standard_file"])) as f:
     standard_controls_data = rtyaml.load(f)
   return standard_controls_data
-
-
-#############################
-# Jinja Helpers
-#############################
-
-_paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
-
-def nl2br(value):
-    result = u'\n\n'.join(u'<p>%s</p>' % p.replace('\n', Markup('<br>\n'))
-                          for p in _paragraph_re.split(escape(value))
-                         )
-    return result
-app.jinja_env.filters['nl2br'] = nl2br
-
-def plain_text_to_markdown(s):
-  # Paragraphs need two newlines in Markdown.
-  s = s.replace("\n", "\n\n")
-  s = s.replace(unicode("•", "utf8"), "*")
-  return s
-app.jinja_env.filters['text2md'] = plain_text_to_markdown
-
-def blockquote(s):
-  return "\n".join((" " + line) for line in s.strip().split("\n")) + "\n"
-app.jinja_env.filters['blockquote'] = blockquote
-
 
 #############################
 # Model
@@ -278,7 +272,7 @@ def get_component_stats(ssp):
 
 # Home route
 
-@app.route('/')
+@route('/')
 def index():
     # Digest .govready files from repos
     cfgs = []
@@ -295,14 +289,9 @@ def index():
                             cfgs=cfgs
                           )
 
-@app.route('/login')
-def login():
-    form = LoginForm()
-    return render_template('login.html', title='Sign In', form=form)
-
 # Project general routes
 
-@app.route('/<organization>/<project>/documents')
+@route('/<organization>/<project>/documents')
 def documents(organization, project):
     """Read and list documents in documents directory"""
     cfg = get_cfg_from_org_and_project(organization, project)
@@ -334,7 +323,7 @@ def documents(organization, project):
                             documents=docs
                           )
 
-@app.route('/<organization>/<project>/assessments')
+@route('/<organization>/<project>/assessments')
 def assessments(organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     return render_template('assessments.html',
@@ -343,7 +332,7 @@ def assessments(organization, project):
                             project=project
                           )
 
-@app.route('/<organization>/<project>/settings')
+@route('/<organization>/<project>/settings')
 def settings(organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     return render_template('settings.html',
@@ -352,7 +341,7 @@ def settings(organization, project):
                             project=project
                           )
 
-@app.route('/<organization>/<project>/poams')
+@route('/<organization>/<project>/poams')
 def poams(organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     components_dir = cfg["components_dir"]
@@ -362,7 +351,7 @@ def poams(organization, project):
                             project=project,
                             poams=poams)
 
-@app.route('/<organization>/<project>/components')
+@route('/<organization>/<project>/components')
 def components(organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     return render_template('components.html',
@@ -371,7 +360,7 @@ def components(organization, project):
                             project=project,
                             components=load_components(cfg))
 
-@app.route('/<organization>/<project>/team')
+@route('/<organization>/<project>/team')
 def team(organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     components_dir = cfg["components_dir"]
@@ -391,7 +380,7 @@ def team(organization, project):
 
 # 800-53
 
-@app.route('/<organization>/<project>/controls')
+@route('/<organization>/<project>/controls')
 def controls(organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     # Read in control list from certification file
@@ -412,7 +401,7 @@ def controls(organization, project):
                             standard_controls=standard_controls
                           )
 
-@app.route('/<organization>/<project>/control/<control_number>/combined')
+@route('/<organization>/<project>/control/<control_number>/combined')
 def control_legacy(organization, project, control_number):
     cfg = get_cfg_from_org_and_project(organization, project)
     control_number = control_number.upper()
@@ -445,7 +434,7 @@ def control_legacy(organization, project, control_number):
                             ssp=ssp
                           )
 
-@app.route('/<organization>/<project>/control/<control_number>')
+@route('/<organization>/<project>/control/<control_number>')
 def control(organization, project, control_number):
     cfg = get_cfg_from_org_and_project(organization, project)
     control_number = control_number.upper().replace("-0", "-")
@@ -477,7 +466,7 @@ def control(organization, project, control_number):
                             ssp=ssp
                           )
 
-@app.route('/<organization>/<project>/component/<component_name>')
+@route('/<organization>/<project>/component/<component_name>')
 def component(organization, project, component_name):
     cfg = get_cfg_from_org_and_project(organization, project)
     # Load control narratives.
@@ -504,7 +493,7 @@ def component(organization, project, component_name):
 
 # HIPAA routes
 
-@app.route('/<organization>/<project>/hipaa/controls')
+@route('/<organization>/<project>/hipaa/controls')
 def hipaa_controls(organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
 
@@ -514,7 +503,7 @@ def hipaa_controls(organization, project):
                             project=project
                           )
 
-@app.route('/<organization>/<project>/hipaa/control/<control_number>')
+@route('/<organization>/<project>/hipaa/control/<control_number>')
 def hipaa_control(organization, project, control_number):
     cfg = get_cfg_from_org_and_project(organization, project)
     # control_number = control_number.upper().replace("-0", "-")
@@ -600,7 +589,7 @@ def hipaa_control(organization, project, control_number):
 
 # Update data routes
 
-@app.route('/update-control', methods=['POST'])
+@route('/update-control', methods=['POST'])
 def update_control():
     # cfg = get_cfg_from_org_and_project(organization, project)
     # BROKEN - THIS MAY NEED REVISION

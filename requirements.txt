@@ -1,5 +1,2 @@
 python-dotenv
-flask
-flask_wtf
-Flask-Testing
 rtyaml

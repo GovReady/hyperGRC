@@ -17,7 +17,7 @@
       <!-- Autoresize -->
       <script src='/static/js/autosize.js'></script>
       <!-- TODO: better solution for invalidating browser css cache for static css pages -->
-      <link rel="stylesheet" type="text/css" href="/static/css/base.css/?r={{ range(0, 100000) | random }}">
+      <link rel="stylesheet" type="text/css" href="/static/css/base.css?r={{ range(0, 100000) | random }}">
     </head>
     <body>
 
@@ -45,18 +45,17 @@
 
       <div id="sidebar-wrapper">
         <div id="sidebar">
-          <!-- <p><a href="/{{ organization }}/{{ project }}/index" title="Menu"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span></a></p><br/> -->
           <p><a href="/" title="Home"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></p>
           <!-- <p><a href="/login" title="Login"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span><br/>login</a></p><br/> -->
           {% if organization and project %}
           <hr>
-          <p><a href="/{{ organization }}/{{ project }}/components" title="Components" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization }}/{{ project }}/controls" title="Controls" onclick="loading();"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization }}/{{ project }}/documents" title="Documents" onclick="loading();"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization }}/{{ project }}/assessments" title="Assessments" onclick="loading();"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization }}/{{ project }}/poams" title="POA&amp;Ms" onclick="loading();"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization }}/{{ project }}/team" title="Team" onclick="loading();"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization }}/{{ project }}/settings" title="Settings" onclick="loading();"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></p>
+          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/components" title="Components" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/controls" title="Controls" onclick="loading();"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/documents" title="Documents" onclick="loading();"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/assessments" title="Assessments" onclick="loading();"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/poams" title="POA&amp;Ms" onclick="loading();"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/team" title="Team" onclick="loading();"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></p><br/>
+          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/settings" title="Settings" onclick="loading();"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></p>
           {% endif %}
         </div>
       </div>

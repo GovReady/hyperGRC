@@ -8,7 +8,7 @@
     </div>
     {% for component in components %}
       <div class="col-md-12" style="color: black;">
-        <p><a href="/{{ organization }}/{{ project }}/component/{{ component.name }}" style="color: black;"><span class="glyphicon glyphicon-link"></span> {{ component.name }}<a></p>
+        <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/component/{{ component.name|urlencode }}" style="color: black;"><span class="glyphicon glyphicon-link"></span> {{ component.name }}<a></p>
       </div>
     {% endfor %}
     <!-- <div class="col-md-12" style="color: black;margin-top: 20px;">+ Add component</div> -->

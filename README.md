@@ -1,4 +1,4 @@
-hyperGRC is a lightweight tool for managing component-to-control mappings for Compliance As Code written in Python and Flask.
+hyperGRC is a lightweight tool for managing component-to-control mappings for Compliance As Code written in Python for Python 3.
 
 hyperGRC provides a very friendly, kanban-style GUI for reading and writing YAML files representing control implementation content associated with system components.
 
@@ -155,20 +155,15 @@ components/Component2/controlset1.yaml
 components/Component2/controlset2.yaml
 ```
 
-### Running Flask server
+### Starting hyperGRC
+
 ```
 cd hypergrc
 
-# If venv not active
+# Activate the virtual environment if it is not already active.
 source venv/bin/activate
 
-# If not run in a while
-export FLASK_APP=hypergrc.py
-
-# Force reload upon code changes
-export FLASK_DEBUG=1
-
-flask run
+python3 -m hypergrc
 ```
 
 # Licensing
