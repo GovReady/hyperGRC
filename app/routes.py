@@ -310,8 +310,8 @@ def login():
 
 @app.route('/<organization>/<project>/documents')
 def documents(organization, project):
-    cfg = get_cfg_from_org_and_project(organization, project)
     """Read and list documents in documents directory"""
+    cfg = get_cfg_from_org_and_project(organization, project)
     docs = []
     message = ""
     for doc_dir in cfg["document_dirs"].keys():
@@ -323,9 +323,14 @@ def documents(organization, project):
       else:
         docs_glob = doc_dir_path.rstrip('/') + "/*"
         for doc in glob.glob(docs_glob):
+          if "~$" in os.path.basename(doc):
+            continue
           if os.path.isfile(doc):
-            docs.append({'name': os.path.basename(doc)})
+            docs.append({'name': os.path.basename(doc),
+                         'file_path': doc
+                        })
       docs.sort()
+      print(docs)
     return render_template('documents.html',
                             cfg=cfg,
                             organization=organization,
