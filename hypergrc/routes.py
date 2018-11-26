@@ -48,7 +48,7 @@ def get_config_file(cfg_file):
   if not os.path.isfile(cfg_file):
     raise ValueError("Could not find indicated file {} locally.".format(cfg_file))
 
-  with open(cfg_file, 'r') as f:
+  with open(cfg_file, encoding="utf8") as f:
     gr_cfg = rtyaml.load(f)
     cfg = {"repo_dir":     os.path.dirname(os.path.abspath(cfg_file)),
            "organization": gr_cfg["organization"]["name"],
@@ -140,7 +140,7 @@ def get_cfg_from_org_and_project(organization, project):
 
 def get_standard_controls_data(cfg):
   # Read in all the controls
-  with open(os.path.join(cfg["standard_controls_dir"], cfg["standard_file"])) as f:
+  with open(os.path.join(cfg["standard_controls_dir"], cfg["standard_file"]), encoding="utf8") as f:
     standard_controls_data = rtyaml.load(f)
   return standard_controls_data
 
@@ -176,7 +176,7 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
           continue
 
         for control_family_fn in glob.glob(os.path.join(component_dir, "*.yaml")):
-          with open(control_family_fn) as f:
+          with open(control_family_fn, encoding="utf8") as f:
             data = rtyaml.load(f)
 
             # Read out each control and store it in memory as a tuple
@@ -379,7 +379,7 @@ def controls(organization, project):
     if not os.path.isfile(certification_file):
       raise ValueError('Certification file {} not found.'.format(certification_file))
 
-    with open(certification_file) as f:
+    with open(certification_file, encoding="utf8") as f:
       certification_controls = rtyaml.load(f)
 
     standard_controls = get_standard_controls_data(cfg)
@@ -534,7 +534,7 @@ def hipaa_control(organization, project, control_number):
         component_controls = []
 
         for control_family_fn in glob.glob(os.path.join(component_dir, "*.yaml")):
-          with open(control_family_fn) as f:
+          with open(control_family_fn, encoding="utf8") as f:
             component_controlfam_data = rtyaml.load(f)
 
             # Read out each control and store it in memory as a tuple
@@ -608,7 +608,7 @@ def update_control():
     for control_file in os.listdir(component_dir):
       if control_file.endswith(".yaml"):
         # Open the control family file for read/write.
-        with open(os.path.join(component_dir, control_file), "r+") as f:
+        with open(os.path.join(component_dir, control_file), "r+", encoding="utf8") as f:
           # Parse the content.
           data = rtyaml.load(f)
 
