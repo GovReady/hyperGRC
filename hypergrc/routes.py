@@ -159,10 +159,39 @@ def load_components(cfg):
       for component_name in component_names ]
     components.sort(key = lambda component : component['name'])
     return components
+    
+def get_contol(standard, control_id):
+    # Get the display name for the control. Sometimes control IDs
+    # refer to subparts of controls, e.g. AC-2 (H), or even non-standard
+    # supplemental citations, e.g. AC-2 (DHS 1.2.3). If the control isn't
+    # in the standard exactly, back off at non-word characters like parens
+    # and spaces until we find the control and then append the extra info.
+    control_parts = re.split(r"(\s+|[^\w\s]+)", control_id)
+    for i in reversed(range(len(control_parts))):
+      test_id = "".join(control_parts[:i+1])
+      id_remainder = "".join(control_parts[i+1:])
+      if test_id in standard:
+        return {
+          "id": control_id + ("" if not id_remainder else id_remainder),
+          "name": standard[test_id]["name"] + ("" if not id_remainder else " " + id_remainder),
+          "description": standard[test_id]["description"] if not id_remainder else "See {}, {}.".format(test_id, id_remainder),
+        }
+    
+    # Control isn't found at all. Fill in with default/dummy data.
+    return {
+      "id": control_id,
+      "name": "[{}]".format(control_id),
+      "description": None,
+    }
 
 def load_component_controls(cfg, filter_control_number=None, filter_component_name=None):
     # Read in all of the components and their control narratives.
     # Return a generator that iterates over control narrative records.
+    
+    # Control metadata comes from the standards file so load that first.
+    standards = get_standard_controls_data(cfg)
+    
+    # Iterate over all components' control data.
     components_glob = os.path.join(cfg["components_dir"], "*")
     for component_dir in glob.glob(components_glob):
         if not os.path.isdir(component_dir):
@@ -190,6 +219,9 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
               # TODO: clean up this regex, but it works.
               control_id = control["control_key"].replace("-0", "-")
 
+              # get the standard's metadata for the control
+              control_standard = get_contol(standards, control_id)
+
               # Apply the control number filter.
               if filter_control_number and control_id != filter_control_number:
                 continue
@@ -203,14 +235,14 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
                 control_group,
                 control["control_key"],
                 control.get("control_key_part") or "",
-                control.get("control_name"),
+                control_standard["name"],
                 component_order,
                 component_name,
                 control.get("security_control_type"),
                 control.get("implementation_status"),
                 control.get("summary", None),
-                control.get("narrative", None)
-                # control["control_description"],
+                control.get("narrative", None),
+                #control_standard.get("description", control["control_description"]),
               )
 
             # If the data file has a "controls" key, then it is in
@@ -219,19 +251,22 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
               # Apply the control number filter.
               if filter_control_number and control["control"] != filter_control_number:
                 continue
+               
+              # get the standard's metadata for the control
+              control_standard = get_contol(standards, control["control"])
 
               yield (
                 control["control"].split("-", 1)[0], # extract control family from control number
                 control["control"],
                 None, # TODO, no part
-                control["control-name"],
+                control_standard.get("name", control["control"]),
                 component_order,
                 component_name,
                 control.get("security_control_type"),
                 control.get("implementation_status") or "Unknown",
                 control.get("summary", None),
-                control.get("control-narrative", None)
-                # control["control_description"],
+                control.get("control-narrative", None),
+                #control_standard.get("description", ""),
               )
 
 def get_component_stats(ssp):
@@ -431,9 +466,8 @@ def control(organization, project, control_number):
     control_number = control_number.upper().replace("-0", "-")
     standard_controls_data = get_standard_controls_data(cfg)
 
-    # Pass along key values
-    control_name = standard_controls_data[control_number]["name"]
-    control_description = standard_controls_data[control_number]["description"]
+    # Load control standard metadata.
+    control_standard = get_contol(standard_controls_data, control_number)
 
     # Load control narratives.
     ssp = list(load_component_controls(cfg, filter_control_number=control_number))
@@ -451,8 +485,8 @@ def control(organization, project, control_number):
                             project=project,
                             component_names=components_involved,
                             control_number=control_number,
-                            control_name=control_name,
-                            control_description=control_description,
+                            control_name=control_standard["name"],
+                            control_description=control_standard["description"],
                             components=components,
                             ssp=ssp
                           )
