@@ -10,6 +10,7 @@ import re
 
 from .render import render_template
 
+REPOSITORY_LIST = []
 ROUTES = []
 
 #############################
@@ -123,28 +124,16 @@ def set_cfg_values(cfg_file):
 
   return cfg
 
-def get_repository_list():
-  REPO_FILE = ".hypergrc_repos"
-  if not os.path.isfile(REPO_FILE):
-    raise ValueError('You must set ".hypergrc_repos" file')
-
-  repo_list = []
-  with open(REPO_FILE, 'r') as f:
-    for line in f:
-      repo_list.append(line.strip())
-
-  return repo_list
-
 def get_cfg_from_org_and_project(organization, project):
   """ Given organization and project find .govredy file """
 
-  repo_list = get_repository_list()
-
   # Digest .govready files from repos
-  for govready_file in repo_list:
+  for govready_file in REPOSITORY_LIST:
     cfg_test = get_config_file(govready_file)
     if cfg_test["organization"] == organization and cfg_test["project"] == project:
       break
+  else:
+    raise ValueError("No repository exist for the organization.")
 
   cfg = set_cfg_values(govready_file)
   return cfg
@@ -274,10 +263,12 @@ def get_component_stats(ssp):
 
 @route('/')
 def index():
+    if len(REPOSITORY_LIST) == 0:
+      raise ValueError("No repositories configured.")
+
     # Digest .govready files from repos
     cfgs = []
-    repo_list = get_repository_list()
-    for govready_file in repo_list:
+    for govready_file in REPOSITORY_LIST:
       cfgs.append(get_config_file(govready_file))
 
     # Use last file to get organization name.
@@ -285,7 +276,7 @@ def index():
 
     organization = cfg["organization"]
     return render_template('index.html',
-                            repo_list=repo_list,
+                            repo_list=REPOSITORY_LIST,
                             cfgs=cfgs
                           )
 

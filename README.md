@@ -23,6 +23,8 @@ Example `.hypergrc_repos` file:
 `/codedata/code/civicactions/Dept-of-Sobriety/dos.gov/.govready`
 `/codedata/code/civicactions/democracy/citizenapp/.govready`
 
+The paths in the `.hypergrc_repos` file can be given as command-line arguments instead, and the `.hypergrc_repos` file itself can be specified explicitly on the command-line by prefixing it with an `@` sign, as in `@.hypergrc_repos`.
+
 # The .govready file
 
 Here's a sample .govready file for each repo:
