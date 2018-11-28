@@ -433,11 +433,8 @@ def control_legacy(organization, project, control_number):
     control_number = control_number.upper()
     standard_controls_data = get_standard_controls_data(cfg)
 
-    # Pass along key values
-    control_name = standard_controls_data[control_number]["name"]
-    control_description = standard_controls_data[control_number]["description"]
-
-    components_dir = cfg["components_dir"]
+    # Load standard control metadata.
+    control_standard = get_contol(standard_controls_data, control_number)
 
     # The map component directory names back to long names. Use an
     # OrderedDict to maintain a preferred component order.
