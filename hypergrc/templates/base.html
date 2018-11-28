@@ -88,7 +88,84 @@
           }, 200);
         }
 // ]]></script>
-    {% block scripts %}{% endblock %}
+
+      <!-- Control Editor Modal -->
+      <div id="control-editor-modal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">...</h4>
+            </div>
+            <div class="modal-body">
+              <b>Implementation narrative</b></br/>
+              <textarea class="narrative-input" style="width: 98%; height: auto; padding: 8px; margin-bottom:20px;" placeholder="Describe what the components contributes to the control..."></textarea>
+
+              <b>Summary</b><br/>
+              <input class="summary-input" style="width: 98%; padding: 8px;" placeholder="Write something short for spreadsheets..."><br/><br/>
+
+              <b>Implementation status</b></br/>
+              <input class="implementation_status-input" style="width: 98%; padding: 8px;" placeholder="Unknown"><br/><br/>
+
+              <br />
+              <div style="color: #666;">
+                <br/><span class="glyphicon glyphicon-check"></span> {{ range(1, 6) | random }} assessments
+                <br/><span class="glyphicon glyphicon-time"></span> {{ range(1, 14) | random }} versions
+                <br/><span class="glyphicon glyphicon-bookmark"></span> upstream source
+                <br/>
+                <br/><a class="component-link" style="color: #666;"><span class="glyphicon glyphicon-th"></span>  components</a>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal" >Save</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+      <!-- /Control Editor Modal -->
+
+      {% block scripts %}{% endblock %}
+
+      <script>
+      // Edit a control.
+      var edit_control_current_control = null;
+      var edit_control_current_callback = null;
+      function edit_control(control, callback) {
+        edit_control_current_control = control;
+        edit_control_current_callback = callback;
+        var modal = $('#control-editor-modal');
+        modal.find('.modal-title').text(control.control_key + " " + control.control_part);
+        modal.find('.narrative-input').val(control.narrative);
+        modal.find('.summary-input').val(control.summary);
+        modal.find('.implementation_status-input').val(control.status);
+        modal.find('.component-link')
+          .attr('href', "/" + encodeURIComponent(control.organization) + "/" + encodeURIComponent(control.project) + "/control/" + encodeURIComponent(control.control_key));
+        modal.modal();
+      }
+
+      // Save control.
+      $('#control-editor-modal').on("hidden.bs.modal", function() {
+        // Update.
+        edit_control_current_control.summary = $(this).find('.summary-input').val();
+        edit_control_current_control.narrative = $(this).find('.narrative-input').val();
+        edit_control_current_control.status = $(this).find('.implementation_status-input').val();
+
+        // Send.
+        $.ajax({
+          url: "/update-control",
+          method: "POST",
+          data: edit_control_current_control,
+          success: function(res) {
+            // ok it's saved, unless there's an error which we should display
+            if (res != "OK")
+              alert(res);
+            // save succeeded, so also update the current page displayed version of content
+            else
+              edit_control_current_callback();
+          }
+        });
+      });
+      </script>
 
     </body>
 </html>

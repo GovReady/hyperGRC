@@ -90,7 +90,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     # Call the route function.
     #print(route_function, m, getattr(self, 'form', None))
-    route_function(self, **m)
+    resp = route_function(self, **m)
+    if isinstance(resp, str):
+      # Send string return values as plain text.
+      self.send_response(200)
+      self.send_header("Content-Type", "text/plain; charset=UTF-8")
+      self.end_headers()
+      self.wfile.write(resp.encode("utf8"))
 
 def path_matches(route_path, path):
   # Does path match the route path specification in route_path?

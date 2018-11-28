@@ -620,10 +620,6 @@ def update_control(request):
     # Get the current project.
     cfg = get_cfg_from_org_and_project(request.form["organization"], request.form["project"])
 
-    # Split the 'path' variable to get the component, control, and control path.
-    # TODO: The front-end should pass these as separate parameters.
-    component, control, part = request.form["path"].split("/")
-
     # Update the component's control.
 
     # Scan all of the YAML files in matching component's directory looking for one that
@@ -631,7 +627,7 @@ def update_control(request):
     # proper control family file.
     # GREG: Could this helpfulness ever overwrite wrong information b/c we assume only
     # one file in component directory has control?
-    for _, control_file in iterate_control_files(cfg, filter_component_name=component):
+    for _, control_file in iterate_control_files(cfg, filter_component_name=request.form["component"]):
         # Open the control family file for read/write.
         with open(control_file, "r+", encoding="utf8") as f:
           # Parse the content.
@@ -639,7 +635,8 @@ def update_control(request):
 
           # Look for a matching control entry.
           for controldata in data["satisfies"]:
-            if controldata["control_key"] == control and (controldata.get("control_key_part") or "") == part:
+            if controldata["control_key"] == request.form["control_key"] \
+              and (controldata.get("control_key_part") or "") == request.form.get("control_part", ""):
               # Found the right entry. Update the fields.
 
               def clean_text(text):
@@ -651,9 +648,9 @@ def update_control(request):
                   return None
                 return text
 
-              controldata["summary"] = clean_text(request.form["summary"])
-              controldata["narrative"] = clean_text(request.form["narrative"])
-              controldata["implementation_status"] = clean_text(request.form["implementation_status"])
+              controldata["summary"] = clean_text(request.form.get("summary", ""))
+              controldata["narrative"] = clean_text(request.form.get("narrative", ""))
+              controldata["implementation_status"] = clean_text(request.form.get("status", ""))
 
               # Write back out to the data files.
               f.seek(0);

@@ -43,58 +43,30 @@
       {% for control_family, control_key, part, control_name, component_order, component_name, security_control_type, implementation_status, summary, narrative in ssp %}
 
         {% if component_name == component_selected %}
-          <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:8px; height: 32px; overflow-y: hidden; border-radius: 5px;">
+          <div id="control-{{loop.index}}" style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:8px; height: 32px; overflow-y: hidden; border-radius: 5px;">
 
             <div class="container" style="width:100%;">
               <div class="row">
                 <div class="col-sm-12" style="padding-left: 0px;">
-                  <a href="" style="color: #333;" class="" data-toggle="modal" data-target="#myModal-{{ component_name | replace(' ', '_') }}{{ part | replace('(','') | replace(')','') }}" tabindex="-1"><span style="color: #333; font-weight: normal;" title="{{ component_name }}: {{ narrative }}">{{ control_number }} {% if part %}{{ part }} {% endif %}{{ control_name | truncate(30, false, "") }}</span></a>
+                  <script async>
+                    var control_{{loop.index}} = {
+                      organization: {{organization|tojson}},
+                      project: {{project|tojson}},
+                      component: {{component_name|tojson}},
+                      control_key: {{control_key|tojson}},
+                      control_part: {{part|tojson}},
+                      narrative: {{narrative|tojson}},
+                      summary: {{summary|tojson}},
+                      status: {{implementation_status|tojson}}
+                    };
+                  </script>
+                  <a href="#" style="color: #333;" class="" data-toggle="modal"  onclick="edit_control(control_{{loop.index}}, function () { update_control($('#control-{{loop.index}}'), control_{{loop.index}}); }); return false;">
+                    <span style="color: #333; font-weight: normal;" title="{{ component_name }}: {{ narrative }}">{{ control_number }} {% if part %}{{ part }} {% endif %}{{ control_name | truncate(30, false, "") }}</span>
+                  </a>
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- Modal -->
-          <div id="myModal-{{ component_name | replace(' ', '_') }}{{ part | replace('(','') | replace(')','') }}" class="modal" role="dialog">
-            <div class="modal-dialog modal-lg" style="height: 600px;">
-
-
-              <!-- Modal content-->
-              <div class="modal-content">
-                
-                <div class="modal-body">
-                  <div class="row">
-                    <div class="col-sm-10">
-                      <h4 class="modal-title"><b>{{ control_number }} {% if part %}{{ part }}{% endif %} - {{ component_name }}</b></h4>
-                    </div>
-                    <div class="col-sm-2" style="text-align: right;">
-                      <button type="button" class="btn btn-link glyphicon glyphicon-remove-circle" data-dismiss="modal"
-                    style="font-size:2em; color: #777;"></button>
-                    </div>
-                  </div>
-
-                  <b>Implementation narrative</b></br/>
-                  <textarea style="width: 98%; height:{% if narrative %}{{ narrative | length / 122 * 22 + 18 |int }}{% endif %}px; padding: 8px; margin-bottom:20px;" placeholder="Describe what {{ component_name }} contributes to the control...">{% if narrative %}{{ narrative }}{% endif %}</textarea>
-                  
-                  <b>Summary</b><br/>
-                  <input style="width: 98%; padding: 8px;" value="{% if summary %}{{ summary }}{% endif %}" placeholder="Write something short for spreadsheets..."><br/><br/>
-
-                  <b>Implementation status</b></br/>
-                  <input class="implementation_status-input" style="width: 98%; padding: 8px;" value="{% if implementation_status %}{{ implementation_status }}{% endif %}" placeholder="Unknown"><br/><br/>
-
-                  <br />
-                  <div style="color: #666;">
-                    <br/><span class="glyphicon glyphicon-check"></span> {{ range(1, 6) | random }} assessments
-                    <br/><span class="glyphicon glyphicon-time"></span> {{ range(1, 14) | random }} versions
-                    <br/><span class="glyphicon glyphicon-bookmark"></span> upstream source
-                  </div>
-
-                </div>
-              </div>
-
-            </div>
-          </div>
-          <!-- /Modal -->
         {% endif %}
 
 
@@ -132,5 +104,8 @@
 
 <script>
   autosize($('textarea'));
+  function update_control(elem, control) {
+    elem.find('span').attr('title', control.component + ": " + control.narrative);
+  }
 </script>
 {% endblock %}
