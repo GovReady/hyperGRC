@@ -44,6 +44,7 @@ def route(path, methods=["GET"]):
   def decorator(route_function):
     path1 = parse_route_path_string(path)
     ROUTES.append((methods, path1, route_function))
+    return route_function
   return decorator
 
 def get_config_file(cfg_file):
@@ -187,27 +188,27 @@ def get_contol(standard, control_id):
       "description": None,
     }
 
+def iterate_control_files(cfg, filter_component_name=None):
+    components_glob = os.path.join(cfg["components_dir"], "*")
+    for component_dir in glob.glob(components_glob):
+        if os.path.isdir(component_dir):
+          component_name = os.path.basename(component_dir)
+          if filter_component_name and component_name.lower() != filter_component_name.lower():
+            continue
+          for controlset_fn in glob.glob(os.path.join(component_dir, "*.yaml")):
+            yield component_name, controlset_fn
+
 def load_component_controls(cfg, filter_control_number=None, filter_component_name=None):
     # Read in all of the components and their control narratives.
     # Return a generator that iterates over control narrative records.
     
     # Control metadata comes from the standards file so load that first.
     standards = get_standard_controls_data(cfg)
+
+    component_order = None
+
+    for component_name, control_family_fn in iterate_control_files(cfg, filter_component_name=filter_component_name):
     
-    # Iterate over all components' control data.
-    components_glob = os.path.join(cfg["components_dir"], "*")
-    for component_dir in glob.glob(components_glob):
-        if not os.path.isdir(component_dir):
-          continue
-
-        component_name = os.path.basename(component_dir)
-        component_order = None
-
-        # Apply the control name filter.
-        if filter_component_name and component_name.lower() != filter_component_name.lower():
-          continue
-
-        for control_family_fn in glob.glob(os.path.join(component_dir, "*.yaml")):
           with open(control_family_fn, encoding="utf8") as f:
             data = rtyaml.load(f)
 
@@ -616,33 +617,23 @@ def hipaa_control(request, organization, project, control_number):
 
 @route('/update-control', methods=['POST'])
 def update_control(request):
-    # cfg = get_cfg_from_org_and_project(organization, project)
-    # BROKEN - THIS MAY NEED REVISION
+    # Get the current project.
+    cfg = get_cfg_from_org_and_project(request.form["organization"], request.form["project"])
 
     # Split the 'path' variable to get the component, control, and control path.
     # TODO: The front-end should pass these as separate parameters.
     component, control, part = request.form["path"].split("/")
 
-    # Get the control narrative user input.
-    summary = request.form["summary"]
-    narrative = request.form["narrative"]
-
     # Update the component's control.
-
-    # Get the component directory.
-    # TODO: SECURITY: User input is currently trusted and assumed to be a safe, valid
-    # directory name.
-    component_dir = os.path.join('..', 'components', component)
 
     # Scan all of the YAML files in matching component's directory looking for one that
     # contains the control. We are helpfully not assuming that controls are in their
     # proper control family file.
     # GREG: Could this helpfulness ever overwrite wrong information b/c we assume only
     # one file in component directory has control?
-    for control_file in os.listdir(component_dir):
-      if control_file.endswith(".yaml"):
+    for _, control_file in iterate_control_files(cfg, filter_component_name=component):
         # Open the control family file for read/write.
-        with open(os.path.join(component_dir, control_file), "r+", encoding="utf8") as f:
+        with open(control_file, "r+", encoding="utf8") as f:
           # Parse the content.
           data = rtyaml.load(f)
 
@@ -660,8 +651,9 @@ def update_control(request):
                   return None
                 return text
 
-              controldata["summary"] = clean_text(summary)
-              controldata["narrative"] = clean_text(narrative)
+              controldata["summary"] = clean_text(request.form["summary"])
+              controldata["narrative"] = clean_text(request.form["narrative"])
+              controldata["implementation_status"] = clean_text(request.form["implementation_status"])
 
               # Write back out to the data files.
               f.seek(0);

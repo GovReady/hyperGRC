@@ -41,8 +41,39 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     else:
       # Otherwise, run one of our routes.
       self.do_request("GET")
+
   def do_POST(self):
+    # Parse POST body.
+    if not self.parse_request_body():
+      self.send_error(404, "Invalid request body.")
+      return
     self.do_request("POST")
+
+  def parse_request_body(self):
+    # We need the Content-Type header to know what format the body is in.
+    if "Content-Type" not in self.headers:
+      return
+
+    # We need the Content-Length header to know how much data to read, otherwise
+    # reading blocks indefinitely.
+    if "Content-Length" not in self.headers:
+      return
+
+    # Parse the content type.
+    import cgi, urllib.parse
+    content_length = int(self.headers["Content-Length"])
+    content_type = cgi.parse_header(self.headers["Content-Type"])
+    if content_type[0] == "application/x-www-form-urlencoded":
+      # Read the body stream, decode it, and parse it like a query string.
+      body = self.rfile.read(content_length)
+      body = body.decode(content_type[1].get("charset", "utf-8"))
+      self.form = urllib.parse.parse_qs(body)
+
+      # parse_qs yields { key: [value1, value2] } but multi-valued keys
+      # aren't typically used, so simplify to { key: value }.
+      self.form = { key: value[0] for key, value in self.form.items() }
+      return True
+
   def do_request(self, method):
     # Find the route that can handle this request. On a match,
     # we get back a dict holding parsed parameters from the
@@ -54,10 +85,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
           break
     else:
       # No route_function was found.
-      self.send_error(404)
+      self.send_error(404, "Page not found.")
       return
 
     # Call the route function.
+    #print(route_function, m, getattr(self, 'form', None))
     route_function(self, **m)
 
 def path_matches(route_path, path):

@@ -69,7 +69,7 @@
 
 
           <!-- Modal -->
-          <div id="control-modal-{{loop.index}}" class="modal control-modal" role="dialog" data-path="{{component_id}}/{{control_key}}/{{part}}">
+          <div id="control-modal-{{loop.index}}" class="modal control-modal" role="dialog" data-path="{{component_name}}/{{control_key}}/{{part}}">
             <div class="modal-dialog modal-lg" style="height: 600px;">
 
               <!-- Modal content-->
@@ -140,9 +140,12 @@ $(function() {
       url: "/update-control",
       method: "POST",
       data: {
+        organization: {{organization|tojson}},
+        project: {{project|tojson}},
         path: $(this).attr('data-path'),
         summary: $(this).find('.summary-input').val(),
-        narrative: $(this).find('.narrative-input').val()
+        narrative: $(this).find('.narrative-input').val(),
+        implementation_status: $(this).find('.implementation_status-input').val()
       },
       success: function(res) {
         // ok it's saved, unless there's an error which we should display
