@@ -3,7 +3,6 @@
 import argparse
 import http.server
 import socketserver
-import threading
 
 from .routes import REPOSITORY_LIST, ROUTES
 
@@ -35,8 +34,6 @@ for project in args.project:
 
 # Define the basic server.
 class Handler(http.server.SimpleHTTPRequestHandler):
-  current_request_tl = threading.local()
-
   def do_GET(self):
     if self.path.startswith("/static/"):
       # For /static only, serve static files.
@@ -47,24 +44,21 @@ class Handler(http.server.SimpleHTTPRequestHandler):
   def do_POST(self):
     self.do_request("POST")
   def do_request(self, method):
-    # Routes use global variables to send the request response,
-    # as in Flask. Although this application is single-threaded,
-    # use thread-local storage for good measure to store a global
-    # variable holding this request instance.
-    Handler.current_request_tl.current_request = self
-
-    try:
-      # Find the route that can handle this request.
-      for methods, path, route_function in ROUTES:
-        if method in methods:
-          m = path_matches(path, self.path)
-          if m is not False:
-            route_function(**m)
-            return
+    # Find the route that can handle this request. On a match,
+    # we get back a dict holding parsed parameters from the
+    # request path.
+    for methods, path, route_function in ROUTES:
+      if method in methods:
+        m = path_matches(path, self.path)
+        if m is not False:
+          break
+    else:
+      # No route_function was found.
       self.send_error(404)
-    finally:
-      # Reset the global variable.
-      Handler.current_request_tl.current_request = None
+      return
+
+    # Call the route function.
+    route_function(self, **m)
 
 def path_matches(route_path, path):
   # Does path match the route path specification in route_path?
@@ -79,9 +73,6 @@ def path_matches(route_path, path):
       in m.groupdict().items()
     }
   return False
-
-def get_current_request():
-  return Handler.current_request_tl.current_request
 
 # Start server.
 try:

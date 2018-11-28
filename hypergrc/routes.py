@@ -17,29 +17,32 @@ ROUTES = []
 # Helpers
 #############################
 
+def parse_route_path_string(path):
+  # path looks something like:
+  #   /<organization>/<project>/documents
+  # Brackets denote variables holding filename-like characters only.
+  # Everything else is a literal character.
+
+  # Convert the route path into a regular expression with named groups, e.g. into:
+  # /(?P<organization>\w+)/(?P<project>\w+)/(?P<documents>\w+)$
+
+  import re, string
+  ALLOWED_PATH_CHARS = string.ascii_letters + string.digits + '_.~' + '%+' + '-' # put - at the end because of re
+  def replacer(m):
+    if m.group(0).startswith("<"):
+      # Substitute <var> with (?P<var>\w+).
+      return r"(?P<{}>[{}]+)".format(m.group(1), ALLOWED_PATH_CHARS)
+    else:
+      # Substitute other characters with their re-escaped string.
+      return re.escape(m.group(0))
+  path = re.sub(r"<([a-z_]+?)>|.", replacer, path)
+  path = re.compile(path + "$")
+  return path
+
 # Define a decorator to build up a routing table.
 def route(path, methods=["GET"]):
   def decorator(route_function):
-    # path looks something like:
-    #   /<organization>/<project>/documents
-    # Brackets denote variables holding filename-like characters only.
-    # Everything else is a literal character.
-
-    # Convert the route path into a regular expression with named groups, e.g. into:
-    # /(?P<organization>\w+)/(?P<project>\w+)/(?P<documents>\w+)
-
-    import re, string
-    ALLOWED_PATH_CHARS = string.ascii_letters + string.digits + '_.~' + '%+' + '-' # put - at the end because of re
-    def replacer(m):
-      if m.group(0).startswith("<"):
-        # Substitute <var> with (?P<var>\w+).
-        return r"(?P<{}>[{}]+)".format(m.group(1), ALLOWED_PATH_CHARS)
-      else:
-        # Substitute other characters with their re-escaped string.
-        return re.escape(m.group(0))
-    path1 = re.sub(r"<([a-z_]+?)>|.", replacer, path)
-    path1 = re.compile(path1 + "$")
-
+    path1 = parse_route_path_string(path)
     ROUTES.append((methods, path1, route_function))
   return decorator
 
@@ -297,7 +300,7 @@ def get_component_stats(ssp):
 # Home route
 
 @route('/')
-def index():
+def index(request):
     if len(REPOSITORY_LIST) == 0:
       raise ValueError("No repositories configured.")
 
@@ -310,7 +313,7 @@ def index():
     cfg = set_cfg_values(govready_file)
 
     organization = cfg["organization"]
-    return render_template('index.html',
+    return render_template(request, 'index.html',
                             repo_list=REPOSITORY_LIST,
                             cfgs=cfgs
                           )
@@ -318,7 +321,7 @@ def index():
 # Project general routes
 
 @route('/<organization>/<project>/documents')
-def documents(organization, project):
+def documents(request, organization, project):
     """Read and list documents in documents directory"""
     cfg = get_cfg_from_org_and_project(organization, project)
     docs = []
@@ -340,7 +343,7 @@ def documents(organization, project):
                         })
       docs.sort()
       print(docs)
-    return render_template('documents.html',
+    return render_template(request, 'documents.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
@@ -350,44 +353,44 @@ def documents(organization, project):
                           )
 
 @route('/<organization>/<project>/assessments')
-def assessments(organization, project):
+def assessments(request, organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
-    return render_template('assessments.html',
+    return render_template(request, 'assessments.html',
                             cfg=cfg,
                             organization=organization,
                             project=project
                           )
 
 @route('/<organization>/<project>/settings')
-def settings(organization, project):
+def settings(request, organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
-    return render_template('settings.html',
+    return render_template(request, 'settings.html',
                             cfg=cfg,
                             organization=organization,
                             project=project
                           )
 
 @route('/<organization>/<project>/poams')
-def poams(organization, project):
+def poams(request, organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     components_dir = cfg["components_dir"]
-    return render_template('poams.html',
+    return render_template(request, 'poams.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
                             poams=poams)
 
 @route('/<organization>/<project>/components')
-def components(organization, project):
+def components(request, organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
-    return render_template('components.html',
+    return render_template(request, 'components.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
                             components=load_components(cfg))
 
 @route('/<organization>/<project>/team')
-def team(organization, project):
+def team(request, organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     components_dir = cfg["components_dir"]
 
@@ -398,7 +401,7 @@ def team(organization, project):
         if os.path.isdir(component_dir):
           components.append({'name': os.path.basename(component_dir)})
 
-    return render_template('team.html',
+    return render_template(request, 'team.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
@@ -407,7 +410,7 @@ def team(organization, project):
 # 800-53
 
 @route('/<organization>/<project>/controls')
-def controls(organization, project):
+def controls(request, organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     # Read in control list from certification file
     certification_file = os.path.join(cfg["certifications_dir"], cfg["certification_file"])
@@ -419,7 +422,7 @@ def controls(organization, project):
 
     standard_controls = get_standard_controls_data(cfg)
 
-    return render_template('controls.html',
+    return render_template(request, 'controls.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
@@ -428,7 +431,7 @@ def controls(organization, project):
                           )
 
 @route('/<organization>/<project>/control/<control_number>/combined')
-def control_legacy(organization, project, control_number):
+def control_legacy(request, organization, project, control_number):
     cfg = get_cfg_from_org_and_project(organization, project)
     control_number = control_number.upper()
     standard_controls_data = get_standard_controls_data(cfg)
@@ -446,19 +449,19 @@ def control_legacy(organization, project, control_number):
     ssp = list(load_component_controls(cfg, filter_control_number=control_number))
     ssp.sort()
 
-    return render_template('control.html',
+    return render_template(request, 'control.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
                             control_number=control_number,
-                            control_name=control_name,
-                            control_description=control_description,
+                            control_name=control_standard["name"],
+                            control_description=control_standard["description"],
                             components=components,
                             ssp=ssp
                           )
 
 @route('/<organization>/<project>/control/<control_number>')
-def control(organization, project, control_number):
+def control(request, organization, project, control_number):
     cfg = get_cfg_from_org_and_project(organization, project)
     control_number = control_number.upper().replace("-0", "-")
     standard_controls_data = get_standard_controls_data(cfg)
@@ -476,7 +479,7 @@ def control(organization, project, control_number):
       components_involved.add(entry[5])
     components_involved = sorted(components_involved)
 
-    return render_template('control2.html',
+    return render_template(request, 'control2.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
@@ -489,7 +492,7 @@ def control(organization, project, control_number):
                           )
 
 @route('/<organization>/<project>/component/<component_name>')
-def component(organization, project, component_name):
+def component(request, organization, project, component_name):
     cfg = get_cfg_from_org_and_project(organization, project)
     # Load control narratives.
     component_name = component_name.lower()
@@ -503,7 +506,7 @@ def component(organization, project, component_name):
       control_families.add(entry[0])
     control_families = sorted(control_families)
 
-    return render_template('component2.html',
+    return render_template(request, 'component2.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
@@ -516,17 +519,17 @@ def component(organization, project, component_name):
 # HIPAA routes
 
 @route('/<organization>/<project>/hipaa/controls')
-def hipaa_controls(organization, project):
+def hipaa_controls(request, organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
 
-    return render_template('controls_hipaa.html',
+    return render_template(request, 'controls_hipaa.html',
                             cfg=cfg,
                             organization=organization,
                             project=project
                           )
 
 @route('/<organization>/<project>/hipaa/control/<control_number>')
-def hipaa_control(organization, project, control_number):
+def hipaa_control(request, organization, project, control_number):
     cfg = get_cfg_from_org_and_project(organization, project)
     # control_number = control_number.upper().replace("-0", "-")
 
@@ -597,7 +600,7 @@ def hipaa_control(organization, project, control_number):
                 components_involved.append(component_controlfam_data["name"])
 
     ssp.sort()
-    return render_template('control2.html',
+    return render_template(request, 'control2.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
@@ -612,7 +615,7 @@ def hipaa_control(organization, project, control_number):
 # Update data routes
 
 @route('/update-control', methods=['POST'])
-def update_control():
+def update_control(request):
     # cfg = get_cfg_from_org_and_project(organization, project)
     # BROKEN - THIS MAY NEED REVISION
 

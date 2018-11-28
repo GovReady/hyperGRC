@@ -33,10 +33,7 @@ def blockquote(s):
   return "\n".join((" " + line) for line in s.strip().split("\n")) + "\n"
 jinja_env.filters['blockquote'] = blockquote
 
-def render_template(template_fn, **contextvars):
-	from __main__ import get_current_request
-	request = get_current_request()
-
+def render_template(request, template_fn, **contextvars):
 	try:
 		template = jinja_env.get_template(template_fn)
 		body = template.render(**contextvars)
