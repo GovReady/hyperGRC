@@ -140,8 +140,9 @@
           .attr('href', "/" + encodeURIComponent(control.organization) + "/" + encodeURIComponent(control.project) + "/control/" + encodeURIComponent(control.control_key));
         modal.modal();
         // resize textarea height arbitrarily small then to scrollHeight browser determined by text length
-        modal.find('.narrative-input').css('height', 20 + "px");
+        modal.find('.narrative-input').css('height', 20 + 'px');
         modal.find('.narrative-input').css('height', modal.find('.narrative-input')[0].scrollHeight + "px");
+        modal.find('.narrative-input').css('resize', 'none');
       }
 
       // Save control.
