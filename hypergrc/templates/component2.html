@@ -99,12 +99,3 @@
 </div>
 
 {% endblock %}
-
-{% block scripts %}
-<script>
-  autosize($('textarea'));
-  function update_control(elem, control) {
-    elem.find('.col-sm-12').attr('title', control.narrative);
-  }
-</script>
-{% endblock %}
