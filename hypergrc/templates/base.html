@@ -1,6 +1,6 @@
 <html>
     <head>
-      <title>{% if control_number %}GovReady - {{ control_number }}{% else %}hyperGRC {% endif %}</title>
+      <title>GovReady {% if control_number %}- {{ control_number }}{% else %}{% endif %}</title>
       <!-- Load jQuery library first -->
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" crossorigin="anonymous"></script>
       <!-- Latest compiled and minified Bootstrap CSS -->
@@ -24,18 +24,14 @@
     <nav class="navbar navbar-fixed-top navbar-dark bg-transparent" style=" opacity: 1.0;margin-left: 80px; ">
       <div class="container-fluid" style="height: 60px;padding-top: 8px;">
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-5">
             <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230);">
               <span class="glyphicon glyphicon-home"></span>
               {% if organization %}<b> / {{ organization }} / {{ project }}</b>{% endif %}
             </button>
           </div>
-          <div class="col-md-3">
-            <!-- button for source of content -->
-            <a href="/"><button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230); margin-left:48px;"><b>hyperGRC</b></button></a>
-          </div>
           {% if organization and project %}
-          <div class="col-md-3">
+          <div class="col-md-7">
             <!-- button for source of content -->
             <a href="{{ cfg.src_repo }}" target="_blank"><button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230); margin-left:48px;"><b>source: {{ cfg.src_repo }}</b></button></a>
           </div>
@@ -109,11 +105,13 @@
 
               <br />
               <div style="color: #666;">
+                <!-- Hiding mockup feature links
                 <br/><span class="glyphicon glyphicon-check"></span> {{ range(1, 6) | random }} assessments
                 <br/><span class="glyphicon glyphicon-time"></span> {{ range(1, 14) | random }} versions
                 <br/><span class="glyphicon glyphicon-bookmark"></span> upstream source
                 <br/>
-                <br/><a class="component-link" style="color: #666;"><span class="glyphicon glyphicon-th"></span>  components</a>
+                -->
+                <br/><a class="component-link" style="color: #666;"><span class="glyphicon glyphicon-th"></span>  View components</a>
               </div>
             </div>
             <div class="modal-footer">
