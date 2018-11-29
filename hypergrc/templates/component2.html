@@ -34,7 +34,7 @@
       <div class="containerx" style="">
         <div class="row" style="overflow-x: auto; margin-left:2px; margin-right: 2px;">
 
-      {% for control_family, control_key, part, control_name, component_order, component_name, security_control_type, implementation_status, summary, narrative in ssp %}
+      {% for control_family, control_key, part, control_name, component_order, component_name, security_control_type, implementation_status, summary, narrative, covered_by in ssp %}
 
         {% if control_family == control_family_selected %}
           <div class="card-control" style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:8px; height: 32px; overflow-y: hidden; border-radius: 5px;">
@@ -51,7 +51,8 @@
                   control_part: {{part|tojson}},
                   narrative: {{narrative|tojson}},
                   summary: {{summary|tojson}},
-                  status: {{implementation_status|tojson}}
+                  status: {{implementation_status|tojson}},
+                  covered_by: {{covered_by|tojson}}
                 };
               </script>
               <a href="#" style="color: #333; font-weight: normal;" onclick="edit_control(control_{{loop.index}}, function () { update_control($('#control-{{loop.index}}'), control_{{loop.index}}); }); return false;">

@@ -246,6 +246,7 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
                 control.get("implementation_status"),
                 control.get("summary", None),
                 control.get("narrative", None),
+                control.get("covered_by", None),
                 #control_standard.get("description", control["control_description"]),
               )
 

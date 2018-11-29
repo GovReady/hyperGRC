@@ -55,7 +55,8 @@
                security_control_type,
                implementation_status,
                summary,
-               narrative
+               narrative,
+               covered_by
            in ssp
         %}
 
@@ -73,6 +74,11 @@
           {% endif %}
 
           <div style='margin: auto auto 8px auto;'>{{ narrative | nl2br | safe }}</div>
+
+          {% if covered_by|length > 0 %}
+          <div style='margin: auto auto 8px auto;'>(Evidence: {% for cb in covered_by %} <a href="{{ cb.path }}" style="color: #333;">{{ cb.name }}</a>{%- if not loop.last -%}, {% endif %}{% if loop.last %}.{% endif %}{% endfor %})</div>
+          {% endif %}
+
         {% endfor %}
 
     </div><!-- /narrative -->
