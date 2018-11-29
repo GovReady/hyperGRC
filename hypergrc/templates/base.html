@@ -95,7 +95,7 @@
             </div>
             <div class="modal-body">
               <b>Implementation narrative</b></br/>
-              <textarea class="narrative-input" style="width: 98%; height: auto; padding: 8px; margin-bottom:20px;" placeholder="Describe what the components contributes to the control..."></textarea>
+              <textarea class="narrative-input" style="width: 98%; height: 100px; padding: 8px; margin-bottom:20px;" placeholder="Describe what the components contributes to the control..."></textarea>
 
               <b>Summary</b><br/>
               <input class="summary-input" style="width: 98%; padding: 8px;" placeholder="Write something short for spreadsheets..."><br/><br/>
@@ -139,6 +139,9 @@
         modal.find('.component-link')
           .attr('href', "/" + encodeURIComponent(control.organization) + "/" + encodeURIComponent(control.project) + "/control/" + encodeURIComponent(control.control_key));
         modal.modal();
+        // resize textarea height arbitrarily small then to scrollHeight browser determined by text length
+        modal.find('.narrative-input').css('height', 20 + "px");
+        modal.find('.narrative-input').css('height', modal.find('.narrative-input')[0].scrollHeight + "px");
       }
 
       // Save control.
@@ -163,6 +166,14 @@
           }
         });
       });
+
+      // Autoresize textarea
+      autosize($('.narrative-input'));
+
+      // Update tool tip
+      function update_control(elem, control) {
+        elem.find('.col-sm-12').attr('title', control.narrative);
+      }
       </script>
 
     </body>
