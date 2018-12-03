@@ -26,63 +26,24 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-# Setting things up
+# Quickstart
 
-1. Set up at least one Compliance As Code repository on your workstation.
-2. Copy `.hypergrc_repos_example` to `.hypergrc_repos`.
-3. Edit  `.hypergrc_repos` contents to point to each Compliance As Code hypergrc configuration file (default is currently `.govready`).
-
-You are now ready to launch hyperGRC.
-
-An example hyperGRC install along side a Compliance as Code repository for a system called "agencyapp" might look like the following, with one directory for the Compliance as Code repository and one directory for the hyperGRC.
+After installing the few required Python libraries, do the following to start hyperGRC with the included example Compliance as Code repository.
 
 ```
-workspace
-├── agencyapp
-│   ├── .git
-│   ├── .gitignore
-│   ├── .govready
-│   ├── README.md
-│   ├── certifications
-│   │   └── fisma-low-impact.yaml
-│   ├── components
-│   │   ├── AWS
-│   │   ├── CentOS
-│   │   ├── Cisco-Cloud-Rtr
-│   │   ├── Graylog
-│   │   ├── Jenkins
-│   │   ├── OpenLDAP
-│   │   ├── SOC-Services
-│   │   └── Terraform
-│   ├── outputs
-│   └── standards
-│       └── nist-800-53-rev4.yaml
-└── hypergrc
-    ├── .git
-    │   ├── ...
-    ├── .gitignore
-    ├── .hypergrc_repos
-    ├── .hypergrc_repos_example
-    ├── LICENSE.md
-    ├── README.md
-    ├── app
-    │   ├── ...
-    ├── hypergrc
-    │   ├── ...
-    ├── lint.py
-    ├── ref
-    │   ├── certifications
-    │   │   └── fisma-low-impact.yaml
-    │   └── standards
-    │       ├── NIST-800-171r1.yaml
-    │       └── nist-800-53-rev4.yaml
-    ├── requirements.txt
-    ├── static
-    │   ├── ...
-    └── venv
-    │   ├── ...
+# Copy `.hypergrc_repos_example` to `.hypergrc_repos`.
+cp .hypergrc_repos_example .hypergrc_repos
+
+# Launch hyperGRC with defaults
+python -m hypergrc
+
+# Open indicated URL in your browser
 ```
 
+NOTES:
+
+* Use either `python` or `python3` in your commands depending on your configuration.
+* The included Compliance As Code repository `example/agencyapp` has fake system components and fake data.
 
 
 # Launching
@@ -90,7 +51,7 @@ workspace
 ### Starting hyperGRC
 
 ```
-python3 -m hypergrc
+python -m hypergrc
 ```
 
 ### Starting hyperGRC with virtualenv
@@ -99,10 +60,19 @@ python3 -m hypergrc
 # Activate the virtual environment if it is not already active.
 source venv/bin/activate
 
-python3 -m hypergrc
+python -m hypergrc
 ```
 
+NOTES:
 
+- Use either `python` or `python3` in your commands depending on your configuration.
+
+# Adding your repos
+
+1. Add one or more Compliance As Code repositories to your workstation.
+2. Edit  `.hypergrc_repos` contents to point to each Compliance As Code hypergrc configuration file (default is currently `.govready`).
+
+Re-launch hyperGRC.
 
 # Understanding the files
 
