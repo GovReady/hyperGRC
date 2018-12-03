@@ -48,7 +48,7 @@ def route(path, methods=["GET"]):
   return decorator
 
 def get_config_file(cfg_file):
-  """Read the .govready file and return values"""
+  """Read the config file (.govready) and return values"""
   if not os.path.isfile(cfg_file):
     raise ValueError("Could not find indicated file {} locally.".format(cfg_file))
 
@@ -129,7 +129,7 @@ def set_cfg_values(cfg_file):
   return cfg
 
 def get_cfg_from_org_and_project(organization, project):
-  """ Given organization and project find .govredy file """
+  """ Given organization and project find configuration file (default .govready) """
 
   # Digest .govready files from repos
   for govready_file in REPOSITORY_LIST:
@@ -246,6 +246,7 @@ def load_component_controls(cfg, filter_control_number=None, filter_component_na
                 control.get("implementation_status"),
                 control.get("summary", None),
                 control.get("narrative", None),
+                control.get("covered_by", None),
                 #control_standard.get("description", control["control_description"]),
               )
 
