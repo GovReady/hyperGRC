@@ -110,14 +110,11 @@ def set_cfg_values(cfg_file):
   cfg["document_dirs"] = document_dirs
 
   # Get certification
-  primary_certification = cfg["system"]["primary_certification"]
   certifications = {}
-  # print(rtyaml.dump(cfg))
   for item in cfg["certifications"]:
     certifications[item["name"]] = item["certification_file"]
-  # print(certifications)
-  certification_file = certifications[primary_certification]
-  cfg["certification_file"] = certification_file
+  cfg["primary_certification"] = cfg["system"]["primary_certification"]
+  cfg["primary_certification_file"] = certifications[cfg["system"]["primary_certification"]]
 
   # Set components ordered dict
   _component_names = collections.OrderedDict([(None, None)])
@@ -315,9 +312,15 @@ def index(request):
     cfg = set_cfg_values(govready_file)
 
     organization = cfg["organization"]
+
+    # Prepare item_ctl_msg message
+    edit_file = os.path.join(os.getcwd(), ".hypergrc_repos")
+    item_ctl_msg = "To modify listed projects, change hyperGRC launch params or edit file: `{}`".format(edit_file)
+
     return render_template(request, 'index.html',
                             repo_list=REPOSITORY_LIST,
-                            cfgs=cfgs
+                            cfgs=cfgs,
+                            item_ctl_msg=item_ctl_msg
                           )
 
 # Project general routes
@@ -344,52 +347,85 @@ def documents(request, organization, project):
                          'file_path': doc
                         })
       docs.sort()
-      print(docs)
+      # print(docs)
+
+    # Prepare item_ctl_msg message
+    edit_dir = os.path.join(cfg["repo_dir"], cfg["documents_dir"])
+    item_ctl_msg = "To modify listed documents, change documents in directory: `{}`".format(edit_dir)
+
     return render_template(request, 'documents.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
                             src_repo=cfg["src_repo"],
                             message=message,
-                            documents=docs
+                            documents=docs,
+                            item_ctl_msg=item_ctl_msg
                           )
 
 @route('/<organization>/<project>/assessments')
 def assessments(request, organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
+
+    # Prepare item_ctl_msg message
+    edit_file = os.path.join(cfg["repo_dir"], ".govready")
+    item_ctl_msg = "This page is a feature mockup, does not yet work and cannot currently be modified."   
+
     return render_template(request, 'assessments.html',
                             cfg=cfg,
                             organization=organization,
-                            project=project
+                            project=project,
+                            item_ctl_msg=item_ctl_msg
                           )
 
 @route('/<organization>/<project>/settings')
 def settings(request, organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
+
+    # Prepare item_ctl_msg message
+    edit_file = os.path.join(cfg["repo_dir"], ".govready")
+    item_ctl_msg = "To modify settings, update file: `{}`".format(edit_file)
+
     return render_template(request, 'settings.html',
                             cfg=cfg,
                             organization=organization,
-                            project=project
+                            project=project,
+                            item_ctl_msg=item_ctl_msg
                           )
 
 @route('/<organization>/<project>/poams')
 def poams(request, organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     components_dir = cfg["components_dir"]
+
+    # Prepare item_ctl_msg message
+    edit_file = os.path.join(cfg["repo_dir"], ".govready")
+    item_ctl_msg = "This page is a feature mockup, does not yet work and cannot currently be modified."   
+
     return render_template(request, 'poams.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
-                            poams=poams)
+                            poams=poams,
+                            item_ctl_msg=item_ctl_msg
+                          )
 
 @route('/<organization>/<project>/components')
 def components(request, organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
+
+    # Prepare item_ctl_msg message
+    edit_dir = os.path.join(cfg["repo_dir"], cfg["components_dir"])
+    edit_file = os.path.join(cfg["repo_dir"], ".govready")
+    item_ctl_msg = "To modify listed components (1) Add/remove components from directory: `{}` and (2) Update components in file: `{}`".format(edit_dir, edit_file)
+
     return render_template(request, 'components.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
-                            components=load_components(cfg))
+                            components=load_components(cfg),
+                            item_ctl_msg=item_ctl_msg
+                            )
 
 @route('/<organization>/<project>/team')
 def team(request, organization, project):
@@ -403,11 +439,17 @@ def team(request, organization, project):
         if os.path.isdir(component_dir):
           components.append({'name': os.path.basename(component_dir)})
 
+    # Prepare item_ctl_msg message
+    edit_file = os.path.join(cfg["repo_dir"], ".govready")
+    item_ctl_msg = "To modify team, update team section in file: `{}`".format(edit_file)
+
     return render_template(request, 'team.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
-                            components=components)
+                            components=components,
+                            item_ctl_msg=item_ctl_msg
+                          )
 
 # 800-53
 
@@ -415,7 +457,7 @@ def team(request, organization, project):
 def controls(request, organization, project):
     cfg = get_cfg_from_org_and_project(organization, project)
     # Read in control list from certification file
-    certification_file = os.path.join(cfg["certifications_dir"], cfg["certification_file"])
+    certification_file = os.path.join(cfg["certifications_dir"], cfg["primary_certification_file"])
     if not os.path.isfile(certification_file):
       raise ValueError('Certification file {} not found.'.format(certification_file))
 
@@ -424,12 +466,17 @@ def controls(request, organization, project):
 
     standard_controls = get_standard_controls_data(cfg)
 
+    # Prepare item_ctl_msg message
+    edit_file = certification_file
+    item_ctl_msg = "To modify listed controls, edit file: `{}`".format(edit_file)
+
     return render_template(request, 'controls.html',
                             cfg=cfg,
                             organization=organization,
                             project=project,
                             certification_controls=certification_controls,
-                            standard_controls=standard_controls
+                            standard_controls=standard_controls,
+                            item_ctl_msg=item_ctl_msg
                           )
 
 @route('/<organization>/<project>/control/<control_number>/combined')
