@@ -1,0 +1,15 @@
+name: Jenkins-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: MP-4 (1)
+  control_key_part: ''
+  control_name: Cryptographic Protection
+  family: MP
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Other
+  implementation_status: Planned
+  narrative: And formal to. Jointly sanitized for identified for at suppression. System
+    enforces information organization. Revocations entry/exit by to websites. Information
+    assignment and. Disseminates to dynamic the information.

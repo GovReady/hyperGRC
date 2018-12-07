@@ -1,0 +1,13 @@
+name: CentOS-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: SC-7 (21)
+  control_key_part: ''
+  control_name: Isolation Of Information System Components
+  family: SC
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Other
+  implementation_status: Inherited
+  narrative: Or approved exception specification controls pii.

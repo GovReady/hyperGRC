@@ -1,0 +1,46 @@
+hgrc_version: 0.3.1
+mode: local workstation
+standard_controls_dir: standards
+certifications_dir: certifications
+components_dir: components
+organization:
+  name: DoSobriety
+system:
+  name: AgencyApp
+  src_repo: https://github.com/fake-data/agencyapp
+  primary_standard: 800-53r4
+  primary_certification: FISMA Low Impact
+standards:
+- standard: 800-53r4
+  standard_file: nist-800-53-rev4.yaml
+certifications:
+- name: FISMA Low Impact
+  certification_file: fisma-low-impact.yaml
+components:
+- name: CentOS-fake
+  directory: CentOS-fake
+- name: Cisco-Cloud-Rtr-fake
+  directory: Cisco-Cloud-Rtr-fake
+- name: Cylance-fake
+  directory: Cylance-fake
+- name: GovReady-fake
+  directory: GovReady-fake
+- name: Jenkins-fake
+  directory: Jenkins-fake
+- name: Keycloak-fake
+  directory: Keycloak-fake
+- name: OpenLDAP-fake
+  directory: OpenLDAP-fake
+- name: SOC-Services-fake
+  directory: SOC-Services-fake
+documents:
+- name: outputs
+  directory: outputs
+  description: Default output directory
+users:
+- name: Anonymous (workstation mode)
+team:
+- name: Jane Doe
+  role: ISSO
+  phone: (202) 555-5555
+  email: jane.doe@dos.gov

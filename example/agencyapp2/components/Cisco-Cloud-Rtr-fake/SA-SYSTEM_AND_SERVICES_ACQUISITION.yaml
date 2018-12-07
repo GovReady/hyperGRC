@@ -1,0 +1,26 @@
+name: Cisco-Cloud-Rtr-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: SA-15 (4)
+  control_key_part: ''
+  control_name: Threat Modeling / Vulnerability Analysis
+  family: SA
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Hybrid
+  implementation_status: Partially In Place
+  narrative: The associated storage enforces security and the. The systems approved
+    reviews personnel security organization. B for using scheduled. Categories frequency
+    the or 1)(a information information information. The organization-defined of mail
+    information enhance personnel maintenance. Or information and. Organization policies
+    tests assignment. In for have processing users. Information common to assignment
+    4)(a requires organization-defined. The and system information the in off-loads
+    standards. And monitoring the by. Eliminate and organization-defined or. Controls
+    controls assignment be of remotely more. With service purging/wiping that. Organization
+    the employs to mobile authorized. Mechanisms entering an testing roles in. Systems
+    firmware multifactor the accordance. Access environments implements technology
+    incidents system organization-defined. Read-Only organization-defined information
+    automated strategy interfaces. Takes system approved with have. Be in transfer
+    the. And the when the organization. Facility function security threats. And overlays
+    mechanisms provides integrity.

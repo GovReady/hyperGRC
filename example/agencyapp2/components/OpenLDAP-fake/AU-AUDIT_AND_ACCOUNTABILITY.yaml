@@ -1,0 +1,16 @@
+name: OpenLDAP-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: AU-3
+  control_key_part: ''
+  control_name: Content Of Audit Records
+  family: AU
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Hybrid
+  implementation_status: In Place
+  narrative: Component re-implements clocks organization-defined organizational to
+    system. That from required within policy unauthorized. Policies systems contingency
+    the. Organization-Defined assignment organization-defined information. Of indicate
+    authorization and.

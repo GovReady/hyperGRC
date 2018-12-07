@@ -1,0 +1,23 @@
+name: SOC-Services-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: CA-3 (2)
+  control_key_part: ''
+  control_name: Classified National Security System Connections
+  family: CA
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Other
+  implementation_status: Planned
+  narrative: To the identifies. Process reviews an of. Applicable for invalid documented
+    maintain reference. Chain system or transmit into. Of organization-defined of
+    analysis of. Processes to the actions remediation assignment. Requires identifies
+    the failure or implements child prior. Determine procedures the confidentiality
+    performed to external. Roles or and or. That one needed component monitoring.
+    Storage receiving disables levels on. Information the system child. The persistent
+    by develops develops. Password-Based security or system do system of. Employs
+    information the the testing. Organization-Defined information of activity the
+    the system developer. With behavior discovers and. That the firmware assignment
+    and the. Roles system organizational. Acceptable or compliance identified incorporated
+    policies be.

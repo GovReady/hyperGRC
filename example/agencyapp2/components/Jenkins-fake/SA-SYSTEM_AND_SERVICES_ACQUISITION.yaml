@@ -1,0 +1,24 @@
+name: Jenkins-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: SA-17 (6)
+  control_key_part: ''
+  control_name: Structure For Testing
+  family: SA
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Hybrid
+  implementation_status: Partially In Place
+  narrative: In procedures authentication received elements of. About using system
+    prohibit. The plan as assignment. Mobile threats policy into and. Assignment selection
+    to to collection product. Information changes the organizational. Or and to access
+    information. Information period located to information intrusion-monitoring. Supplemental
+    management disaster 1 users. By operational the object. The implements and retains
+    alternate. And additional components components flow where. Privileged describe
+    incorporated the organization scans system. Assessment receives the system component.
+    Organization-Defined information policies organization points activities. The
+    identifier read security control devices. Authorizations the includes information
+    control additional. Organization-Defined system d implement. Enforced of requires
+    collect handling information to. Organization-Defined and purpose system support.
+    The when operational for authorized identifying monitoring.

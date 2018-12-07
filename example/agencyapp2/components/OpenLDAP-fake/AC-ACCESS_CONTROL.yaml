@@ -1,0 +1,72 @@
+name: OpenLDAP-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: AC-1
+  control_key_part: ''
+  control_name: Access Control Policy And Procedures
+  family: AC
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Other
+  implementation_status: Inherited
+  narrative: Information organization-defined monitoring organization. Organization
+    established list non-national information. System assessment and. Responsible
+    reuse an to dedicated. Services reported authorized perspective. Comply the software.
+    Security maintain performs routed. Information organization that authorizations
+    identified identified channels organization-defined. The within information and.
+    From reviews missions assignment. By provides of displays and the. Au-6 scanning
+    processing roles 2 the into. That and when the information the. System sanitized
+    security response source to of. Or organization-defined protection that. The of
+    personnel potential the security. The organization-defined to support an the authorization.
+    That personnel selection accounts storage recovery within. Categorization to level
+    3)(a assignment of an. Other the applicable.
+- control_key: AC-3
+  control_key_part: ''
+  control_name: Access Enforcement
+  family: AC
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Other
+  implementation_status: Inherited
+  narrative: Explicit by data federal automated. Quality and the enforces the the
+    and. Threats power the with throughout media. And use risk or reflects. A personnel
+    organization-defined a as. The for for security the. Software missions/business
+    a of specification consistently. Policy and displays the to devices containing
+    addresses. Reviews protocols entities other organizational tools. And system and
+    and team identification transfer. Individuals architecture flows a necessary.
+    Power mission employs ac-2 minimize authorizes.
+- control_key: AC-4
+  control_key_part: ''
+  control_name: Information Flow Enforcement
+  family: AC
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Hybrid
+  implementation_status: Inherited
+  narrative: And organization-defined program the of individuals. Establishes provides
+    to organization governing. More software critical supply of.
+- control_key: AC-6
+  control_key_part: ''
+  control_name: Least Privilege
+  family: AC
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Other
+  implementation_status: In Place
+  narrative: Authentication organization transfer by the more regulations. B and the.
+    Using assignment organizational processes. Detect security as for. Individuals
+    high-level access f of information. Personnel contingency to as by. Requirements
+    and organization-defined entities flows. Physical assignment memory operations
+    c of processes. And/Or withdrawn and to component coordination. Where e threat
+    system removal non-organizational. Capture/Record information responders to provides.
+- control_key: AC-8
+  control_key_part: ''
+  control_name: System Use Notification
+  family: AC
+  standard_key: NIST-800-53
+  covered_by: []
+  security_control_type: Hybrid
+  implementation_status: Partially In Place
+  narrative: Time management withdrawn. Versions information protects time information
+    and. Milestones frequency the minimum to. The or the records performs information.
