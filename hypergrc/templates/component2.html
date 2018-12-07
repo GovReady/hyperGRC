@@ -3,25 +3,25 @@
 {% block content %}
 <div id="components" style="overflow: auto; width: {{ (stats.control_families_total+2) * 360 + 50 |int }}px; overflow: auto;">
 
-<div style="width:340px; min-height:100px; max-height: 94%; overflow-y: auto; background-color: #cdcdcd; margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
+<div style="width:380px; min-height:100px; max-height: 94%; overflow-y: auto; background-color: #cdcdcd; margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
   <h4 style="height:2em; margin-top: -8px;">{{ component_name | upper }}</h4>
   <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; min-height: 82px; overflow-y: auto; border-radius: 5px;">
     <!-- <p>description here</p> -->
     <div style="text-decoration: underline;">{{ component_name | title }} relevant to:</div>
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ stats.controls_total }}</div><div class="col-md-10">controls</div></div>
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ stats.controlparts_total }}</div><div class="col-md-10">control-parts</div></div>
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ stats.control_families_total }}</div><div class="col-md-10">control groups</div></div>
+    <div class="row" style="display:flex;"><div class="col-md-2" style="text-align: right;">{{ stats.controls_total }}</div><div class="col-md-9">controls</div></div>
+    <div class="row" style="display:flex;"><div class="col-md-2" style="text-align: right;">{{ stats.controlparts_total }}</div><div class="col-md-9">control-parts</div></div>
+    <div class="row" style="display:flex;"><div class="col-md-2" style="text-align: right;">{{ stats.control_families_total }}</div><div class="col-md-9">control groups</div></div>
 
     <br/>
     <div style="text-decoration: underline;">Current control-parts status:</div>
     {% for status in stats.controlparts_status_totals %}
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ status[1] }}</div><div class="col-md-10">{{ status[0] }}</div></div>
+    <div class="row" style="display:flex;"><div class="col-md-2" style="text-align: right;">{{ status[1] }}</div><div class="col-md-9">{{ status[0] }}</div></div>
     {% endfor %}
 
     <br/>
     <div style="text-decoration: underline;">FWIW:</div>
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(stats.controlparts_words_total) }}</div><div class="col-md-9">total words</div></div>
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ "%.1f"|format(stats.controlparts_words_avg) }}</div><div class="col-md-9">average words per control-part </div></div>
+    <div class="row" style="display:flex;"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(stats.controlparts_words_total) }}</div><div class="col-md-9">total words</div></div>
+    <div class="row" style="display:flex;"><div class="col-md-2" style="text-align: right;">{{ "%.1f"|format(stats.controlparts_words_avg) }}</div><div class="col-md-9">average words per control-part</div></div>
   </div>
 </div>
 
