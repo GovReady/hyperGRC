@@ -1,16 +1,9 @@
 # This Python file uses the following encoding: utf-8
 
-import collections
-import glob
-import os.path
-import os
-import rtyaml
-
-import re
-
 from .render import render_template
+from . import opencontrol
 
-REPOSITORY_LIST = []
+PROJECT_LIST = []
 ROUTES = []
 
 #############################
@@ -47,124 +40,23 @@ def route(path, methods=["GET"]):
     return route_function
   return decorator
 
-def get_config_file(cfg_file):
-  """Read the config file (.govready) and return values"""
-  if not os.path.isfile(cfg_file):
-    raise ValueError("Could not find indicated file {} locally.".format(cfg_file))
-
-  with open(cfg_file, encoding="utf8") as f:
-    gr_cfg = rtyaml.load(f)
-    cfg = {"repo_dir":     os.path.dirname(os.path.abspath(cfg_file)),
-           "organization": gr_cfg["organization"]["name"],
-           "system":       gr_cfg["system"],
-           "standards":    gr_cfg["standards"],
-           "certifications": gr_cfg["certifications"],
-           "project":      gr_cfg["system"]["name"],
-           "standard":     gr_cfg["system"]["primary_standard"],
-           "standard_file": "nist-800-53-rev4.yaml",
-           "standard_controls_dir": os.path.join(os.path.dirname(os.path.abspath(cfg_file)), gr_cfg["standard_controls_dir"]),
-           "src_repo":     gr_cfg["system"]["src_repo"],
-           "mode":         gr_cfg["mode"],
-           "hgrc_version": gr_cfg["hgrc_version"],
-           "team":         gr_cfg["team"],
-           "users":        gr_cfg["users"],
-           "components":   gr_cfg["components"],
-           "components_dir": os.path.join(os.path.dirname(os.path.abspath(cfg_file)), gr_cfg["components_dir"]),
-           "certifications_dir": os.path.join(os.path.dirname(os.path.abspath(cfg_file)), gr_cfg["certifications_dir"]),
-           "documents":     gr_cfg["documents"],
-           "document_dirs": ""
-          }
-  return cfg
-
-def set_cfg_values(cfg_file):
-  """Set all the cfg values for a specific .govready file"""
-
-  # Set the values available in the config yaml file
-  cfg = get_config_file(cfg_file)
-
-  # Set mode info in local workstation mode
-  if cfg['mode'] == "local workstation":
-    pass
-
-  # Check components and standards directories exist
-  if not os.path.isdir(cfg["components_dir"]):
-      raise ValueError("Can't find directory:", cfg["components_dir"])
-
-  if not os.path.isdir(cfg["standard_controls_dir"]):
-      raise ValueError("Can't find directory:", cfg["standard_controls_dir"])
-
-  # To Do: Check standard file exists
-  primary_standard = cfg["system"]["primary_standard"]
-  standards = {}
-  for item in cfg["standards"]:
-    standards[item["standard"]] = item["standard_file"]
-  # print(standards)
-  standard_file = standards[primary_standard]
-  cfg["standard_file"] = standard_file
-
-  # Get document directories
-  document_dirs = {}
-  for item in cfg["documents"]:
-    document_dirs[item["name"]] = {"directory": item["directory"],
-                                    "description": item["description"]}
-  cfg["document_dirs"] = document_dirs
-
-  # Get certification
-  primary_certification = cfg["system"]["primary_certification"]
-  certifications = {}
-  # print(rtyaml.dump(cfg))
-  for item in cfg["certifications"]:
-    certifications[item["name"]] = item["certification_file"]
-  # print(certifications)
-  certification_file = certifications[primary_certification]
-  cfg["certification_file"] = certification_file
-
-  # Set components ordered dict
-  _component_names = collections.OrderedDict([(None, None)])
-  for cn in cfg["components"]:
-    _component_names[cn["name"]] = cn["directory"]
-
-  cfg["component_names"] = _component_names
-
-  return cfg
-
-def get_cfg_from_org_and_project(organization, project):
-  """ Given organization and project find configuration file (default .govready) """
-
-  # Digest .govready files from repos
-  for govready_file in REPOSITORY_LIST:
-    cfg_test = get_config_file(govready_file)
-    if cfg_test["organization"] == organization and cfg_test["project"] == project:
-      break
-  else:
-    raise ValueError("No repository exist for the organization.")
-
-  cfg = set_cfg_values(govready_file)
-  return cfg
-
-def get_standard_controls_data(cfg):
-  # Read in all the controls
-  with open(os.path.join(cfg["standard_controls_dir"], cfg["standard_file"]), encoding="utf8") as f:
-    standard_controls_data = rtyaml.load(f)
-  return standard_controls_data
-
 #############################
 # Model
 #############################
 
-def load_components(cfg):
-    # Get the set of components by reading all of the controls,
-    # so we keep the code simple and don't repeat logic, although
-    # it might be faster if we didn't have to read all of the
-    # control narrative data files.
-    component_names = { entry[5] for entry in load_component_controls(cfg) }
-    components = [
-      { "name": component_name }
-      for component_name in component_names ]
-    components.sort(key = lambda component : component['name'])
-    return components
-    
-def get_contol(standard, control_id):
+def load_projects():
+    # Yield a dict of information for each project by reading the opencontrol.yaml
+    # file in each project directory.
+    for project_dir in PROJECT_LIST:
+        yield opencontrol.load_project_from_path(project_dir)
+
+def load_project(organization_id, project_id):
+    for project in load_projects():
+        if project["organization"]["id"] == organization_id and project["id"] == project_id:
+            return project
+    raise ValueError("Project {} not found.".format(project_id))
+
+def get_control(standard, control_id):
     # Get the display name for the control. Sometimes control IDs
     # refer to subparts of controls, e.g. AC-2 (H), or even non-standard
     # supplemental citations, e.g. AC-2 (DHS 1.2.3). If the control isn't
@@ -188,113 +80,6 @@ def get_contol(standard, control_id):
       "description": None,
     }
 
-def iterate_control_files(cfg, filter_component_name=None):
-    components_glob = os.path.join(cfg["components_dir"], "*")
-    for component_dir in glob.glob(components_glob):
-        if os.path.isdir(component_dir):
-          component_name = os.path.basename(component_dir)
-          if filter_component_name and component_name.lower() != filter_component_name.lower():
-            continue
-          for controlset_fn in glob.glob(os.path.join(component_dir, "*.yaml")):
-            yield component_name, controlset_fn
-
-def load_component_controls(cfg, filter_control_number=None, filter_component_name=None):
-    # Read in all of the components and their control narratives.
-    # Return a generator that iterates over control narrative records.
-    
-    # Control metadata comes from the standards file so load that first.
-    standards = get_standard_controls_data(cfg)
-
-    component_order = None
-
-    for component_name, control_family_fn in iterate_control_files(cfg, filter_component_name=filter_component_name):
-    
-          with open(control_family_fn, encoding="utf8") as f:
-            data = rtyaml.load(f)
-
-            # Read out each control and store it in memory as a tuple
-            # that holds the information we need to sort all of the
-            # items into the right order for the SSP.
-
-            # If the data file has a "satisfies" key, then it is in
-            # an OpenControl-like format.
-            for control in data.get("satisfies", []):
-              # Prepare control description text and fix spacing before parenthesis for subcontrols
-              # TODO: clean up this regex, but it works.
-              control_id = control["control_key"].replace("-0", "-")
-
-              # get the standard's metadata for the control
-              control_standard = get_contol(standards, control_id)
-
-              # Apply the control number filter.
-              if filter_control_number and control_id != filter_control_number:
-                continue
-
-              if "control_family" in control:
-                control_group = control["control_family"]
-              else:
-                control_group = control["control_key"].split("-", 1)[0]
-
-              yield (
-                control_group,
-                control["control_key"],
-                control.get("control_key_part") or "",
-                control_standard["name"],
-                component_order,
-                component_name,
-                control.get("security_control_type"),
-                control.get("implementation_status"),
-                control.get("summary", None),
-                control.get("narrative", None),
-                control.get("covered_by", None),
-                #control_standard.get("description", control["control_description"]),
-              )
-
-            # If the data file has a "controls" key, then it is in
-            # a GovReady-parsed SSP format.
-            for control in data.get("controls", []):
-              # Apply the control number filter.
-              if filter_control_number and control["control"] != filter_control_number:
-                continue
-               
-              # get the standard's metadata for the control
-              control_standard = get_contol(standards, control["control"])
-
-              yield (
-                control["control"].split("-", 1)[0], # extract control family from control number
-                control["control"],
-                None, # TODO, no part
-                control_standard.get("name", control["control"]),
-                component_order,
-                component_name,
-                control.get("security_control_type"),
-                control.get("implementation_status") or "Unknown",
-                control.get("summary", None),
-                control.get("control-narrative", None),
-                #control_standard.get("description", ""),
-              )
-
-def get_component_stats(ssp):
-  """Get basic stats on component"""
-  control_families_total = len(set([ctl[0] for ctl in ssp]))
-  controls_total = len(set([ctl[1] for ctl in ssp]))
-  controlparts_total = len(set(["{} {}".format(ctl[1],ctl[2]) for ctl in ssp]))
-
-  controlparts_words_total = sum([len(ctl[9].split()) for ctl in ssp])
-  controlparts_words_avg = controlparts_words_total / controlparts_total
-  controlparts_status_totals = [(status, len([ctl[7] for ctl in ssp if ctl[7]==status])) for status in set([ctl[7] for ctl in ssp])]
-
-  stats={
-          "control_families_total": control_families_total,
-          "controls_total": controls_total,
-          "controlparts_total": controlparts_total,
-          "controlparts_words_total": controlparts_words_total,
-          "controlparts_words_avg": controlparts_words_avg,
-          "controlparts_status_totals": controlparts_status_totals
-        }
-  return stats
-
-
 #############################
 # Routes
 #############################
@@ -303,363 +88,265 @@ def get_component_stats(ssp):
 
 @route('/')
 def index(request):
-    if len(REPOSITORY_LIST) == 0:
-      raise ValueError("No repositories configured.")
+    # Read each project's opencontrol.yaml file for a project name
+    # and render a list of projects grouped by organization.
 
-    # Digest .govready files from repos
-    cfgs = []
-    for govready_file in REPOSITORY_LIST:
-      cfgs.append(get_config_file(govready_file))
+    # Read projects and put into organization buckets.
+    organizations = { }
+    for project in load_projects():
+        org = project["organization"]["id"]
+        if org not in organizations:
+            organizations[org] = {
+                "name": project["organization"]["name"],
+                "projects": [],
+            }
+        organizations[org]["projects"].append(project)
 
-    # Use last file to get organization name.
-    cfg = set_cfg_values(govready_file)
+    # Sort organizations and the projects within them.
+    organizations = list(organizations.values())
+    organizations.sort(key = lambda org : org["name"])
+    for org in organizations:
+        org["projects"].sort(key = lambda project : project["title"])
 
-    organization = cfg["organization"]
     return render_template(request, 'index.html',
-                            repo_list=REPOSITORY_LIST,
-                            cfgs=cfgs
-                          )
+        organizations=organizations
+    )
 
 # Project general routes
 
-@route('/<organization>/<project>/documents')
-def documents(request, organization, project):
-    """Read and list documents in documents directory"""
-    cfg = get_cfg_from_org_and_project(organization, project)
-    docs = []
-    message = ""
-    for doc_dir in cfg["document_dirs"].keys():
-      print("doc_dir: ", doc_dir)
-      doc_dir_path = os.path.join(cfg["repo_dir"], doc_dir)
-
-      if not os.path.isdir(doc_dir_path):
-        message += "<br /> Directory {} not found in repository files".format(doc_dir_path)
-      else:
-        docs_glob = doc_dir_path.rstrip('/') + "/*"
-        for doc in glob.glob(docs_glob):
-          if "~$" in os.path.basename(doc):
-            continue
-          if os.path.isfile(doc):
-            docs.append({'name': os.path.basename(doc),
-                         'file_path': doc
-                        })
-      docs.sort()
-      print(docs)
-    return render_template(request, 'documents.html',
-                            cfg=cfg,
-                            organization=organization,
-                            project=project,
-                            src_repo=cfg["src_repo"],
-                            message=message,
-                            documents=docs
-                          )
-
-@route('/<organization>/<project>/assessments')
-def assessments(request, organization, project):
-    cfg = get_cfg_from_org_and_project(organization, project)
-    return render_template(request, 'assessments.html',
-                            cfg=cfg,
-                            organization=organization,
-                            project=project
-                          )
-
-@route('/<organization>/<project>/settings')
-def settings(request, organization, project):
-    cfg = get_cfg_from_org_and_project(organization, project)
-    return render_template(request, 'settings.html',
-                            cfg=cfg,
-                            organization=organization,
-                            project=project
-                          )
-
-@route('/<organization>/<project>/poams')
-def poams(request, organization, project):
-    cfg = get_cfg_from_org_and_project(organization, project)
-    components_dir = cfg["components_dir"]
-    return render_template(request, 'poams.html',
-                            cfg=cfg,
-                            organization=organization,
-                            project=project,
-                            poams=poams)
-
-@route('/<organization>/<project>/components')
-def components(request, organization, project):
-    cfg = get_cfg_from_org_and_project(organization, project)
+@route('/organizations/<organization>/projects/<project>')
+def project(request, organization, project):
+    """Main project page listing components."""
+    project = load_project(organization, project)
     return render_template(request, 'components.html',
-                            cfg=cfg,
-                            organization=organization,
                             project=project,
-                            components=load_components(cfg))
+                            components=opencontrol.load_project_components(project))
 
-@route('/<organization>/<project>/team')
-def team(request, organization, project):
-    cfg = get_cfg_from_org_and_project(organization, project)
-    components_dir = cfg["components_dir"]
+@route('/organizations/<organization>/projects/<project>/components/<component_name>')
+def component(request, organization, project, component_name):
+    """Show one component from a project."""
+    project = load_project(organization, project)
+    component = opencontrol.load_project_component(project, component_name)
 
-    components = []
-    components_glob = components_dir.rstrip('/') + "/*"
-    # Read in all of the components' control implementation texts.
-    for component_dir in glob.glob(components_glob):
-        if os.path.isdir(component_dir):
-          components.append({'name': os.path.basename(component_dir)})
+    # Each control's metadata, such as control names and control family names,
+    # are loaded from standards. Load the standards first.
+    standards = dict(opencontrol.load_project_standards(project))
 
-    return render_template(request, 'team.html',
-                            cfg=cfg,
-                            organization=organization,
+    # Load the component's controls.
+    controlimpls = list(opencontrol.load_project_component_controls(component, standards))
+
+    # Group the controls by control family, and sort the families and the controls within them.
+    from collections import OrderedDict
+    control_families = OrderedDict()
+    for controlimpl in controlimpls:
+        fam = controlimpl["family"]["sort_key"]
+        if fam not in control_families:
+            control_families[fam] = dict(controlimpl["family"])
+            control_families[fam]["standard"] = controlimpl["standard"]
+            control_families[fam]["controls"] = []
+        control_families[fam]["controls"].append(controlimpl)
+    control_families = list(control_families.values())
+    control_families.sort(key = lambda controlfamily : controlfamily["sort_key"])
+    for control_family in control_families:
+        control_family["controls"].sort(key = lambda controlimpl : controlimpl["sort_key"])
+
+    # Get total count of controls and control parts.
+    control_count = len({
+        ( controlimpl["standard"]["name"], controlimpl["control"]["number"] )
+        for controlimpl in controlimpls
+        })
+    control_part_counts = len(controlimpls)
+
+    # Word totals statistics.
+    import re
+    words = []
+    for controlimpl in controlimpls:
+        wds = len(re.split("\W+", controlimpl["narrative"]))
+        words.append(wds)
+    total_words = sum(words)
+    average_words_per_controlpart = total_words / (len(controlimpls) if len(controlimpls) > 0 else 1) # don't err if no controlimpls
+
+    return render_template(request, 'component.html',
                             project=project,
-                            components=components)
+                            component=component,
+                            control_families=control_families,
+                            control_count=control_count,
+                            control_part_count=control_part_counts,
+                            total_words=total_words,
+                            average_words_per_controlpart=average_words_per_controlpart,
+                          )
 
-# 800-53
-
-@route('/<organization>/<project>/controls')
+@route('/organizations/<organization>/projects/<project>/controls')
 def controls(request, organization, project):
-    cfg = get_cfg_from_org_and_project(organization, project)
-    # Read in control list from certification file
-    certification_file = os.path.join(cfg["certifications_dir"], cfg["certification_file"])
-    if not os.path.isfile(certification_file):
-      raise ValueError('Certification file {} not found.'.format(certification_file))
+    """Show all of the controls for a project."""
 
-    with open(certification_file, encoding="utf8") as f:
-      certification_controls = rtyaml.load(f)
+    project = load_project(organization, project)
 
-    standard_controls = get_standard_controls_data(cfg)
+    # Get a list of all controls, by standard, combining both the controls listed
+    # in the standards as well as the controls in use by the components, which
+    # may be different when the components have non-standard controls.
+
+    # Start with the controls defined by the standards.
+
+    standards = dict(opencontrol.load_project_standards(project))
+
+    # Add in controls defined by the components.
+
+    for component in opencontrol.load_project_components(project):
+        for controlimpl in opencontrol.load_project_component_controls(component, standards):
+          # If the control implementation is for an unknown standard, make a record for it.
+          standard_key = controlimpl["standard"]["id"]
+          if standard_key not in standards:
+            standards[standard_key] = controlimpl["standard"]
+            standards[standard_key].update({ 
+              "controls": { }
+            })
+
+          # If the control implementation is for an unknown control, make a record for it.
+          control_key = controlimpl["control"]["id"]
+          if control_key not in standards[standard_key]["controls"]:
+            standards[standard_key]["controls"][control_key] = controlimpl["control"]
+
+          # Count up the number of components that have an implementation for the control.
+          # Note that we may come here more than once for a component because a component
+          # can have multiple "control parts". So we use a set to track the (unique)
+          # components.
+          control = standards[standard_key]["controls"][control_key]
+          control.setdefault("components", set())
+          control["components"].add(component["id"])
+
+    # Make the standards a sorted list, and sort the controls within it.
+    standards = list(standards.values())
+    standards.sort(key = lambda group : group["name"])
+    for standard in standards:
+      standard["controls"] = list(standard["controls"].values())
+      standard["controls"].sort(key = lambda control : control["sort_key"])
+
+    # Not all controls have a URL so far. The ones that have no implementations
+    # in components don't. Add a URL field now.
+    from urllib.parse import quote_plus
+    for standard in standards:
+      for control in standard["controls"]:
+        if "url" not in control:
+          control["url"] = "{}/controls/{}/{}".format(
+            project["url"],
+            quote_plus(standard["id"]),
+            quote_plus(control["id"]),
+          )
 
     return render_template(request, 'controls.html',
-                            cfg=cfg,
-                            organization=organization,
                             project=project,
-                            certification_controls=certification_controls,
-                            standard_controls=standard_controls
+                            standards=standards,
                           )
 
-@route('/<organization>/<project>/control/<control_number>/combined')
-def control_legacy(request, organization, project, control_number):
-    cfg = get_cfg_from_org_and_project(organization, project)
-    control_number = control_number.upper()
-    standard_controls_data = get_standard_controls_data(cfg)
+@route('/organizations/<organization>/projects/<project>/controls/<standard_key>/<control_key>/<format>')
+def project_control_grid(request, organization, project, standard_key, control_key, format):
+    """Show all of the components that contribute to this control."""
 
-    # Load standard control metadata.
-    control_standard = get_contol(standard_controls_data, control_number)
+    if format not in ("grid", "combined"):
+        raise ValueError()
 
-    # The map component directory names back to long names. Use an
-    # OrderedDict to maintain a preferred component order.
-    component_names = cfg["component_names"]
-    component_order = { component: i for i, component in enumerate(component_names) }
-    ssp = []
-    control_components = {}
+    # Load the project.
+    project = load_project(organization, project)
+    standards = dict(opencontrol.load_project_standards(project))
 
-    ssp = list(load_component_controls(cfg, filter_control_number=control_number))
-    ssp.sort()
+    # Get the control info from the standard.
+    try:
+      control = standards[standard_key]["controls"][control_key]
+    except KeyError:
+      control = None
 
-    return render_template(request, 'control.html',
-                            cfg=cfg,
-                            organization=organization,
-                            project=project,
-                            control_number=control_number,
-                            control_name=control_standard["name"],
-                            control_description=control_standard["description"],
-                            components=components,
-                            ssp=ssp
-                          )
-
-@route('/<organization>/<project>/control/<control_number>')
-def control(request, organization, project, control_number):
-    cfg = get_cfg_from_org_and_project(organization, project)
-    control_number = control_number.upper().replace("-0", "-")
-    standard_controls_data = get_standard_controls_data(cfg)
-
-    # Load control standard metadata.
-    control_standard = get_contol(standard_controls_data, control_number)
-
-    # Load control narratives.
-    ssp = list(load_component_controls(cfg, filter_control_number=control_number))
-    ssp.sort()
-
-    # Make set of components.
-    components_involved = set()
-    for entry in ssp:
-      components_involved.add(entry[5])
-    components_involved = sorted(components_involved)
-
-    return render_template(request, 'control2.html',
-                            cfg=cfg,
-                            organization=organization,
-                            project=project,
-                            component_names=components_involved,
-                            control_number=control_number,
-                            control_name=control_standard["name"],
-                            control_description=control_standard["description"],
-                            components=components,
-                            ssp=ssp
-                          )
-
-@route('/<organization>/<project>/component/<component_name>')
-def component(request, organization, project, component_name):
-    cfg = get_cfg_from_org_and_project(organization, project)
-    # Load control narratives.
-    component_name = component_name.lower()
-    ssp = list(load_component_controls(cfg, filter_component_name=component_name))
-    ssp.sort()
-    stats = get_component_stats(ssp)
-
-    # Make set of control families.
-    control_families = set()
-    for entry in ssp:
-      control_families.add(entry[0])
-    control_families = sorted(control_families)
-
-    return render_template(request, 'component2.html',
-                            cfg=cfg,
-                            organization=organization,
-                            project=project,
-                            component_name=component_name,
-                            control_families=control_families,
-                            ssp=ssp,
-                            stats=stats
-                          )
-
-# HIPAA routes
-
-@route('/<organization>/<project>/hipaa/controls')
-def hipaa_controls(request, organization, project):
-    cfg = get_cfg_from_org_and_project(organization, project)
-
-    return render_template(request, 'controls_hipaa.html',
-                            cfg=cfg,
-                            organization=organization,
-                            project=project
-                          )
-
-@route('/<organization>/<project>/hipaa/control/<control_number>')
-def hipaa_control(request, organization, project, control_number):
-    cfg = get_cfg_from_org_and_project(organization, project)
-    # control_number = control_number.upper().replace("-0", "-")
-
-    standard_file = "hipaa-draft.yaml"
-    standard_controls_data = get_standard_controls_data()
-
-    # Pass along key values
-    control_name = standard_controls_data[control_number]["name"]
-    control_description = standard_controls_data[control_number]["description"]
-
-    components_dir = cfg["components_dir"]
-
-    # The map component directory names back to long names. Use an
-    # OrderedDict to maintain a preferred component order.
-    component_names = collections.OrderedDict([
-      (None, None),
-      ("CivicActions",  "CivicActions"),
-      ("Drupal",        "Drupal"),
-      ("DNFSB",         "DNFSB"),
-      ("Acquia-ACE",    "Acquia-ACE"),
-      ("AWS",           "AWS"),
-      ("MacOS", "MacOS")
-    ])
-    component_order = { component: i for i, component in enumerate(component_names) }
-    ssp = []
-
-    components_involved = []
-    control_components = {}
-
+    # Scan all of the components for all contributions to this control.
     components = []
-    components_glob = components_dir.rstrip('/') + "/*"
-    # Read in all of the components' control implementation texts.
-    for component_dir in glob.glob(components_glob):
-        if os.path.isdir(component_dir):
-          components.append({'name': os.path.basename(component_dir)})
-        component_controls = []
+    for component in opencontrol.load_project_components(project):
+        # Iterate over its controls.
+        controlimpls = []
+        for controlimpl in opencontrol.load_project_component_controls(component, standards):
+            if controlimpl["control"]["id"] == control_key:
+                # This is a matching control --- save the control metadata
+                # for the UI if we didn't get it from the standard.
+                if not control:
+                  control = controlimpl["control"]
 
-        for control_family_fn in glob.glob(os.path.join(component_dir, "*.yaml")):
-          with open(control_family_fn, encoding="utf8") as f:
-            component_controlfam_data = rtyaml.load(f)
+                # Put this control narrative implementation into the bucket
+                # for this component.
+                controlimpls.append(controlimpl)
 
-            # Read out each control and store it in memory as a tuple
-            # that holds the information we need to sort all of the
-            # items into the right order for the SSP.
-            for control in component_controlfam_data["satisfies"]:
-              # Prepare control description text and fix spacing before parenthesis for subcontrols
-              # TODO: clean up this regex, but it works.
-              control_id = control["control_key"].replace("-0", "-")
-        
-              if control_id != control_number:
-                continue
+        # If there were any matched controls, keep this component and the matched
+        # controls for output.
+        if controlimpls:
+            components.append({
+              "component": component,
+              "controls": controlimpls
+            })
 
-              ssp.append((
-                component_order[component_controlfam_data["name"]],
-                component_names[component_controlfam_data["name"]],
-                component_controlfam_data["family"],
-                control.get("control_key"),
-                control.get("control_name"),
-                control.get("control_key_part") or "",
-                control.get("security_control_type"),
-                control.get("implementation_status"),
-                control.get("summary", None),
-                control.get("narrative", None)
-                # control["control_description"],
-              ))
+    # Sort the components and the controls within each component.
+    components.sort(key = lambda component : component["component"]["name"])
+    for component in components:
+        component["controls"].sort(key = lambda controlimpl : controlimpl["sort_key"])
 
-              if component_controlfam_data["name"] not in components_involved:
-                components_involved.append(component_controlfam_data["name"])
+    # If we're formatting by part, then instead of grouping by components, group by
+    # control part. But we use the sorted arrays above because we want to use the
+    # ordering we put things in already.
+    parts = []
+    for component in components:
+        for controlimpl in component["controls"]:
+            if len(parts) == 0 or parts[-1]["part"] != controlimpl["control_part"]:
+                parts.append({
+                    "part": controlimpl["control_part"],
+                    "components": [],
+                })
+            if len(parts[-1]["components"]) == 0 or parts[-1]["components"][-1]["id"] != controlimpl["component"]["id"]:
+                parts[-1]["components"].append({
+                    "component": controlimpl["component"],
+                    "controls": [],
+                })
+            parts[-1]["components"][-1]["controls"].append(controlimpl)
 
-    ssp.sort()
-    return render_template(request, 'control2.html',
-                            cfg=cfg,
-                            organization=organization,
+    # Add URL info.
+    from urllib.parse import quote_plus
+    control["url"] = "{}/controls/{}/{}".format(
+        project["url"],
+        quote_plus(standard_key),
+        quote_plus(control_key),
+    )
+
+    return render_template(request, 'control_{}.html'.format(format),
                             project=project,
-                            component_names=components_involved,
-                            control_number=control_number,
-                            control_name=control_name,
-                            control_description=control_description,
+                            standard=standards[standard_key],
+                            control=control,
                             components=components,
-                            ssp=ssp
+                            parts=parts,
                           )
 
-# Update data routes
+def clean_text(text):
+  # Clean text before going into YAML. YAML gets quirky
+  # about extra spaces, so get rid of them.
+  import re
+  text = text.strip()
+  text = re.sub(r"\s+\n", "\n", text)
+  if not text: # empty
+    return None
+  return text
 
 @route('/update-control', methods=['POST'])
 def update_control(request):
-    # Get the current project.
-    cfg = get_cfg_from_org_and_project(request.form["organization"], request.form["project"])
+    # Load the project and the component being edited, then iterate through its
+    # controls to find a maching record.
+    project = load_project(request.form["organization"], request.form["project"])
+    component = opencontrol.load_project_component(project, request.form["component"])
+    for component in opencontrol.load_project_components(project):
+        for controlimpl in opencontrol.load_project_component_controls(component, {}):
+          if controlimpl["standard"]["id"] == request.form["standard"] \
+           and controlimpl["control"]["id"] == request.form["control"] \
+           and controlimpl.get("part") == (request.form.get("control_part")) \
+           :
 
-    # Update the component's control.
-
-    # Scan all of the YAML files in matching component's directory looking for one that
-    # contains the control. We are helpfully not assuming that controls are in their
-    # proper control family file.
-    # GREG: Could this helpfulness ever overwrite wrong information b/c we assume only
-    # one file in component directory has control?
-    for _, control_file in iterate_control_files(cfg, filter_component_name=request.form["component"]):
-        # Open the control family file for read/write.
-        with open(control_file, "r+", encoding="utf8") as f:
-          # Parse the content.
-          data = rtyaml.load(f)
-
-          # Look for a matching control entry.
-          for controldata in data["satisfies"]:
-            if controldata["control_key"] == request.form["control_key"] \
-              and (controldata.get("control_key_part") or "") == request.form.get("control_part", ""):
-              # Found the right entry. Update the fields.
-
-              def clean_text(text):
-                # Clean text before going into YAML. YAML gets quirky
-                # about extra spaces, so get rid of them.
-                text = text.strip()
-                text = re.sub(r"\s+\n", "\n", text)
-                if not text: # empty
-                  return None
-                return text
-
-              controldata["summary"] = clean_text(request.form.get("summary", ""))
-              controldata["narrative"] = clean_text(request.form.get("narrative", ""))
-              controldata["implementation_status"] = clean_text(request.form.get("status", ""))
-
-              # Write back out to the data files.
-              f.seek(0);
-              f.truncate()
-              rtyaml.dump(data, f)
-
-              # Return OK, we're good.
-              return "OK"
+           controlimpl["summary"] = clean_text(request.form.get("summary", ""))
+           controlimpl["narrative"] = clean_text(request.form.get("narrative", ""))
+           controlimpl["implementation_status"] = clean_text(request.form.get("status", ""))
+           opencontrol.update_component_control(controlimpl)
+           return "OK"
 
     # The control was not found in the data files.
     return "NOTFOUND"

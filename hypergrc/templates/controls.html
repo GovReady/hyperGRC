@@ -1,39 +1,36 @@
 {% extends "base.html" %}
 
+{% block title %}
+  hyperGRC - {{project.title}} - Controls
+{% endblock %}
+
 {% block content %}
 <div id="static-page-content" class="container">
   <div class="row">
     <div class="col-md-12">
-        <h3>Your {{ project }} controls</h3>
+        <h3>Controls</h3>
     </div>
     <div class="col-md-12 ctl-btns" style="color: black; margin-bottom: 1.5em;">
 
-        {% for standard in certification_controls.standards %}
+        {% for standard in standards %}
         <div>
-          <h4>{{ standard }}</h4>
-          <br/>
+          <h4>{{ standard.name }}</h4>
 
-          {% for control in certification_controls.standards[standard] %}
+          {% for control in standard.controls %}
 
-            <a href="/{{ organization }}/{{ project }}/control/{{ control }}/combined" onclick="loading();"><button type="button" class="btn btn-default" style="width:76px; margin: 8px; opacity: 1.0; color: black;">{{ control }}</button></a>
+            <a href="{{control.url}}/combined" onclick="loading();">
+              <button type="button" class="btn btn-default"
+                title="{{control.name}}">
+                {{ control.number }}
+                {% if control.components %}
+                  <div><small>{{ control.components|length }} component{% if control.components|length != 1 %}s{% endif %}</small>
+                {% endif %}
+              </button>
+            </a>
           {% endfor %}
 
         </div>
         {% endfor %}
-
-        <!-- % for standard in certification_controls.standards %}
-        <div>
-          <h4>{{ standard }}</h4>
-          <br/>
-
-          {% for control in certification_controls.standards[standard] %}
-
-            <a href="/{{ organization }}/{{ project }}/control/{{ control }}"><button type="button" class="btn btn-default" style="width:76px; margin: 8px; opacity: 1.0; color: black;">{{ control }}</button></a>
-          {% endfor %}
-
-        </div>
-        % endfor %}  -->
-
     </div>
   </div>    
 </div>

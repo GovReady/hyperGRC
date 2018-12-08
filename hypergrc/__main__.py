@@ -4,12 +4,12 @@ import argparse
 import http.server
 import socketserver
 
-from .routes import REPOSITORY_LIST, ROUTES
+from .routes import PROJECT_LIST, ROUTES
 
 # Get server settings.
 parser = argparse.ArgumentParser(description='hyperGRC')
 parser.add_argument('--bind', default="localhost:8000", help='[host:]port to bind to')
-parser.add_argument('project', nargs="*", default=["@.hypergrc_repos"], help='Paths to project configuration files. Reads list from .hypergrc_repos by default.')
+parser.add_argument('project', nargs="+", help='Path to a directory containing an opencontrol.yaml file for a system. Specify more than once to edit multiple system projects. Precede with an @-sign to read a list of directories from a newline-delimited text file.')
 args = parser.parse_args()
 if ":" in args.bind:
   BIND_HOST = args.bind.split(":", 1)[0]
@@ -18,7 +18,7 @@ else:
   BIND_HOST = "localhost"
   BIND_PORT = args.bind
 
-# Get other settings.
+# Read list of projects from the command-line and any @-prefixed listing files.
 for project in args.project:
   if project.startswith("@"):
     # '@' prefixes are the Unixy-way of saying read a list from
@@ -27,10 +27,10 @@ for project in args.project:
       for line in f:
         line = line.strip()
         if line:
-          REPOSITORY_LIST.append(line)
+          PROJECT_LIST.append(line)
   else:
     # Append this argument.
-    REPOSITORY_LIST.append(project)
+    PROJECT_LIST.append(project)
 
 # Define the basic server.
 class Handler(http.server.SimpleHTTPRequestHandler):

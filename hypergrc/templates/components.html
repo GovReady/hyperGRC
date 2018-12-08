@@ -1,17 +1,20 @@
 {% extends "base.html" %}
 
+{% block title %}
+  hyperGRC - {{project.title}} - Components
+{% endblock %}
+
 {% block content %}
 <div id="static-page-content" class="container">
-  <div class="row" style="">
-    <div class="col-md-12">
-      <h3>Your {{ project }} components</h3>
-    </div>
+    <h1>{{project.title}} components</h1>
+
     {% for component in components %}
-      <div class="col-md-12" style="color: black;">
-        <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/component/{{ component.name|urlencode }}" style="color: black;"><span class="glyphicon glyphicon-link"></span> {{ component.name }}<a></p>
-      </div>
+        <h2>
+          <a href="{{component.url}}">
+            <span class="glyphicon glyphicon-link"></span>
+            {{ component.name }}
+          </a>
+        </h2>
     {% endfor %}
-    <!-- <div class="col-md-12" style="color: black;margin-top: 20px;">+ Add component</div> -->
-  </div>
 </div>
 {% endblock %}

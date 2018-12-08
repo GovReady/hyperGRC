@@ -16,6 +16,14 @@ body {
   font-family: helvetica, sans-serif;
 }
 
+h1, h2, h3, h4, h5 {
+  font-weight: bold;
+}
+  h1 { font-size: 22px; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 18px; }
+  h4 { font-size: 16px; }
+
 #static-page-content {
   width: 760px;
   margin-left: 0px;
@@ -30,7 +38,7 @@ body {
   overflow: auto;
 }
 
-#static-page-content h3, h3 {
+#static-page-content h3 {
   color: black;
   margin-bottom: 1.5em;
   border-bottom: 0.5px solid #999;
@@ -58,7 +66,7 @@ body {
   border-right: 1px solid #121212;
 }
 
-#sidebar a:link, a:visited {
+#sidebar a:link, #sidebar a:visited {
   color: white;
   text-decoration: none;
 }
@@ -152,9 +160,10 @@ body {
 /* misc
 *******************************/
 
-.ctl-btns > .btn {
-  font-family: monospace;
-  width: 100px;
+.ctl-btns .btn {
+  width: 95px;
+  height: 3.5em;
+  margin: 0 1em 1em 0;
 }
 
 /*******************************

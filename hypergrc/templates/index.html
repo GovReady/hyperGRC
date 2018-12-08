@@ -1,16 +1,27 @@
 {% extends "base.html" %}
 
+{% block title %}
+	hyperGRC
+{% endblock %}
+
 {% block content %}
 <div id="static-page-content" class="container" style="">
-	<div class="row">
-		<div class="col-md-12">
-			<h3 style="">Your projects</h3>
-		</div>
-		<div class="col-md-12">
-			{% for g in cfgs %}
-				<h4><span class="glyphicon glyphicon-link"></span> <a href="{{ g['organization']|urlencode }}/{{ g['project']|urlencode }}/components" style="color: black;" onclick="loading();">{{ g['organization'] }} / {{ g['project'] }}</a></h4>
-			{% endfor %}
-		</div>
-	</div>
+	<h1>Your projects</h1>
+
+	{% for organization in organizations %}
+
+		<h2>{{organization.name}}</h2>
+
+		{% for project in organization.projects %}
+			<h2>
+				<span class="glyphicon glyphicon-link"></span>
+				<a href="{{project.url}}" onclick="loading();">
+					{{project.title}}
+				</a>
+			</h2>
+			<p>{{project.description}}</p>
+		{% endfor %}
+
+	{% endfor %}
 </div>
 {% endblock %}

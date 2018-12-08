@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}
+  hyperGRC - {{project.title}} - {{component.name}}
+{% endblock %}
+
+{% block content %}
+<div id="components" style="overflow: auto; width: {{ (control_families|length+2) * 360 + 50 | int }}px; overflow: auto;">
+
+<div style="width:340px; min-height:100px; max-height: 94%; overflow-y: auto; background-color: #cdcdcd; margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
+  
+  <h2 style="margin: 0 0 18px 0;">{{ component.name }}</h2>
+
+  <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; min-height: 82px; overflow-y: auto; border-radius: 5px;">
+    <!-- <p>description here</p> -->
+    <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(control_families|length) }}</div><div class="col-md-10">control families</div></div>
+    <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(control_count) }}</div><div class="col-md-10">controls</div></div>
+    <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(control_part_count) }}</div><div class="col-md-10">control parts</div></div>
+
+    <br/>
+    <div style="text-decoration: underline;">Current control-parts status:</div>
+    {% for status in [('x', 'y')] %}
+    <div class="row"><div class="col-md-2" style="text-align: right;">{{ status[1] }}</div><div class="col-md-10">{{ status[0] }}</div></div>
+    {% endfor %}
+
+    <br/>
+    <div style="text-decoration: underline;">FWIW:</div>
+    <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(total_words) }}</div><div class="col-md-9">total words</div></div>
+    <div class="row"><div class="col-md-2" style="text-align: right;">{{ "%.1f"|format(average_words_per_controlpart) }}</div><div class="col-md-9">average words per control-part </div></div>
+  </div>
+</div>
+
+  {% for control_family in control_families %}
+    <div style="width:340px; min-height:100px; max-height: 94%;background-color: rgb(223, 227, 230); margin-right: 12px; margin-bottom:20px; float: left; padding: 18px; border-radius: 5px; overflow-y: auto;">
+
+      <div>{{control_family.standard.name}}</div>
+      <h3 style="margin: 0 0 18px 0;">
+        {% if control_family.name != control_family.abbrev %}
+          {{control_family.abbrev}}:
+        {% endif %}
+        {{ control_family.name }}
+      </h3>
+
+      <div class="containerx" style="">
+        <div class="row" style="overflow-x: auto; margin-left:2px; margin-right: 2px;">
+
+      {% set outer_loop = loop %}
+
+      {% for impl in control_family.controls %}
+          <div class="card-control" style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:8px; height: 32px; overflow-y: hidden; border-radius: 5px;">
+
+          <div id="control-{{outer_loop.index}}-{{loop.index}}" class="container" style="width:100%;">
+            <div class="row">
+              <script async>
+                var control_{{outer_loop.index}}_{{loop.index}} = {{impl|tojson}};
+              </script>
+              <a href="#" style="color: #333; font-weight: normal;" onclick="edit_control(control_{{outer_loop.index}}_{{loop.index}}, function () { update_control($('#control-{{outer_loop.index}}-{{loop.index}}'), control_{{outer_loop.index}}_{{loop.index}}); }); return false;">
+                <div class="col-sm-12" style="padding-left: 0px;" title="{{ impl.narrative }}">
+                  {{ impl.control.number }}
+                  {% if impl.control_part %}<span>Part {{ impl.control_part }} </span>{% endif %}
+                  {% if impl.control.name %}&middot; {{ impl.control.name | truncate(30, true, "") }}{% endif %}
+                </div>
+              </a>
+            </div>
+          </div>
+          </div>
+      {% endfor %}
+    </div>
+  </div><!-- /row -->
+  </div><!-- /container -->
+{% endfor %}
+
+    <div style="width:340px; height:40px; background-color: #fff; border:2px dashed #aaa; margin-right: 12px; float: left; padding: 18px; border-radius: 5px; color: #999; opacity: 0.6;">
+        <h4 style="height:2em; margin-top: -8px;">+ Add another column</h4>
+    </div>
+
+
+</div>
+
+{% endblock %}

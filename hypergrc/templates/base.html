@@ -1,6 +1,9 @@
 <html>
     <head>
-      <title>GovReady {% if control_number %}- {{ control_number }}{% else %}{% endif %}</title>
+      <title>
+        {% block title %}
+        {% endblock %}
+      </title>
       <!-- Load jQuery library first -->
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" crossorigin="anonymous"></script>
       <!-- Latest compiled and minified Bootstrap CSS -->
@@ -27,15 +30,9 @@
           <div class="col-md-5">
             <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230);">
               <span class="glyphicon glyphicon-home"></span>
-              {% if organization %}<b> / {{ organization }} / {{ project }}</b>{% endif %}
+              {% if project %}<b>{{ project.title }}</b>{% endif %}
             </button>
           </div>
-          {% if organization and project %}
-          <div class="col-md-7">
-            <!-- button for source of content -->
-            <a href="{{ cfg.src_repo }}" target="_blank"><button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230); margin-left:48px;"><b>source: {{ cfg.src_repo }}</b></button></a>
-          </div>
-          {% endif %}
       </div>
     </nav>
 
@@ -43,15 +40,15 @@
         <div id="sidebar">
           <p><a href="/" title="Home"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></p>
           <!-- <p><a href="/login" title="Login"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span><br/>login</a></p><br/> -->
-          {% if organization and project %}
+          {% if project %}
           <hr>
-          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/components" title="Components" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/controls" title="Controls" onclick="loading();"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/documents" title="Documents" onclick="loading();"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/assessments" title="Assessments" onclick="loading();"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/poams" title="POA&amp;Ms" onclick="loading();"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/team" title="Team" onclick="loading();"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></p><br/>
-          <p><a href="/{{ organization|urlencode }}/{{ project|urlencode }}/settings" title="Settings" onclick="loading();"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></p>
+          <p><a href="{{project.url}}" title="Components" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a></p><br/>
+          <p><a href="{{project.url}}/controls" title="Controls" onclick="loading();"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p><br/>
+          <p><a href="{{project.url}}/documents" title="Documents" onclick="loading();"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a></p><br/>
+          <p><a href="{{project.url}}/assessments" title="Assessments" onclick="loading();"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></a></p><br/>
+          <p><a href="{{project.url}}/poams" title="POA&amp;Ms" onclick="loading();"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a></p><br/>
+          <p><a href="{{project.url}}/team" title="Team" onclick="loading();"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></p><br/>
+          <p><a href="{{project.url}}/settings" title="Settings" onclick="loading();"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></p>
           {% endif %}
         </div>
       </div>
@@ -111,7 +108,7 @@
                 <br/><span class="glyphicon glyphicon-bookmark"></span> upstream source
                 <br/>
                 -->
-                <br/><a class="component-link" style="color: #666;"><span class="glyphicon glyphicon-th"></span>  View components</a>
+                <br/><a class="component-link" style="color: #666;"><span class="glyphicon glyphicon-th"></span>  View all components for this control</a>
               </div>
             </div>
             <div class="modal-footer">
@@ -132,12 +129,12 @@
         edit_control_current_control = control;
         edit_control_current_callback = callback;
         var modal = $('#control-editor-modal');
-        modal.find('.modal-title').text(control.control_key + " " + control.control_part);
+        modal.find('.modal-title').text(control.control.number + (control.control.part ? (" Part " + control.control.part) : ""));
         modal.find('.narrative-input').val(control.narrative);
         modal.find('.summary-input').val(control.summary);
         modal.find('.implementation_status-input').val(control.status);
         modal.find('.component-link')
-          .attr('href', "/" + encodeURIComponent(control.organization) + "/" + encodeURIComponent(control.project) + "/control/" + encodeURIComponent(control.control_key));
+          .attr('href', control.control.url + "/grid");
         modal.modal();
         // resize textarea height arbitrarily small then to scrollHeight browser determined by text length
         modal.find('.narrative-input').css('height', 20 + 'px');
@@ -156,7 +153,17 @@
         $.ajax({
           url: "/update-control",
           method: "POST",
-          data: edit_control_current_control,
+          data: {
+            organization: {{project.organization.id|tojson}},
+            project: {{project.id|tojson}},
+            component: edit_control_current_control.component.id, 
+            standard: edit_control_current_control.standard.id,
+            control: edit_control_current_control.control.id,
+            control_part: edit_control_current_control.control_part,
+            summary: edit_control_current_control.summary,
+            narrative: edit_control_current_control.narrative,
+            status: edit_control_current_control.status,
+          },
           success: function(res) {
             // ok it's saved, unless there's an error which we should display
             if (res != "OK")

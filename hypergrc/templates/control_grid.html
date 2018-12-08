@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}
+  hyperGRC - {{project.title}} - {{standard.name}} - {{control.number}}: {{control.name}}
+{% endblock %}
+
+{% block content %}
+
+<div id="components" style="overflow: auto; width: 3600px; overflow: auto;">
+
+<div style="width:340px; min-height:100px; max-height: 94%; overflow-y: auto;background-color: #cdcdcd; margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
+  <div>{{standard.name}}</div>
+  <h1 style="margin: 0 0 18px 0;">{{control.number}}: {{control.name}}</h4>
+
+  <!-- button row -->
+  <div class="row" style="margin-bottom: 8px;">
+    <div class="col-md-4">
+      <!-- <button type="button" class="btn btn-outline-secondary" style="">Guide me</button> -->
+    </div>
+    <div class="col-md-2">
+      &nbsp;
+    </div>
+    <div class="col-md-4">
+      <a href="{{control.url}}/combined" style="color: black;" onclick="loading();">
+        <button type="button" class="btn btn-link" style="opacity: 1.0; color: black;">Show combined</button>
+      </a>
+    </div>
+  </div>
+
+  <!-- control guidance -->
+  <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; border-radius: 5px;">
+    <span style="color: #999;font-weight: bold;">Guidance</span><br/>
+    <div style="max-height: 40%; overflow-y: auto;">{{ control.description | nl2br | safe  }}</div>
+  </div>
+
+  <!-- assessment links -->
+  <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; border-radius: 5px;">
+    <span style="color: #999;font-weight: bold;">{{ control.number }} assessment</span><br/>
+    <div style="max-height: 10%; overflow-y: auto;">Assessment summary here</div>
+  </div>
+</div>
+
+{% for component_info in components %}
+    <div style="width:340px; min-height:100px; background-color: rgb(223, 227, 230); margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
+
+      <h4 style="height:2em; margin-top: -8px;">{{component_info.component.name}}</h4>
+      <button type="button" class="btn btn-outline-secondary" style="margin-bottom: 8px;">Guide me</button>
+
+      {% set outer_loop = loop %}
+      {% for impl in component_info.controls %}
+          <div class="card-control" style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:8px; height: 32px; overflow-y: hidden; border-radius: 5px;">
+
+          <div id="control-{{outer_loop.index}}-{{loop.index}}" class="container" style="width:100%;">
+
+            <div class="row">
+              <script async>
+                var control_{{outer_loop.index}}_{{loop.index}} = {{impl|tojson}};
+              </script>
+              <a href="#" style="color: #333; font-weight: normal;" onclick="edit_control(control_{{outer_loop.index}}_{{loop.index}}, function () { update_control($('#control-{{outer_loop.index}}-{{loop.index}}'), control_{{outer_loop.index}}_{{loop.index}}); }); return false;">
+                <div class="col-sm-12" style="padding-left: 0px;" title="{{ impl.narrative }}">
+                  {{ impl.control.number }}
+                  {% if impl.control_part %}<span>Part {{ impl.control_part }} </span>{% endif %}
+                  {% if impl.control.name %}&middot; {{ impl.control.name | truncate(30, true, "") }}{% endif %}
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+{% endfor %}
+ 
+    <div style="width:340px; height:40px; background-color: #fff; border:2px dashed #aaa; margin-right: 12px; float: left; padding: 18px; border-radius: 5px; color: #999; opacity: 0.6;">
+        <h4 style="height:2em; margin-top: -8px;">+ Add another column</h4>
+    </div>
+
+</div>
+
+{% endblock %}
