@@ -327,13 +327,12 @@ def index(request):
 
 @route('/<organization>/<project>/documents')
 def documents(request, organization, project):
-    """Read and list documents in documents directory"""
+    """Read and list documents"""
     cfg = get_cfg_from_org_and_project(organization, project)
     docs = []
     message = ""
-    for doc_dir in cfg["document_dirs"].keys():
-      print("doc_dir: ", doc_dir)
-      doc_dir_path = os.path.join(cfg["repo_dir"], doc_dir)
+    for doc_set in cfg["document_dirs"].keys():
+      doc_dir_path = os.path.join(cfg["repo_dir"], cfg["document_dirs"][doc_set]["directory"])
 
       if not os.path.isdir(doc_dir_path):
         message += "<br /> Directory {} not found in repository files".format(doc_dir_path)
@@ -346,12 +345,10 @@ def documents(request, organization, project):
             docs.append({'name': os.path.basename(doc),
                          'file_path': doc
                         })
-      docs.sort()
-      # print(docs)
 
     # Prepare item_ctl_msg message
-    edit_dir = os.path.join(cfg["repo_dir"], cfg["documents_dir"])
-    item_ctl_msg = "To modify listed documents, change documents in directory: `{}`".format(edit_dir)
+    edit_dir = os.path.join(cfg["repo_dir"])
+    item_ctl_msg = "To modify listed documents, change files in document directories of `{}`".format(edit_dir)
 
     return render_template(request, 'documents.html',
                             cfg=cfg,

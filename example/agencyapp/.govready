@@ -37,6 +37,9 @@ documents:
 - name: outputs
   directory: outputs
   description: Default output directory
+- name: word docs
+  directory: outputs/word
+  description: Word documents
 users:
 - name: Anonymous (workstation mode)
 team:
