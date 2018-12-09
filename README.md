@@ -16,6 +16,11 @@ cd hypergrc
 pip install -r requirements.txt
 ```
 
+NOTES:
+
+* Use either `pip` or `pip3` in your commands depending on your configuration.
+
+
 ### Installing with virtualenv
 
 ```
