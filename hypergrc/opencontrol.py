@@ -182,79 +182,97 @@ def load_project_component_controls(component, standards):
         if component_opencontrol.get("schema_version") != "3.0.0":
             raise ValueError("Don't know how to read OpenControl component file {} which has schema_version {}.".format(fn, component_opencontrol.get("schema_version")))
 
-        for control in component_opencontrol.get("satisfies", []):
-            # For each control, yield a dict holding the control
-            # number, name, etc. Because of UI limitations, yield
-            # a separate control record for each control *part*.
+        def yield_from_list(component_opencontrol, source_file):
+            for control in component_opencontrol.get("satisfies", []):
+                # If an entry is a string rather than a dict, then it names a file
+                # that we should read that contains a list of controls implemented.
+                if isinstance(control, str):
+                    fn = os.path.join(os.path.dirname(source_file), control)
+                    with open(fn, encoding="utf8") as f:
+                        yield from yield_from_list(rtyaml.load(f), fn)
+                    continue
 
-            # Create basic metadata for the control only based on what's in the
-            # component.
-            control_metadata = {
-                "component": component,
-                "standard": {
-                    "id": control["standard_key"], # matches how the control is put in the URL
-                    "name": control["standard_key"],
-                },
-                "family": {
-                    "abbrev": control["control_key"].split("-")[0],
-                    "name": control["control_key"].split("-")[0],
-                    "sort_key": control["control_key"].split("-")[0],
-                },
-                "control": { # must match control structure in load_project_standards
-                    "id": control["control_key"], # matches how the control is put in the URL
-                    "sort_key": (control["standard_key"], make_control_number_sort_key(control["control_key"])),
-                    "number": control["control_key"],
-                    "name": control.get("name", control["control_key"]), # not in OpenControl spec
-                    "url": "{}/controls/{}/{}".format(
-                        component["project"]["url"],
-                        quote_plus(control["standard_key"]),
-                        quote_plus(control["control_key"]),
-                    )
-                },
-                "source_file": fn,
-            }
+                # For each control, yield a dict holding the control
+                # number, name, etc. Because of UI limitations, yield
+                # a separate control record for each control *part*.
 
-            # Look up the standard and add standard metadata.
-            if control["standard_key"] in standards:
-                standard = standards[control["standard_key"]]
-                control_metadata["standard"]["name"] = standard["name"]
+                # Create basic metadata for the control only based on what's in the
+                # component.
+                control_metadata = {
+                    "component": component,
+                    "standard": {
+                        "id": control["standard_key"], # matches how the control is put in the URL
+                        "name": control["standard_key"],
+                    },
+                    "family": {
+                        "abbrev": control["control_key"].split("-")[0],
+                        "name": control["control_key"].split("-")[0],
+                        "sort_key": control["control_key"].split("-")[0],
+                    },
+                    "control": { # must match control structure in load_project_standards
+                        "id": control["control_key"], # matches how the control is put in the URL
+                        "sort_key": (control["standard_key"], make_control_number_sort_key(control["control_key"])),
+                        "number": control["control_key"],
+                        "name": control.get("name", control["control_key"]), # not in OpenControl spec
+                        "url": "{}/controls/{}/{}".format(
+                            component["project"]["url"],
+                            quote_plus(control["standard_key"]),
+                            quote_plus(control["control_key"]),
+                        )
+                    },
+                    "source_file": source_file,
+                }
 
-                # If the control is in the standard, add its info also.
-                if control["control_key"] in standard["controls"]:
-                    control_metadata["control"].update(standard["controls"][control["control_key"]])
+                # Look up the standard and add standard metadata.
+                if control["standard_key"] in standards:
+                    standard = standards[control["standard_key"]]
+                    control_metadata["standard"]["name"] = standard["name"]
 
-                # If this is a nonstandard citation to a control, add some of the parent control's info.
-                elif get_matched_control(control["control_key"], standard) in standard["controls"]:
-                    matched_control = standard["controls"][get_matched_control(control["control_key"], standard)]
-                    print(control["control_key"], get_matched_control(control["control_key"], standard))
-                    if not control_metadata["control"].get("name"):
-                      control_metadata["control"]["name"] = matched_control["name"]
-                    if not control_metadata["control"].get("family"):
-                      control_metadata["control"]["family"] = matched_control["family"]
-                    if not control_metadata["control"].get("description"):
-                      control_metadata["control"]["description"] = matched_control["description"]
+                    # If the control is in the standard, add its info also.
+                    if control["control_key"] in standard["controls"]:
+                        control_metadata["control"].update(standard["controls"][control["control_key"]])
+
+                    # If this is a nonstandard citation to a control, add some of the parent control's info.
+                    elif get_matched_control(control["control_key"], standard) in standard["controls"]:
+                        matched_control = standard["controls"][get_matched_control(control["control_key"], standard)]
+                        print(control["control_key"], get_matched_control(control["control_key"], standard))
+                        if not control_metadata["control"].get("name"):
+                          control_metadata["control"]["name"] = matched_control["name"]
+                        if not control_metadata["control"].get("family"):
+                          control_metadata["control"]["family"] = matched_control["family"]
+                        if not control_metadata["control"].get("description"):
+                          control_metadata["control"]["description"] = matched_control["description"]
+                        
+                    # If the control's family is in the standard, add its info also.
+                    if control_metadata["control"].get("family") in standard["families"]:
+                        control_metadata["family"].update(standard["families"][control_metadata["control"]["family"]])
                     
-                # If the control's family is in the standard, add its info also.
-                if control_metadata["control"].get("family") in standard["families"]:
-                    control_metadata["family"].update(standard["families"][control_metadata["control"]["family"]])
-                
 
-            # For each narrative part, make a copy of the control metadata
-            # so far, add the control part, and return the combined metadata.
-            import copy
-            for narrative_part in control.get("narrative", []):
-                controlimpl = dict(control_metadata)
-                controlimpl.update({
-                    "control_part": narrative_part.get("key"),
-                    "sort_key": (controlimpl["control"]["sort_key"], make_control_number_sort_key(narrative_part.get("key"))),
-                    "narrative": narrative_part["text"],
-                })
-                yield controlimpl
+                # For each narrative part, make a copy of the control metadata
+                # so far, add the control part, and return the combined metadata.
+                #
+                # Note that we're reading "implementation_status" from the narrative
+                # part. This is non-conformant with OpenControl which has a single
+                # implementation_statuses field on the *control*, for all control
+                # parts, which are are ignoring so far in hyperGRC.
+                import copy
+                for narrative_part in control.get("narrative", []):
+                    controlimpl = dict(control_metadata)
+                    controlimpl.update({
+                        "control_part": narrative_part.get("key"),
+                        "sort_key": (controlimpl["control"]["sort_key"], make_control_number_sort_key(narrative_part.get("key"))),
+                        "narrative": narrative_part["text"],
+                        "implementation_status": narrative_part.get("implementation_status") or "",
+                    })
+                    yield controlimpl
+
+        # Yield the controls in the "satisfies" key.
+
+        yield from yield_from_list(component_opencontrol, fn)
 
 def update_component_control(controlimpl):
     # The control is defined in the component.yaml file given in controlimpl["source_file"].
     # Open that file for editing, find the control record, update it, and return.
-
     with open(controlimpl["source_file"], "r+", encoding="utf8") as f:
         # Parse the content.
         data = rtyaml.load(f)
@@ -266,9 +284,19 @@ def update_component_control(controlimpl):
 
                 for narrative_part in control.get("narrative", []):
                     if narrative_part.get("key") == controlimpl.get("control_part"):
+                        
                         # Found the right entry. Update the fields.
+
                         narrative_part["text"] = controlimpl["narrative"]
 
+                        # Store implementation_status here. In OpenControl there is
+                        # a `implementation_statuses` on the control. But our data
+                        # model has a single implementation_status per control *part*.
+                        # If the implementation status is cleared, remove the key.
+                        if controlimpl["implementation_status"]:
+                            narrative_part["implementation_status"] = controlimpl["implementation_status"]
+                        elif "implementation_status" in narrative_part:
+                            del narrative_part["implementation_status"]
 
         # Write back out to the data files.
         f.seek(0);

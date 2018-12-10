@@ -94,8 +94,10 @@
               <b>Implementation narrative</b></br/>
               <textarea class="narrative-input" style="width: 98%; height: 100px; padding: 8px; margin-bottom:20px;" placeholder="Describe what the components contributes to the control..."></textarea>
 
+              {#
               <b>Summary</b><br/>
               <input class="summary-input" style="width: 98%; padding: 8px;" placeholder="Write something short for spreadsheets..."><br/><br/>
+              #}
 
               <b>Implementation status</b></br/>
               <input class="implementation_status-input" style="width: 98%; padding: 8px;" placeholder="Unknown"><br/><br/>
@@ -132,8 +134,8 @@
         var modal = $('#control-editor-modal');
         modal.find('.modal-title').text(control.control.number + (control.control.part ? (" Part " + control.control.part) : ""));
         modal.find('.narrative-input').val(control.narrative);
-        modal.find('.summary-input').val(control.summary);
-        modal.find('.implementation_status-input').val(control.status);
+        //modal.find('.summary-input').val(control.summary);
+        modal.find('.implementation_status-input').val(control.implementation_status);
         modal.find('.component-link')
           .attr('href', control.control.url + "/grid");
         modal.modal();
@@ -161,9 +163,9 @@
             standard: edit_control_current_control.standard.id,
             control: edit_control_current_control.control.id,
             control_part: edit_control_current_control.control_part,
-            summary: edit_control_current_control.summary,
+            //summary: edit_control_current_control.summary,
             narrative: edit_control_current_control.narrative,
-            status: edit_control_current_control.status,
+            implementation_status: edit_control_current_control.implementation_status,
           },
           success: function(res) {
             // ok it's saved, unless there's an error which we should display

@@ -297,12 +297,19 @@ def project_control_grid(request, organization, project, standard_key, control_k
 
 def clean_text(text):
   # Clean text before going into YAML. YAML gets quirky
-  # about extra spaces, so get rid of them.
+  # about extra spaces before newlines and at the ends of
+  # values, so get rid of them so that the output is
+  # clean and legible. Single-line strings should not end
+  # with a newline, but multi-line strings should have a
+  # newline at the end of each line, including the last
+  # line.
   import re
   text = text.strip()
   text = re.sub(r"\s+\n", "\n", text)
   if not text: # empty
     return None
+  if "\n" in text:
+    text += "\n"
   return text
 
 @route('/update-control', methods=['POST'])
@@ -311,18 +318,17 @@ def update_control(request):
     # controls to find a maching record.
     project = load_project(request.form["organization"], request.form["project"])
     component = opencontrol.load_project_component(project, request.form["component"])
-    for component in opencontrol.load_project_components(project):
-        for controlimpl in opencontrol.load_project_component_controls(component, {}):
-          if controlimpl["standard"]["id"] == request.form["standard"] \
-           and controlimpl["control"]["id"] == request.form["control"] \
-           and controlimpl.get("part") == (request.form.get("control_part")) \
-           :
+    for controlimpl in opencontrol.load_project_component_controls(component, {}):
+      if controlimpl["standard"]["id"] == request.form["standard"] \
+       and controlimpl["control"]["id"] == request.form["control"] \
+       and controlimpl.get("control_part") == (request.form.get("control_part") or None) \
+       :
 
-           controlimpl["summary"] = clean_text(request.form.get("summary", ""))
-           controlimpl["narrative"] = clean_text(request.form.get("narrative", ""))
-           controlimpl["implementation_status"] = clean_text(request.form.get("status", ""))
-           opencontrol.update_component_control(controlimpl)
-           return "OK"
+       #controlimpl["summary"] = clean_text(request.form.get("summary", ""))
+       controlimpl["narrative"] = clean_text(request.form.get("narrative", ""))
+       controlimpl["implementation_status"] = clean_text(request.form.get("implementation_status", ""))
+       opencontrol.update_component_control(controlimpl)
+       return "OK"
 
     # The control was not found in the data files.
     return "NOTFOUND"
