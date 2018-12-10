@@ -56,30 +56,6 @@ def load_project(organization_id, project_id):
             return project
     raise ValueError("Project {} not found.".format(project_id))
 
-def get_control(standard, control_id):
-    # Get the display name for the control. Sometimes control IDs
-    # refer to subparts of controls, e.g. AC-2 (H), or even non-standard
-    # supplemental citations, e.g. AC-2 (DHS 1.2.3). If the control isn't
-    # in the standard exactly, back off at non-word characters like parens
-    # and spaces until we find the control and then append the extra info.
-    control_parts = re.split(r"(\s+|[^\w\s]+)", control_id)
-    for i in reversed(range(len(control_parts))):
-      test_id = "".join(control_parts[:i+1])
-      id_remainder = "".join(control_parts[i+1:])
-      if test_id in standard:
-        return {
-          "id": control_id + ("" if not id_remainder else id_remainder),
-          "name": standard[test_id]["name"] + ("" if not id_remainder else " " + id_remainder),
-          "description": standard[test_id]["description"] if not id_remainder else "See {}, {}.".format(test_id, id_remainder),
-        }
-    
-    # Control isn't found at all. Fill in with default/dummy data.
-    return {
-      "id": control_id,
-      "name": "[{}]".format(control_id),
-      "description": None,
-    }
-
 #############################
 # Routes
 #############################
