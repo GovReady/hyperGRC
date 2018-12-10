@@ -1,0 +1,13 @@
+name: Cylance-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: MA-3 (4)
+  control_name: Restricted Tool Use
+  family: MA
+  standard_key: NIST-SP-800-53-r4
+  covered_by: []
+  security_control_type: Hybrid
+  implementation_status: Planned
+  narrative:
+  - text: Tool provision purpose use into to 4)(a.

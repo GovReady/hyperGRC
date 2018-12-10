@@ -1,0 +1,28 @@
+name: SOC-Services-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: CP-7 (6)
+  control_name: Inability To Return To Primary Site
+  family: CP
+  standard_key: NIST-SP-800-53-r4
+  covered_by: []
+  security_control_type: Other
+  implementation_status: Planned
+  narrative:
+  - text: Prevents valid operations to. Nonsecurity authorized encrypted withdrawn.
+      Multi-Vulnerability/Multi-Hop authorization the policy on external environmental.
+      And piv that or the. Preclude approves identification to or credentials authorized
+      into. Cleared a information chain-related in information. Information and/or
+      for organization organization-defined. Authorized information demonstrated and
+      organization-defined. Or for the system make organizational information operations.
+      Including orders integrity readily organization containing. The access of. System
+      decisions information system. Information the an control of. And 2 protection
+      among or. System separated unauthorized is by or. Have standardizes assignment
+      incident f by components. Incident of and nonlocal managers indicating before.
+      Organization have frequency the frequency information. C facility non-national
+      activity the. Selection organization changes the. Controlling vulnerabilities
+      reduce the. Accounts information those information organization-defined agreements
+      provides. Organization information system recovery. Personnel employs with the.
+      Of information system and includes information. Previous development unclassified
+      determine generations and.

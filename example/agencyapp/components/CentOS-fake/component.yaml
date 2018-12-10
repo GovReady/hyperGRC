@@ -1,0 +1,5 @@
+name: CentOS-fake
+schema_version: 3.0.0
+satisfies:
+- CP-CONTINGENCY_PLANNING.yaml
+- SC-SYSTEM_AND_COMMUNICATIONS_PROTECTION.yaml

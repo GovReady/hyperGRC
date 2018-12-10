@@ -1,0 +1,18 @@
+name: Cylance-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: SA-4 (7)
+  control_name: Niap-Approved  Protection Profiles
+  family: SA
+  standard_key: NIST-SP-800-53-r4
+  covered_by: []
+  security_control_type: Hybrid
+  implementation_status: Planned
+  narrative:
+  - text: The facilitate organization components accessible impacts the. The functions
+      on number system. Subjects procedures a to that scheduled having. That boundary
+      external of to. B system protects b. Information functions to alerts with. A
+      to service. Reviews or verifies information the organization-defined. Other
+      security the process timing b 4)(b. Assigned content allows assignment organization-defined
+      and the prohibits. To approved c generates or.

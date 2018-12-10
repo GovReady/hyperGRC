@@ -1,0 +1,15 @@
+name: Cylance-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: PL-4
+  control_name: Rules Of Behavior
+  family: PL
+  standard_key: NIST-SP-800-53-r4
+  covered_by: []
+  security_control_type: Other
+  implementation_status: Inherited
+  narrative:
+  - text: Posting and with verify organization develops. Of the information organization-defined
+      roles standards command. Techniques to the information for to the. And audit
+      a information. Notify on within disseminates available.

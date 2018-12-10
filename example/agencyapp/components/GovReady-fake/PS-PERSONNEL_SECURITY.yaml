@@ -1,0 +1,23 @@
+name: GovReady-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: PS-7
+  control_name: Third-Party Personnel Security
+  family: PS
+  standard_key: NIST-SP-800-53-r4
+  covered_by: []
+  security_control_type: Other
+  implementation_status: In Place
+  narrative:
+  - text: Disaster password the over approves into the. Cryptographic a b resulting
+      provides connection process. Response selection and been physical. A be object
+      detect. Value coordination organization those communications the the activated.
+      Provider reputation and roles. Components is employs identifying to employs
+      security. Can the corrective to. The the in for. To system via system establishes
+      organization-defined. Time the terms information. For e that. Criticality implementation
+      during firmware. Information the level uses authorizations event incident. Identity
+      examines system the the configuration/connection information. Maintain centrally
+      privacy. Reject or organizational organization-defined security. Code inactive
+      a design.
+  summary: ~

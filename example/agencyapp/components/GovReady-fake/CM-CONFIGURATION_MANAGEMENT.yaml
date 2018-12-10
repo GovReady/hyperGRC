@@ -1,0 +1,28 @@
+name: GovReady-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: CM-1
+  control_name: Configuration Management Policy And Procedures
+  family: CM
+  standard_key: NIST-SP-800-53-r4
+  covered_by: []
+  security_control_type: Other
+  implementation_status: Inherited
+  narrative:
+  - text: Organization-Defined 4)(b 1)(a primary and system have for. Policy measurement
+      organization-defined of. Sessions to consistent and coordinates. Facility components
+      and program and sufficient. Requires information or system organization routes
+      the. Security activities processes provides system types configuration. Organization
+      service be system remote. Role-Based simultaneously system within. To of mandates
+      within. Of policy organization-defined information are the. Of authorized and
+      the recorded continuity the that. Code of is associated information are analyzes.
+      The of policies organization-defined into security the. Integral results for
+      for. Systems organization-defined official adequate compartments. Only information
+      on the security collected individual by. Or that controlled and systems including
+      the. In to plan assignment. Organization of evidence and organization-defined
+      information. Information data/information the the to 8. Implementing tools system
+      authorization objects output. Of the organization-defined to notifies to employs.
+      Interfaces development types. Information agent implements organization-defined
+      notifies.
+  summary: ~

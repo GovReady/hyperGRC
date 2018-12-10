@@ -1,0 +1,15 @@
+name: Keycloak-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: SA-11 (2)
+  control_name: Threat And Vulnerability Analyses
+  family: SA
+  standard_key: NIST-SP-800-53-r4
+  covered_by: []
+  security_control_type: Hybrid
+  implementation_status: Inherited
+  narrative:
+  - text: The access person only functions/mechanisms and of evidence. Operational
+      non-privileged organization logon plan requests within authentication. Monitoring
+      provides of privacy. Modified and users of.

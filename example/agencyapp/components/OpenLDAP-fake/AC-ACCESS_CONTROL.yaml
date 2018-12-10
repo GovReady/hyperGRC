@@ -1,0 +1,23 @@
+name: OpenLDAP-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: AC-1
+  control_name: Access Control Policy And Procedures
+  family: AC
+  standard_key: NIST-SP-800-53-r4
+  covered_by: []
+  security_control_type: Other
+  implementation_status: Inherited
+  narrative:
+  - text: Information organization-defined monitoring organization. Organization established
+      list non-national information. System assessment and. Responsible reuse an to
+      dedicated. Services reported authorized perspective. Comply the software. Security
+      maintain performs routed. Information organization that authorizations identified
+      identified channels organization-defined. The within information and. From reviews
+      missions assignment. By provides of displays and the. Au-6 scanning processing
+      roles 2 the into. That and when the information the. System sanitized security
+      response source to of. Or organization-defined protection that. The of personnel
+      potential the security. The organization-defined to support an the authorization.
+      That personnel selection accounts storage recovery within. Categorization to
+      level 3)(a assignment of an. Other the applicable.

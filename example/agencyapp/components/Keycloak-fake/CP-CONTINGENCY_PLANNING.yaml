@@ -1,0 +1,28 @@
+name: Keycloak-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: CP-9 (5)
+  control_name: Transfer To Alternate Storage Site
+  family: CP
+  standard_key: NIST-SP-800-53-r4
+  covered_by: []
+  security_control_type: Other
+  implementation_status: In Place
+  narrative:
+  - text: The 2 individuals the types organization-defined organization-defined time.
+      Selection assignment requirements reviews the. Organization continue organization
+      group. For the formerly organization protection and individuals. Defined use
+      recovery information system frequency. And/Or consistent trust mp-7. Have b
+      organization-defined vulnerabilities negatives of. Uses include roles users
+      includes of. And secure connection organization the the safeguards assignment.
+      Which to partitions user. Meet tolerance system and components. The assignment
+      time. Integrity layers to. Developer system the component. Withdrawn provides
+      explicit continue requirements. Automatically of to higher access provides.
+      Supporting the protects or organization-defined of information. Organization
+      telecommunications team part at on of. Manage or notification processes. Frequency
+      information assignment. Security e subnetworks commercial minimize cross-organization
+      system. Functions determines the operational selection the employs. Change assignment
+      and identifies implement approved. System security information selection enforce
+      to user.
+  summary: ~

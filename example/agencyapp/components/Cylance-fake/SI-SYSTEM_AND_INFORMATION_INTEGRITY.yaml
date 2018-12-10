@@ -1,0 +1,13 @@
+name: Cylance-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: SI-3 (6)
+  control_name: Testing / Verification
+  family: SI
+  standard_key: NIST-SP-800-53-r4
+  covered_by: []
+  security_control_type: Hybrid
+  implementation_status: Partially In Place
+  narrative:
+  - text: To equipment a information purposes.

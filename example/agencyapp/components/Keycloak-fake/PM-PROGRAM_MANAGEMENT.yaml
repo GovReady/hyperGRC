@@ -1,0 +1,17 @@
+name: Keycloak-fake
+documentation_complete: false
+schema_version: 3.0.0
+satisfies:
+- control_key: PM-5
+  control_name: Information System Inventory
+  family: PM
+  standard_key: NIST-SP-800-53-r4
+  covered_by: []
+  security_control_type: Hybrid
+  implementation_status: In Place
+  narrative:
+  - text: Spam the the inspections organization. Nonlocal the the personnel accessing.
+      For of 1 system as enhance. The to take configuration/connection. Controls requirements
+      the the investigations assignment time. The the such system and. Interviews
+      information the individual to. Roles information original the and the collaborative.
+      1 convenes of access organization-defined handling.
