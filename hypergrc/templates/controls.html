@@ -6,10 +6,18 @@
 
 {% block content %}
 <div id="static-page-content" class="container">
+  <div class="row item-ctl">
+    <div class="col-md-10">&nbsp;</div>
+    <div class="col-md-2" style="text-align: right;" onclick="alert('{{ item_ctl_msg }}')">
+      MODIFY <span class="glyphicon glyphicon-cog"></span>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-md-12">
         <h1>Controls</h1>
     </div>
+
     <div class="col-md-12 ctl-btns" style="color: black; margin-bottom: 1.5em;">
 
         {% for standard in standards %}
@@ -31,11 +39,12 @@
                 {% endif %}
               </button>
             </a>
+
           {% endfor %}
 
         </div>
         {% endfor %}
     </div>
-  </div>    
+  </div>
 </div>
 {% endblock %}

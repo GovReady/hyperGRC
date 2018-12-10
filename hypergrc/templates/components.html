@@ -6,6 +6,13 @@
 
 {% block content %}
 <div id="static-page-content" class="container">
+  <div class="row item-ctl">
+    <div class="col-md-10">&nbsp;</div>
+    <div class="col-md-2" style="text-align: right;" onclick="alert('{{ item_ctl_msg }}')">
+      MODIFY <span class="glyphicon glyphicon-cog"></span>
+    </div>
+  </div>
+
     <h1>{{project.title}} components</h1>
 
     {% for component in components %}

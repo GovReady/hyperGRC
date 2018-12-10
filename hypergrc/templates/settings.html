@@ -2,6 +2,13 @@
 
 {% block content %}
 <div  id="static-page-content" class="container">
+	<div class="row item-ctl">
+		<div class="col-md-10">&nbsp;</div>
+		<div class="col-md-2" style="text-align: right;" onclick="alert('{{ item_ctl_msg }}')">
+		  MODIFY <span class="glyphicon glyphicon-cog"></span>
+		</div>
+	</div>
+
 	<div class="row">
 		<div class="col-md-12">
 			<h3>Your {{ project }} project settings</h3>
@@ -35,9 +42,23 @@
 		</div>
 		<div class="row col-md-12">
 			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
-			<div class="col-md-3">standards file version</div>
+			<div class="col-md-3">standards file</div>
 			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ cfg.standard_file }}</a></div>
 		</div>
+		<div class="row col-md-12">
+			<p>&nbsp;</p>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
+			<div class="col-md-3">primary certification</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ cfg.system.primary_certification }}</a></div>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
+			<div class="col-md-3">primary certification file</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ cfg.primary_certification_file }}</a></div>
+		</div>
+
 		<div class="row col-md-12">
 			<p>&nbsp;</p>
 		</div>

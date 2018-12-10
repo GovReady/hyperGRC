@@ -5,6 +5,7 @@ metadata:
   organization:
     name: U.S. General Examples Administration
     abbreviation: USGEA
+  repository: https://github.com/GovReady/hyperGRC/tree/master/example/agencyapp
 components:
   - ./components/CentOS-fake
   - ./components/Cisco-Cloud-Rtr-fake

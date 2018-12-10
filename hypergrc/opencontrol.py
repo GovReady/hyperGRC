@@ -30,6 +30,7 @@ def load_project_from_path(project_dir):
         organization_name = opencontrol.get("metadata", {}).get("organization", {}).get("name", "No Organization")
         organization_abbrev = opencontrol.get("metadata", {}).get("organization", {}).get("abbreviation", organization_name)
         organization_id = organization_abbrev[0:12] + "-" + short_hash(organization_name)
+        source_repository = opencontrol.get("metadata", {}).get("repository")
 
         # make an identifier
         project_id = name[0:12] + "-" + short_hash(fn)
@@ -44,6 +45,7 @@ def load_project_from_path(project_dir):
         "title": name,
         "path": project_dir,
         "description": description,
+        "source_repository": source_repository,
         "url": "/organizations/{}/projects/{}".format(
             quote_plus(organization_id),
             quote_plus(project_id)

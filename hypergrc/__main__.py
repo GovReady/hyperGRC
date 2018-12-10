@@ -1,5 +1,13 @@
 # Start the hyperGRC HTTP server. Run until CTRL+C is pressed.
 
+import sys
+if (sys.version_info.major < 3) or (sys.version_info.major == 3 and sys.version_info.minor < 5):
+  print("hyperGRC failed to start.")
+  print("hyperGRC requires Python 3.5 or higher.")
+  # raise ValueError("hyperGRC requires Python 3.5 or higher.")
+  sys.exit(1)
+
+import os
 import argparse
 import http.server
 import socketserver
@@ -23,6 +31,10 @@ for project in args.project:
   if project.startswith("@"):
     # '@' prefixes are the Unixy-way of saying read a list from
     # a file.
+    if not os.path.isfile(project[1:]):
+      print("hyperGRC failed to start.")
+      print("File `{}` listing Compliance as Code repositories not found.".format(project[1:]))
+      sys.exit(1)
     with open(project[1:], 'r') as f:
       for line in f:
         line = line.strip()
@@ -116,6 +128,7 @@ def path_matches(route_path, path):
 try:
   socketserver.TCPServer.allow_reuse_address = True
   httpd = socketserver.TCPServer((BIND_HOST, int(BIND_PORT)), Handler)
+  print("hyperGRC started...")
   print("Listening at http://{}:{}...".format(BIND_HOST, BIND_PORT))
   httpd.serve_forever()
 except KeyboardInterrupt:
