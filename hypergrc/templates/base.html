@@ -122,6 +122,7 @@
       {% block scripts %}{% endblock %}
 
       <script>
+      {% if project %}
       // Edit a control.
       var edit_control_current_control = null;
       var edit_control_current_callback = null;
@@ -182,6 +183,7 @@
       function update_control(elem, control) {
         elem.find('.col-sm-12').attr('title', control.narrative);
       }
+      {% endif %}
       </script>
 
     </body>
