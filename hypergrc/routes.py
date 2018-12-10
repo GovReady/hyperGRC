@@ -272,7 +272,7 @@ def project_control_grid(request, organization, project, standard_key, control_k
                     "part": controlimpl["control_part"],
                     "components": [],
                 })
-            if len(parts[-1]["components"]) == 0 or parts[-1]["components"][-1]["id"] != controlimpl["component"]["id"]:
+            if len(parts[-1]["components"]) == 0 or parts[-1]["components"][-1]["component"]["id"] != controlimpl["component"]["id"]:
                 parts[-1]["components"].append({
                     "component": controlimpl["component"],
                     "controls": [],
