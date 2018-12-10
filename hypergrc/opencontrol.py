@@ -1,6 +1,8 @@
 # Routines for loading OpenControl data.
 
 import os.path
+import re
+
 import rtyaml
 
 def short_hash(s, len=6):
@@ -153,6 +155,21 @@ def load_project_standards(project):
                         },
                     }
                 yield (standard_key, standard)
+                
+def get_matched_control(control_id, standard):
+    # Sometimes control IDs refer to subparts of controls, e.g. AC-2 (a)
+    # or non-standard supplemental citations, e.g. AC-2 (DHS 1.2.3). If the
+    # control isn't in the standard exactly, back off at non-word characters
+    # like parens and spaces until we find a matching control.
+    control_parts = re.split(r"(\s+|[^\w\s]+)", control_id)
+    for i in reversed(range(len(control_parts))):
+      test_id = "".join(control_parts[:i+1])
+      #id_remainder = "".join(control_parts[i+1:])
+      if test_id in standard["controls"]:
+        return test_id
+    
+    # Control isn't found at all. Return the original control_id unchanged.
+    return control_id
 
 def load_project_component_controls(component, standards):
     # Return a generator over all of the controls implemented by the component.
@@ -187,7 +204,7 @@ def load_project_component_controls(component, standards):
                     "id": control["control_key"], # matches how the control is put in the URL
                     "sort_key": (control["standard_key"], make_control_number_sort_key(control["control_key"])),
                     "number": control["control_key"],
-                    "name": control["name"], # not in OpenControl spec
+                    "name": control.get("name", control["control_key"]), # not in OpenControl spec
                     "url": "{}/controls/{}/{}".format(
                         component["project"]["url"],
                         quote_plus(control["standard_key"]),
@@ -206,9 +223,21 @@ def load_project_component_controls(component, standards):
                 if control["control_key"] in standard["controls"]:
                     control_metadata["control"].update(standard["controls"][control["control_key"]])
 
-                    # If the control's family is in the standard, add its info also.
-                    if control_metadata["control"].get("family") in standard["families"]:
-                        control_metadata["family"].update(standard["families"][control_metadata["control"]["family"]])
+                # If this is a nonstandard citation to a control, add some of the parent control's info.
+                elif get_matched_control(control["control_key"], standard) in standard["controls"]:
+                    matched_control = standard["controls"][get_matched_control(control["control_key"], standard)]
+                    print(control["control_key"], get_matched_control(control["control_key"], standard))
+                    if not control_metadata["control"].get("name"):
+                      control_metadata["control"]["name"] = matched_control["name"]
+                    if not control_metadata["control"].get("family"):
+                      control_metadata["control"]["family"] = matched_control["family"]
+                    if not control_metadata["control"].get("description"):
+                      control_metadata["control"]["description"] = matched_control["description"]
+                    
+                # If the control's family is in the standard, add its info also.
+                if control_metadata["control"].get("family") in standard["families"]:
+                    control_metadata["family"].update(standard["families"][control_metadata["control"]["family"]])
+                
 
             # For each narrative part, make a copy of the control metadata
             # so far, add the control part, and return the combined metadata.
