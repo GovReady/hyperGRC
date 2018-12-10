@@ -161,9 +161,10 @@ h1, h2, h3, h4, h5 {
 *******************************/
 
 .ctl-btns .btn {
-  width: 95px;
+  width: 97px;
+  overflow: hidden;
   height: 3.5em;
-  margin: 0 1em 1em 0;
+  margin: 0 .9em .9em 0;
 }
 
 /*******************************
