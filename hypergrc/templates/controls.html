@@ -8,15 +8,19 @@
 <div id="static-page-content" class="container">
   <div class="row">
     <div class="col-md-12">
-        <h3>Controls</h3>
+        <h1>Controls</h1>
     </div>
     <div class="col-md-12 ctl-btns" style="color: black; margin-bottom: 1.5em;">
 
         {% for standard in standards %}
         <div>
-          <h4>{{ standard.name }}</h4>
+          <h2>{{ standard.name }}</h2>
 
           {% for control in standard.controls %}
+          
+            {% if loop.changed(control.family) %}
+              <h3>{{control.family}}</h3>
+            {% endif %}
 
             <a href="{{control.url}}/combined" onclick="loading();">
               <button type="button" class="btn btn-default"
