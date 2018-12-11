@@ -12,7 +12,7 @@ The goal is a low-profile, hyper-useful IT GRC tool supporting compliance-as-cod
 
 ## Install
 
-```
+```sh
 git clone https://github.com/GovReady/hyperGRC.git hypergrc
 cd hypergrc
 pip install -r requirements.txt
@@ -22,7 +22,7 @@ NOTE: You may need to adjust the command for `pip` (.e.g `pip3`) depending on ho
 
 ### Installing with virtualenv
 
-```
+```sh
 git clone https://github.com/GovReady/hyperGRC.git hypergrc
 cd hypergrc
 virtualenv venv -p python3
@@ -34,7 +34,7 @@ pip install -r requirements.txt
 
 After installing the few required Python libraries, start the hyperGRC server using the included example compliance repository for Agency App:
 
-```bash
+```sh
 $ python -m hypergrc example/agencyapp
 Listening at http://localhost:8000...
 ```
@@ -47,11 +47,52 @@ NOTE: You may need to adjust the command for `python` (.e.g `python3`) depending
 
 ### Starting hyperGRC with virtualenv
 
-```
+If you installed hyperGRC with a virtualenv above, start it by first activating the virtualenv:
+
+```sh
 # Activate the virtual environment if it is not already active.
 source venv/bin/activate
 
 python -m hypergrc example/agencyapp
+```
+
+### Command-line options
+
+#### OpenControl repository paths
+
+hyperGRC accepts several command-line arguments. You've already seen one: the local path to the OpenControl repository. You may specify one or more paths to OpenControl repositories to open them all up within hyperGRC.
+
+```sh
+python -m hypergrc example/agencyapp path/to/project2 ...
+```
+
+If you do not specify any paths on the command line, hyperGRC reads a list of paths to repositories in a file named `.hypergrc_repos`, e.g.:
+
+```text
+.hypergrc_repos
+---------------
+example/agencyapp
+path/to/project2
+```
+
+The start as:
+
+```bash
+python -m hypergrc
+```
+
+You may also specify files containing lists of paths to repositories on the command-line by preceding the listing file with an `@`-sign. The command above is equivalent to:
+
+```bash
+python -m hypergrc @.hypergrc_repos
+```
+
+#### Other options
+
+To bind to a host and port other than the default `localhost:8000`, use `--bind host:port`, e.g.:
+
+```bash
+python -m hypergrc --bind 0.0.0.0:80
 ```
 
 ## Understanding the compliance-as-code data files
@@ -98,21 +139,9 @@ For more details, see the files in example/agencyapp.
 
 (Coming soon - content to be added)
 
-
 ### GovReady SSP Parser
 
 (Working - content to be added)
-
-### The standards and certifications data file
-
-hyperGRC expects to find individual "standard" and "certification" files in the local Compliance as Code repository to properly identify control, control guidance and the controls needed for a certification. 
-
-You don't have to create these files. You can fetch from other repositories.
-
-```
-mkdir standards
-curl https://raw.githubusercontent.com/GovReady/NIST-800-53r4-Standards/master/NIST-800-53r4.yaml > standards/nist-800-53-rev4.yaml
-```
 
 # Licensing
 
