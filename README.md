@@ -6,7 +6,7 @@ The goal is a low-profile, hyper-useful IT GRC tool supporting compliance-as-cod
 
 ## Requirements
 
-* Python 3.4+
+* Python 3.5+
 * Packages listed in `requirements.txt`
 * At least one repository of OpenControl files for a system
 

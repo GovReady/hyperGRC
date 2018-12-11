@@ -102,6 +102,8 @@ def make_control_number_sort_key(s):
 def load_project_standards(project):
     # Return a mapping from standard_keys to parsed standard data.
 
+    standards = { }
+
     # The OpenControl file for the system (project) has a list of standards...
     fn1 = os.path.join(project["path"], "opencontrol.yaml")
     with open(fn1, encoding="utf8") as f1:
@@ -156,7 +158,9 @@ def load_project_standards(project):
                                and family_data.get('type') == 'family' # not in OpenControl --- we've added family names to the standard
                         },
                     }
-                yield (standard_key, standard)
+                standards[standard_key] = standard
+
+    return standards
                 
 def get_matched_control(control_id, standard):
     # Sometimes control IDs refer to subparts of controls, e.g. AC-2 (a)

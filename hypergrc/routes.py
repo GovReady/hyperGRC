@@ -1,4 +1,5 @@
-# This Python file uses the following encoding: utf-8
+# This module contains hyperGRC's routes, i.e. handlers for
+# virtual paths.
 
 from .render import render_template
 from . import opencontrol
@@ -10,29 +11,51 @@ ROUTES = []
 # Helpers
 #############################
 
+# This is a helper function used by the @route decorator to take a Flask-like
+# route pattern and make a compiled regular expression that tests for whether
+# an incoming HTTP request path matches the @route's path pattern. It uses
+# named groups to pick out parts of the path that become keyword arguments
+# to the route function.
 def parse_route_path_string(path):
   # path looks something like:
   #   /<organization>/<project>/documents
   # Brackets denote variables holding filename-like characters only.
   # Everything else is a literal character.
-
+  #
   # Convert the route path into a regular expression with named groups, e.g. into:
   # /(?P<organization>\w+)/(?P<project>\w+)/(?P<documents>\w+)$
 
+  # This is a helper function that takes each <varable> or unmached
+  # literal character and returns a regular expression for that
+  # variable or character.
   import re, string
   ALLOWED_PATH_CHARS = string.ascii_letters + string.digits + '_.~' + '%+' + '-' # put - at the end because of re
   def replacer(m):
+    # If we get a <variable>...
     if m.group(0).startswith("<"):
-      # Substitute <var> with (?P<var>\w+).
+      # Return an equivalent named group like (?P<variable>[ALLOWED_PATH_CHARS]+).
+      # ALLOWED_PATH_CHARS contains characters that path variables are allowed to
+      # match against. It's important that this list does not contain a slash because
+      # we usually separate variables in URL patterns with slashses. Everything
+      # else is just to restrict URLs to sane and safe values.
       return r"(?P<{}>[{}]+)".format(m.group(1), ALLOWED_PATH_CHARS)
+
+    # If we get a literal character...
     else:
-      # Substitute other characters with their re-escaped string.
+      # Return it escaped so it can be included in a regular expression literally.
       return re.escape(m.group(0))
+  
+  # Replace <variable>s with named groups and escape every other character
+  # in the path pattern.
   path = re.sub(r"<([a-z_]+?)>|.", replacer, path)
+
+  # Return the compiled regular expression.
   path = re.compile(path + "$")
   return path
 
-# Define a decorator to build up a routing table.
+# This defines an @route decorator that adds the function to the ROUTES routing
+# table with a URL path pattern. methods is the allowed HTTP methods for the
+# route.
 def route(path, methods=["GET"]):
   def decorator(route_function):
     path1 = parse_route_path_string(path)
@@ -41,7 +64,7 @@ def route(path, methods=["GET"]):
   return decorator
 
 #############################
-# Model
+# Model helpers
 #############################
 
 def load_projects():
@@ -51,6 +74,10 @@ def load_projects():
         yield opencontrol.load_project_from_path(project_dir)
 
 def load_project(organization_id, project_id):
+    # Load and return a particular project.
+    # TODO: This inefficiently scans all projects for one that matches the organization
+    # and project ID. Better would be to cache a mapping from org/project IDs to project
+    # paths at application startup.
     for project in load_projects():
         if project["organization"]["id"] == organization_id and project["id"] == project_id:
             return project
@@ -64,10 +91,8 @@ def load_project(organization_id, project_id):
 
 @route('/')
 def index(request):
-    # Read each project's opencontrol.yaml file for a project name
-    # and render a list of projects grouped by organization.
-
-    # Read projects and put into organization buckets.
+    # Iterate through all of the projects and put them into
+    # buckets by organization.
     organizations = { }
     for project in load_projects():
         org = project["organization"]["id"]
@@ -78,12 +103,13 @@ def index(request):
             }
         organizations[org]["projects"].append(project)
 
-    # Sort organizations and the projects within them.
+    # Sort organizations and the projects within them by name.
     organizations = list(organizations.values())
     organizations.sort(key = lambda org : org["name"])
     for org in organizations:
         org["projects"].sort(key = lambda project : project["title"])
 
+    # Render the homepage template.
     return render_template(request, 'index.html',
         organizations=organizations
     )
@@ -93,20 +119,37 @@ def index(request):
 @route('/organizations/<organization>/projects/<project>')
 def project(request, organization, project):
     """Main project page listing components."""
-    project = load_project(organization, project)
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # Load its components.
+    components = opencontrol.load_project_components(project)
+
+    # Show the project's components.
     return render_template(request, 'components.html',
                             project=project,
-                            components=opencontrol.load_project_components(project))
+                            components=components)
 
 @route('/organizations/<organization>/projects/<project>/components/<component_name>')
 def component(request, organization, project, component_name):
     """Show one component from a project."""
-    project = load_project(organization, project)
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # Load the component.
     component = opencontrol.load_project_component(project, component_name)
 
     # Each control's metadata, such as control names and control family names,
     # are loaded from standards. Load the standards first.
-    standards = dict(opencontrol.load_project_standards(project))
+    standards = opencontrol.load_project_standards(project)
 
     # Load the component's controls.
     controlimpls = list(opencontrol.load_project_component_controls(component, standards))
@@ -156,7 +199,10 @@ def component(request, organization, project, component_name):
 def controls(request, organization, project):
     """Show all of the controls for a project."""
 
-    project = load_project(organization, project)
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
 
     # Get a list of all controls, by standard, combining both the controls listed
     # in the standards as well as the controls in use by the components, which
@@ -164,7 +210,7 @@ def controls(request, organization, project):
 
     # Start with the controls defined by the standards.
 
-    standards = dict(opencontrol.load_project_standards(project))
+    standards = opencontrol.load_project_standards(project)
 
     # Add in controls defined by the components.
 
@@ -223,8 +269,13 @@ def project_control_grid(request, organization, project, standard_key, control_k
         raise ValueError()
 
     # Load the project.
-    project = load_project(organization, project)
-    standards = dict(opencontrol.load_project_standards(project))
+    
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    standards = opencontrol.load_project_standards(project)
 
     # Get the control info from the standard.
     try:
