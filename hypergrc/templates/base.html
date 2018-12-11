@@ -139,7 +139,7 @@
         edit_control_current_control = control;
         edit_control_current_callback = callback;
         var modal = $('#control-editor-modal');
-        modal.find('.modal-title').text(control.control.number + (control.control.part ? (" Part " + control.control.part) : ""));
+        modal.find('.modal-title').text(control.control.number + (control.control_part ? (" Part " + control.control_part) : ""));
         modal.find('.narrative-input').val(control.narrative);
         //modal.find('.summary-input').val(control.summary);
         modal.find('.implementation_status-input').val(control.implementation_status);
