@@ -126,8 +126,9 @@ def project(request, organization, project):
     except ValueError:
       return "Organization `{}` project `{}` in URL not found.".format(organization, project)
 
-    # Load its components.
-    components = opencontrol.load_project_components(project)
+    # Load its components and sort them.
+    components = list(opencontrol.load_project_components(project))
+    components.sort(key = lambda component : component["name"])
 
     # Show the project's components.
     return render_template(request, 'components.html',
