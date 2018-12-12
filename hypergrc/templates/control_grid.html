@@ -44,7 +44,7 @@
     <div style="width:340px; min-height:100px; background-color: rgb(223, 227, 230); margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
 
       <h4 style="height:2em; margin-top: -8px;">{{component_info.component.name}}</h4>
-      <button type="button" class="btn btn-outline-secondary" style="margin-bottom: 8px;">Guide me</button>
+      <a class="btn btn-default" style="margin-bottom: 8px;" href="{{component_info.component.url}}/guide">Guide me</a>
 
       {% set outer_loop = loop %}
       {% for impl in component_info.controls %}
