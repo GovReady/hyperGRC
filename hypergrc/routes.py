@@ -145,25 +145,39 @@ def component(request, organization, project, component_name):
       return "Organization `{}` project `{}` in URL not found.".format(organization, project)
 
     # Load the component.
-    component = opencontrol.load_project_component(project, component_name)
+    try:
+      component = opencontrol.load_project_component(project, component_name)
+    except ValueError:
+      return "Component `{}` in URL not found in project.".format(component_name)
 
     # Each control's metadata, such as control names and control family names,
-    # are loaded from standards. Load the standards first.
+    # is loaded from standards. Load the standards first.
     standards = opencontrol.load_project_standards(project)
 
     # Load the component's controls.
     controlimpls = list(opencontrol.load_project_component_controls(component, standards))
 
     # Group the controls by control family, and sort the families and the controls within them.
+    # Iterate over the controls....
     from collections import OrderedDict
     control_families = OrderedDict()
     for controlimpl in controlimpls:
-        fam = controlimpl["family"]["sort_key"]
-        if fam not in control_families:
-            control_families[fam] = dict(controlimpl["family"])
-            control_families[fam]["standard"] = controlimpl["standard"]
-            control_families[fam]["controls"] = []
-        control_families[fam]["controls"].append(controlimpl)
+        # If this is the first time we're seeing this control family, make a new
+        # bucket for the control family.
+        fam_id = (controlimpl["standard"]["id"], controlimpl["family"]["id"])
+        if fam_id not in control_families:
+            control_families[fam_id] = {
+              "name": controlimpl["family"]["name"],
+              "abbrev": controlimpl["family"]["abbrev"],
+              "sort_key": (controlimpl["standard"]["name"], controlimpl["family"]["sort_key"]),
+              "standard": controlimpl["standard"],
+              "controls": [],
+            }
+
+        # Put this control into the bucket for its family.
+        control_families[fam_id]["controls"].append(controlimpl)
+
+    # Sort the families and then the controls within them.
     control_families = list(control_families.values())
     control_families.sort(key = lambda controlfamily : controlfamily["sort_key"])
     for control_family in control_families:
@@ -176,15 +190,16 @@ def component(request, organization, project, component_name):
         })
     control_part_counts = len(controlimpls)
 
-    # Word totals statistics.
+    # Compute some statistics about how many words are in the controls.
     import re
     words = []
     for controlimpl in controlimpls:
-        wds = len(re.split("\W+", controlimpl["narrative"]))
+        wds = len(re.split(r"\W+", controlimpl["narrative"]))
         words.append(wds)
     total_words = sum(words)
     average_words_per_controlpart = total_words / (len(controlimpls) if len(controlimpls) > 0 else 1) # don't err if no controlimpls
 
+    # Done.
     return render_template(request, 'component.html',
                             project=project,
                             component=component,
@@ -199,6 +214,7 @@ def component(request, organization, project, component_name):
 def controls(request, organization, project):
     """Show all of the controls for a project."""
 
+    # Load the project.
     try:
       project = load_project(organization, project)
     except ValueError:
@@ -214,30 +230,34 @@ def controls(request, organization, project):
 
     # Add in controls defined by the components.
 
+    # Iterate through all components in the project...
     for component in opencontrol.load_project_components(project):
+
+        # Iterate through all control implementations across all components...
         for controlimpl in opencontrol.load_project_component_controls(component, standards):
-          # If the control implementation is for an unknown standard, make a record for it.
-          standard_key = controlimpl["standard"]["id"]
-          if standard_key not in standards:
-            standards[standard_key] = controlimpl["standard"]
-            standards[standard_key].update({ 
-              "controls": { }
-            })
+            # If the control implementation is for an unknown standard, make a record for it
+            # by using the "standard" information attached to this control. Create a "controls"
+            # list within the standard if it doesn't exist where we'll store controls that
+            # have not yet been encountered.
+            standard_key = controlimpl["standard"]["id"]
+            standards.setdefault(standard_key, controlimpl["standard"])
+            standards[standard_key].setdefault("controls", { })
 
-          # If the control implementation is for an unknown control, make a record for it.
-          control_key = controlimpl["control"]["id"]
-          if control_key not in standards[standard_key]["controls"]:
-            standards[standard_key]["controls"][control_key] = controlimpl["control"]
+            # If the control implementation is for an unknown control, make a record for it.
+            control_key = controlimpl["control"]["id"]
+            standards[standard_key]["controls"].setdefault(control_key, controlimpl["control"])
 
-          # Count up the number of components that have an implementation for the control.
-          # Note that we may come here more than once for a component because a component
-          # can have multiple "control parts". So we use a set to track the (unique)
-          # components.
-          control = standards[standard_key]["controls"][control_key]
-          control.setdefault("components", set())
-          control["components"].add(component["id"])
+            # Count up the number of components that have an implementation for the control.
+            # Note that we may come here more than once for a component because a component
+            # can have multiple "control parts". So we use a set to track the (unique)
+            # components.
+            standards[standard_key]["controls"][control_key].setdefault("components", set())
+            standards[standard_key]["controls"][control_key]["components"].add(component["id"])
 
-    # Make the standards a sorted list, and sort the controls within it.
+    # Make the standards a sorted list, and sort the controls within it. 'standards'
+    # is a dict mapping standard IDs to dicts holding information about it. Going
+    # forward we just need the dicts in order --- we no longer need a mapping. Same
+    # for the list of controls within each standard.
     standards = list(standards.values())
     standards.sort(key = lambda group : group["name"])
     for standard in standards:
@@ -245,7 +265,10 @@ def controls(request, organization, project):
       standard["controls"].sort(key = lambda control : control["sort_key"])
 
     # Not all controls have a URL so far. The ones that have no implementations
-    # in components don't. Add a URL field now.
+    # in components don't --- they came straight from the standards files and
+    # since the standards are loaded independently of projects, they don't know
+    # what project we're doing right now and so could not pre-generate a URL.
+    # Add a URL field now so that the template can generate links.
     from urllib.parse import quote_plus
     for standard in standards:
       for control in standard["controls"]:
@@ -256,6 +279,7 @@ def controls(request, organization, project):
             quote_plus(control["id"]),
           )
 
+    # Done.
     return render_template(request, 'controls.html',
                             project=project,
                             standards=standards,
@@ -265,33 +289,45 @@ def controls(request, organization, project):
 def project_control_grid(request, organization, project, standard_key, control_key, format):
     """Show all of the components that contribute to this control."""
 
+    # This route has two modes --- grid and combined --- which go off to separate templates.
+    # But the data the two templates are showing is largely the same. So we have them
+    # in a single route.
     if format not in ("grid", "combined"):
         raise ValueError()
 
     # Load the project.
-    
     try:
       project = load_project(organization, project)
     except ValueError:
       return "Organization `{}` project `{}` in URL not found.".format(organization, project)
 
+    # Load the standards in use by this project.
     standards = opencontrol.load_project_standards(project)
 
-    # Get the control info from the standard.
+    # Get the control metadata from the standard. Sometimes we're loading
+    # a page for a control not mentioned in the standard but mentioned in
+    # components. In that case, it will be missing from the standard and
+    # we'll get its metadata later.
     try:
       control = standards[standard_key]["controls"][control_key]
     except KeyError:
       control = None
 
     # Scan all of the components for all contributions to this control.
+    # Build up a list of relevant components and relevant control implementations
+    # within that component.
     components = []
     for component in opencontrol.load_project_components(project):
-        # Iterate over its controls.
+        # Iterate over its controls...
         controlimpls = []
         for controlimpl in opencontrol.load_project_component_controls(component, standards):
+            # Only look at control implementations for the control specified in the URL.
+            # Even though we're looking at a single control, multiple control implementations
+            # may match because there may be implementations for different *parts* of the
+            # same control.
             if controlimpl["control"]["id"] == control_key:
                 # This is a matching control --- save the control metadata
-                # for the UI if we didn't get it from the standard.
+                # if we didn't get it from the standard.
                 if not control:
                   control = controlimpl["control"]
 
@@ -312,9 +348,12 @@ def project_control_grid(request, organization, project, standard_key, control_k
     for component in components:
         component["controls"].sort(key = lambda controlimpl : controlimpl["sort_key"])
 
-    # If we're formatting by part, then instead of grouping by components, group by
-    # control part. But we use the sorted arrays above because we want to use the
-    # ordering we put things in already.
+    # In the 'grid' view, we have columns for the matched components. But in the 'combined'
+    # view we have a single text area that shows all of the control narrative text in order
+    # as it would appear in a system security plan --- i.e. sorted *first* by control part
+    # (i.e. part a, part b) and *second* by component. Our components data structure has
+    # everything sorted by part and component, but by component first. This block just
+    # rearranges it first by part. Sorry if the code isn't clear but it would be easy to redo.
     parts = []
     for component in components:
         for controlimpl in component["controls"]:
@@ -330,7 +369,8 @@ def project_control_grid(request, organization, project, standard_key, control_k
                 })
             parts[-1]["components"][-1]["controls"].append(controlimpl)
 
-    # Add URL info.
+    # Add URL info to the control --- it might be missing if the metadata
+    # came from the standard.
     from urllib.parse import quote_plus
     control["url"] = "{}/controls/{}/{}".format(
         project["url"],
@@ -338,6 +378,7 @@ def project_control_grid(request, organization, project, standard_key, control_k
         quote_plus(control_key),
     )
 
+    # Done.
     return render_template(request, 'control_{}.html'.format(format),
                             project=project,
                             standard=standards[standard_key],
@@ -346,40 +387,29 @@ def project_control_grid(request, organization, project, standard_key, control_k
                             parts=parts,
                           )
 
-def clean_text(text):
-  # Clean text before going into YAML. YAML gets quirky
-  # about extra spaces before newlines and at the ends of
-  # values, so get rid of them so that the output is
-  # clean and legible. Single-line strings should not end
-  # with a newline, but multi-line strings should have a
-  # newline at the end of each line, including the last
-  # line.
-  import re
-  text = text.strip()
-  text = re.sub(r"\s+\n", "\n", text)
-  if not text: # empty
-    return None
-  if "\n" in text:
-    text += "\n"
-  return text
-
 @route('/update-control', methods=['POST'])
 def update_control(request):
-    # Load the project and the component being edited, then iterate through its
-    # controls to find a maching record.
+    """Update a control narrative or other user-editable compliance data."""
+
+    # Load the project and the component being edited.
     project = load_project(request.form["organization"], request.form["project"])
     component = opencontrol.load_project_component(project, request.form["component"])
+
+    # Iterate through the controls until a matching one is found.
+    # We need the existing control so we can update it and then pass it back to
+    # update_component_control.
     for controlimpl in opencontrol.load_project_component_controls(component, {}):
       if controlimpl["standard"]["id"] == request.form["standard"] \
        and controlimpl["control"]["id"] == request.form["control"] \
        and controlimpl.get("control_part") == (request.form.get("control_part") or None) \
        :
 
-       #controlimpl["summary"] = clean_text(request.form.get("summary", ""))
-       controlimpl["narrative"] = clean_text(request.form.get("narrative", ""))
-       controlimpl["implementation_status"] = clean_text(request.form.get("implementation_status", ""))
-       opencontrol.update_component_control(controlimpl)
-       return "OK"
+       # Update the control's metadata.
+       #controlimpl["summary"] = request.form.get("summary", "")
+       controlimpl["narrative"] = request.form.get("narrative", "")
+       controlimpl["implementation_status"] = request.form.get("implementation_status", "")
+       if opencontrol.update_component_control(controlimpl):
+         return "OK"
 
     # The control was not found in the data files.
     return "NOTFOUND"

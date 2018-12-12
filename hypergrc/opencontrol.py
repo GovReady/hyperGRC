@@ -2,9 +2,12 @@
 
 import os.path
 import re
+from urllib.parse import quote_plus
 
 import rtyaml
 
+# This is a utility function to generate a short hex hash for
+# text.
 def short_hash(s, len=6):
     import hashlib
     hasher = hashlib.sha256()
@@ -12,29 +15,40 @@ def short_hash(s, len=6):
     return hasher.hexdigest()[:len]
 
 def load_project_from_path(project_dir):
-    from urllib.parse import quote_plus
+    # Open a project at the given directory. An "opencontrol.yaml" file must
+    # exist in the directory.
 
     # Read the opencontrol file for the system name, description, etc.
-    # If there is no name, fall back to the project directory name.
+    # Check that the schema_version is recognized.
     fn = os.path.join(project_dir, "opencontrol.yaml")
     with open(fn, encoding="utf8") as f:
         opencontrol = rtyaml.load(f)
         if opencontrol.get("schema_version") != "1.0.0":
             raise ValueError("Don't know how to read OpenControl system file {} which has schema_version {}.".format(fn, opencontrol.get("schema_version")))
 
-        # read OpenControl system metadata
+        # Read OpenControl system metadata.
+        # If there is no name, fall back to the project directory name.
         name = opencontrol.get("name") or os.path.splitext(os.path.basename(os.path.normpath(project_dir)))[0]
         description = opencontrol.get("metadata", {}).get("description")
 
-        # read hyperGRC extensions
+        # Read hyperGRC extensions to the metadata.
+        # Create an "organization_id" that we can put into URLs. Use the organization's abbreviation,
+        # but add to it a hash of the full organization name so that in the unlikely case that
+        # two organizations share the same abbreviation, we still assign unique IDs to them.
         organization_name = opencontrol.get("metadata", {}).get("organization", {}).get("name", "No Organization")
         organization_abbrev = opencontrol.get("metadata", {}).get("organization", {}).get("abbreviation", organization_name)
         organization_id = organization_abbrev[0:12] + "-" + short_hash(organization_name)
         source_repository = opencontrol.get("metadata", {}).get("repository")
 
-        # make an identifier
+        # Create a "project_id" that we can put into URLs. Since we don't have a database or
+        # primary keys, we have to make something up. Start with the project's name, but
+        # truncated so that we don't have unnecessarily long URLs. Add to it a hash of the
+        # directory path containing the project so that in the unlikely case that two
+        # projects share the same first 12 characters of the project name, we still assign
+        # unique IDs to them.
         project_id = name[0:12] + "-" + short_hash(fn)
 
+    # This is the data structure that we use throughout the application to represent projects.
     return {
         "id": project_id,
         "organization": {
@@ -53,10 +67,12 @@ def load_project_from_path(project_dir):
     }
 
 def load_project_components(project):
-    # Read the project's opencontrol.yaml file and
-    # then read each component's component.yaml file
-    # and return a generator over components.
-    from urllib.parse import quote_plus
+    # Get a project's components, returning a generator that yields a data
+    # structure for each component holding its metadata.
+
+    # Read the project's opencontrol.yaml file and then read each component's
+    # component.yaml file, and return a generator over components. Check that
+    # the schema_version of each is recognized.
     fn1 = os.path.join(project["path"], "opencontrol.yaml")
     with open(fn1, encoding="utf8") as f1:
         opencontrol = rtyaml.load(f1)
@@ -73,9 +89,16 @@ def load_project_components(project):
                 # Get the component name. If there is no name, fall back to the directory name.
                 name = component.get("name") or os.path.splitext(os.path.basename(os.path.normpath(component_path)))[0]
 
-                # Make a URL-safe, stable component identifier.
+                # Create a "component_id" that we can put into URLs. Since we don't have a database or
+                # primary keys, we have to make something up. Start with the component's name, but
+                # truncated so that we don't have unnecessarily long URLs. Add to it a hash of the
+                # directory path containing the component so that in the unlikely case that two
+                # components share the same first 12 characters of their names, we still assign
+                # unique IDs to them.
                 component_id = name[0:12] + "-" + short_hash(component_path)
 
+                # This is the data structure that we use throughout the application to represent
+                # a component.
                 yield {
                     "project": project,
                     "id": component_id,
@@ -85,6 +108,9 @@ def load_project_components(project):
                 }
 
 def load_project_component(project, component_id):
+    # Load a particular component in the project by its id.
+    # TODO: We currently scan all components until we find the
+    # matching one. We should add some caching to speed this up.
     for component in load_project_components(project):
         if component["id"] == component_id:
             return component
@@ -148,10 +174,11 @@ def load_project_standards(project):
                         },
                         "families": {
                             family_id: { # must match control structure in load_project_component_controls, except the URL
-                                "id": family_id, # matches how the control is put in the URL
+                                "id": family_id,
                                 "sort_key": family_id,
                                 "number": family_id,
                                 "name": family_data["name"],
+                                "abbrev": family_id,
                             }
                             for family_id, family_data in standard_opencontrol.items()
                             if isinstance(family_data, dict) # not the "name: " key
@@ -180,8 +207,6 @@ def get_matched_control(control_id, standard):
 def load_project_component_controls(component, standards):
     # Return a generator over all of the controls implemented by the component.
     
-    from urllib.parse import quote_plus
-
     fn = os.path.join(component["path"], "component.yaml")
     with open(fn, encoding="utf8") as f:
         component_opencontrol = rtyaml.load(f)
@@ -211,6 +236,7 @@ def load_project_component_controls(component, standards):
                         "name": control["standard_key"],
                     },
                     "family": {
+                        "id": control["control_key"].split("-")[0],
                         "abbrev": control["control_key"].split("-")[0],
                         "name": control["control_key"].split("-")[0],
                         "sort_key": control["control_key"].split("-")[0],
@@ -276,6 +302,23 @@ def load_project_component_controls(component, standards):
 
         yield from yield_from_list(component_opencontrol, fn)
 
+def clean_text(text):
+  # Clean text before going into YAML. YAML gets quirky
+  # about extra spaces before newlines and at the ends of
+  # values, so get rid of them so that the output is
+  # clean and legible. Single-line strings should not end
+  # with a newline, but multi-line strings should have a
+  # newline at the end of each line, including the last
+  # line.
+  import re
+  text = text.strip()
+  text = re.sub(r"\s+\n", "\n", text)
+  if not text: # empty
+    return None
+  if "\n" in text:
+    text += "\n"
+  return text
+
 def update_component_control(controlimpl):
     # The control is defined in the component.yaml file given in controlimpl["source_file"].
     # Open that file for editing, find the control record, update it, and return.
@@ -293,18 +336,22 @@ def update_component_control(controlimpl):
                         
                         # Found the right entry. Update the fields.
 
-                        narrative_part["text"] = controlimpl["narrative"]
+                        narrative_part["text"] = clean_text(controlimpl["narrative"])
 
                         # Store implementation_status here. In OpenControl there is
                         # a `implementation_statuses` on the control. But our data
                         # model has a single implementation_status per control *part*.
                         # If the implementation status is cleared, remove the key.
                         if controlimpl["implementation_status"]:
-                            narrative_part["implementation_status"] = controlimpl["implementation_status"]
+                            narrative_part["implementation_status"] = clean_text(controlimpl["implementation_status"])
                         elif "implementation_status" in narrative_part:
                             del narrative_part["implementation_status"]
 
-        # Write back out to the data files.
-        f.seek(0);
-        f.truncate()
-        rtyaml.dump(data, f)
+                        # Write back out to the data files.
+                        f.seek(0);
+                        f.truncate()
+                        rtyaml.dump(data, f)
+
+                        return True
+
+    return False
