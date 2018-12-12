@@ -211,6 +211,28 @@ def component(request, organization, project, component_name):
                             average_words_per_controlpart=average_words_per_controlpart,
                           )
 
+@route('/organizations/<organization>/projects/<project>/components/<component_name>/guide')
+def component_guide(request, organization, project, component_name):
+    """Show a component's guide."""
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # Load the component.
+    try:
+      component = opencontrol.load_project_component(project, component_name)
+    except ValueError:
+      return "Component `{}` in URL not found in project.".format(component_name)
+
+    # Done.
+    return render_template(request, 'component_guide.html',
+                            project=project,
+                            component=component,
+                          )
+                          
 @route('/organizations/<organization>/projects/<project>/controls')
 def controls(request, organization, project):
     """Show all of the controls for a project."""
