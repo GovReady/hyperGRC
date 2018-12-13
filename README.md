@@ -143,7 +143,16 @@ For more details, see the files in example/agencyapp.
 
 (Working - content to be added)
 
-# Licensing
+## Development
+
+Development is easier if hyperGRC is run in a way that it restarts when any source code changes occur, so that you can see your changes immediately. `nodemon` from the Node package manager is a handy tool to do that. [Install Node](https://nodejs.org/en/download/) and then run:
+
+```sh
+npm install -g nodemon
+nodemon -e py -x python3 -m hypergrc
+```
+
+## Licensing
 
 hyperGRC is copyrighted 2018 by GovReady PBC and available under the open source license indicated in [LICENSE.md](LICENSE.md).
 
