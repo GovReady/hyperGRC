@@ -112,6 +112,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
   # Handle a request (for something other than a static file).
   def do_request(self, method):
+    # Add the method as an attribute on 'self'. Some route functions
+    # will look at it to see if this is a GET or POST request, etc.
+    self.method = method
+
     # Find the (first) route that can handle this request. On a match,
     # we get back a dict holding parsed parameters from the request path.
     # See routes.py's parse_route_path_string.

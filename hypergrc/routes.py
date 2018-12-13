@@ -1,7 +1,7 @@
 # This module contains hyperGRC's routes, i.e. handlers for
 # virtual paths.
 
-from .render import render_template
+from .render import render_template, redirect
 from . import opencontrol
 
 PROJECT_LIST = []
@@ -83,9 +83,9 @@ def load_project(organization_id, project_id):
             return project
     raise ValueError("Project {} not found.".format(project_id))
 
-#############################
-# Routes
-#############################
+#######################
+# Routes for Main Pages
+#######################
 
 # Home route
 
@@ -134,6 +134,8 @@ def project(request, organization, project):
     return render_template(request, 'components.html',
                             project=project,
                             components=components)
+
+# Components and controls within a project
 
 @route('/organizations/<organization>/projects/<project>/components/<component_name>')
 def component(request, organization, project, component_name):
@@ -409,6 +411,48 @@ def project_control_grid(request, organization, project, standard_key, control_k
                             components=components,
                             parts=parts,
                           )
+
+#####################################################
+# Routes for Creating and Updating Compliance Content
+#####################################################
+
+@route('/organizations/<organization>/projects/<project>/add-component', methods=["GET", "POST"])
+def add_component(request, organization, project):
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    if request.method == "GET":
+        # Get the default name and path for a new component.
+        component_name, component_path = opencontrol.get_new_component_defaults(project)
+        error = None
+    else:
+        # Read the component name and path from the form fields.
+        component_name = request.form.get("component-name", "").strip()
+        component_path = request.form.get("component-path", "").strip()
+
+        # Validate.
+        if not component_name:
+            error = "The name cannot be empty."
+        elif not component_path:
+            error = "The path cannot be empty."
+        elif not opencontrol.validate_component_path(project, component_path):
+            error = "Component path already exists or is not valid."
+        else:
+            # Validation OK. Create the component.
+            component = opencontrol.create_component(project, component_path, component_name)
+            print(component)
+            return redirect(request, component["url"])
+
+    # Show the form.
+    return render_template(request, 'component_new.html',
+                  project=project,
+                  default_component_name=component_name,
+                  default_component_path=component_path,
+                  error=error,
+                )
 
 @route('/update-control', methods=['POST'])
 def update_control(request):

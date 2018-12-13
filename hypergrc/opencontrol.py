@@ -3,6 +3,7 @@
 import os.path
 import re
 from urllib.parse import quote_plus
+from collections import OrderedDict
 
 import rtyaml
 
@@ -422,6 +423,77 @@ def load_project_component_controls(component, standards):
 
     # Yield the controls in the "satisfies" key.
     yield from yield_from_list(component_opencontrol, fn)
+
+def get_new_component_defaults(project):
+    # What is a good name and path for a new component?
+
+    # For the path, get the common base path of existing components. If there isn't a common
+    # path make a new good path. The path is relative to the project path.
+    existing_components = list(load_project_components(project))
+    component_paths = [ os.path.relpath(component["path"], start=project["path"]) for component in existing_components  ]
+    try:
+        basepath = os.path.commonpath(component_paths)
+    except:
+        basepath = None
+    if not basepath or basepath.startswith(".") or basepath.startswith("/"): # ensure the path is relative
+        basepath = "components"
+
+    # Add to it a new component directory name that isn't an existing directory.
+    i = 1
+    while True:
+        component_name = "New Component {}".format(i)
+        component_path = os.path.join(basepath, component_name.replace(" ", ""))
+        if not os.path.exists(component_path):
+            break
+        i += 1
+
+    return component_name, component_path
+
+def validate_component_path(project, component_path):
+    d = os.path.join(project["path"], component_path)
+    if os.path.exists(d):
+        return False
+    return True
+
+def create_component(project, component_path, component_name):
+    # Create a new OpenControl component.
+
+    # Create the stub data structure.
+    component_opencontrol = OrderedDict()
+    component_opencontrol['schema_version'] = '3.0.0'
+    component_opencontrol['name'] = component_name
+
+    # Create the path.
+    os.makedirs(os.path.join(project['path'], component_path))
+
+    # Write the component.yaml file.
+    with open(os.path.join(project['path'], component_path, 'component.yaml'), 'w', encoding="utf8") as f:
+        f.write(rtyaml.dump(component_opencontrol))
+
+    # Add the path to the project's opencontrol.yaml file.
+    with open(os.path.join(project["path"], 'opencontrol.yaml'), "r+", encoding="utf8") as f:
+        # Parse the content.
+        data = rtyaml.load(f)
+
+        # Create the "components" array if it does not exist.
+        if not isinstance(data.get("components"), list):
+            data["components"] = []
+
+        # Append the new component path.
+        data["components"].append(component_path)
+
+        # Write back out to the data files.
+        f.seek(0);
+        f.truncate()
+        rtyaml.dump(data, f)
+
+    # Read the component back and return it.
+    for component in load_project_components(project):
+        if component["path"] == os.path.join(project['path'], component_path):
+            return component
+
+    raise ValueError("Component {} does not exist in project {} even after creating it.".format(component_path, project["id"]))
+
 
 def clean_text(text):
   # Clean text before going into YAML. YAML gets quirky

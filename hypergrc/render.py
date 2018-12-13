@@ -50,3 +50,8 @@ def render_template(request, template_fn, **contextvars):
 	request.send_header("Content-Type", "text/html; charset=UTF-8")
 	request.end_headers()
 	request.wfile.write(body.encode("utf8"))
+
+def redirect(request, url):
+	request.send_response(301)
+	request.send_header("Location", url)
+	request.end_headers()
