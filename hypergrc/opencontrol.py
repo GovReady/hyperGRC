@@ -112,12 +112,22 @@ def load_project_components(project):
     # Get a project's components, returning a generator that yields a data
     # structure for each component holding its metadata.
 
-    # Read the project's opencontrol.yaml file and then read each component's
-    # component.yaml file, and return a generator over components. Check that
-    # the schema_version of each is recognized.
+    # Read the project's opencontrol.yaml file for paths to components.
     fn1 = os.path.join(project["path"], "opencontrol.yaml")
     opencontrol = load_opencontrol_yaml(fn1, "system", ("1.0.0",))
-    for component_path in opencontrol.get("components", []):
+    component_paths = opencontrol.get("components", [])
+
+    # Typically all components are stored in a 'components' directory. Find
+    # that directory.
+    try:
+        basepath = os.path.commonpath(component_paths)
+    except:
+        basepath = None
+
+    # Read each component's component.yaml file, and return a generator over
+    # components.
+    for component_path in component_paths:
+        # Load the component.yaml file and check that the schema_version of each component is recognized.
         fn2 = os.path.join(project["path"], component_path, "component.yaml")
         component = load_opencontrol_yaml(fn2, "component", ("3.0.0",))
 
@@ -125,12 +135,23 @@ def load_project_components(project):
         name = component.get("name") or os.path.splitext(os.path.basename(os.path.normpath(component_path)))[0]
 
         # Create a "component_id" that we can put into URLs. Since we don't have a database or
-        # primary keys, we have to make something up. Start with the component's name, but
+        # primary keys, we have to make something up. It must be unique within the project and
+        # should be short and human readable.
+        #
+        # The only guaranteed way to be unique is to use the local path to the component, but this
+        # is often components/ComponentName, so chop off the basepath if one exists so we just
+        # have ComponentName. Note that this means the id isn't stable --- if components are added
+        # or removed, the basepath may change, changing all of the component IDs.
+        component_id = component_path
+        if basepath:
+            component_id = os.path.relpath(component_id, start=basepath)
+
+        # Start with the component's name, but
         # truncated so that we don't have unnecessarily long URLs. Add to it a hash of the
         # directory path containing the component so that in the unlikely case that two
         # components share the same first 12 characters of their names, we still assign
         # unique IDs to them.
-        component_id = name[0:12] + "-" + short_hash(component_path)
+        #component_id = name[0:12] + "-" + short_hash(component_path)
 
         # This is the data structure that we use throughout the application to represent
         # a component.
