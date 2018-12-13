@@ -161,7 +161,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .modal-content textarea, .modal-content input {
-  border: 0px solid #bbb;
+  border: 1px solid #ccc;
   background-color: rgb(223, 227, 230)
 }
 

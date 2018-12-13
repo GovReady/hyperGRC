@@ -106,18 +106,17 @@
               <input class="summary-input" style="width: 98%; padding: 8px;" placeholder="Write something short for spreadsheets..."><br/><br/>
               #}
 
-              <b>Implementation status</b></br/>
-              <input class="implementation_status-input" style="width: 98%; padding: 8px;" placeholder="Unknown"><br/><br/>
+              <div style="margin-top: 1.5em"><label for="control-editor-implementation-status">Implementation status</label></div>
+              <input id="control-editor-implementation-status" class="implementation_status-input form-control" placeholder="Unknown">
 
-              <br />
-              <div style="color: #666;">
+              <div style="margin-top: 1.5em; color: #666;">
                 <!-- Hiding mockup feature links
                 <br/><span class="glyphicon glyphicon-check"></span> {{ range(1, 6) | random }} assessments
                 <br/><span class="glyphicon glyphicon-time"></span> {{ range(1, 14) | random }} versions
                 <br/><span class="glyphicon glyphicon-bookmark"></span> upstream source
                 <br/>
                 -->
-                <br/><a class="component-link" style="color: #666;"><span class="glyphicon glyphicon-th"></span>  View all components for this control</a>
+                <a class="component-link" style="color: #666;"><span class="glyphicon glyphicon-th"></span>  View all components for this control</a>
               </div>
             </div>
             <div class="modal-footer">
