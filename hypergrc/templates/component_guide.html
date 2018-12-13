@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}
+  hyperGRC - {{project.title}} - {{component.name}} - Guide
+{% endblock %}
+
+{% block content %}
+<div id="container" style="overflow: auto; width: 1400px; overflow: auto;">
+
+<div style="width:340px; min-height:100px; max-height: 94%; overflow-y: auto; background-color: #cdcdcd; margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
+  
+  <h2 style="margin: 0 0 18px 0;">{{ component.name }}</h2>
+
+
+  <p>This guide will walk you through creating the component security plan for {{component.name}}.</p>
+</div>
+
+<div style="width:1024px; min-height:100px; max-height: 94%;background-color: rgb(223, 227, 230); margin-right: 12px; margin-bottom:20px; float: left; padding: 18px; border-radius: 5px; overflow-y: auto;">
+  <form class="form" style="margin: 0; padding: 0">
+  
+   <h3 style="margin-top: 0">1. What is the name of the system?</h3>
+   <p><input type=text class="form-control" placeholder="system name"></p>
+
+   <h3 style="margin-top: 30px">2. How have the security groups been configured?</h3>
+   <p><textarea class="form-control" placeholder="group 1.... group 2..." rows=3></textarea>
+   
+   <h3 style="margin-top: 30px">3. How often are the audit logs reviewed?</h3>
+   <p><select class="form-control" size=4><option>daily</option><option>weekly</option><option>monthly</option><option>yearly</option></select>
+
+   </form>
+
+</div>
+   
+</div>
+
+{% endblock %}
