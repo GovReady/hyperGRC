@@ -3,6 +3,7 @@
 
 from .render import render_template, redirect
 from . import opencontrol
+import os
 
 PROJECT_LIST = []
 ROUTES = []
@@ -109,9 +110,14 @@ def index(request):
     for org in organizations:
         org["projects"].sort(key = lambda project : project["title"])
 
+    # Prepare modify page message
+    edit_file = os.path.join(os.getcwd(), ".hypergrc_repos")
+    modify_msg = "To modify listed projects, change hyperGRC launch params or edit file: `{}`".format(edit_file)
+
     # Render the homepage template.
     return render_template(request, 'index.html',
-        organizations=organizations
+        organizations=organizations,
+        modify_msg=modify_msg
     )
 
 # Project general routes
@@ -130,10 +136,16 @@ def project(request, organization, project):
     components = list(opencontrol.load_project_components(project))
     components.sort(key = lambda component : component["name"])
 
+    # Prepare modify page message
+    edit_dir = os.path.join(project["path"], "components")
+    edit_file = "opencontrol.yaml"
+    modify_msg = "To modify listed components (1) Add/remove components from directory: `{}` and (2) Update components in file: `{}`".format(edit_dir, edit_file)
+
     # Show the project's components.
     return render_template(request, 'components.html',
                             project=project,
-                            components=components)
+                            components=components,
+                            modify_msg=modify_msg)
 
 # Components and controls within a project
 
@@ -304,10 +316,16 @@ def controls(request, organization, project):
             quote_plus(control["id"]),
           )
 
+    # Prepare modify page message
+    edit_dir = os.path.join(project["path"])
+    print("edit_dir ", edit_dir)
+    modify_msg = "To modify listed controls, edit the standards directory of project path: `{}`".format(edit_dir)
+
     # Done.
     return render_template(request, 'controls.html',
                             project=project,
                             standards=standards,
+                            modify_msg=modify_msg
                           )
 
 @route('/organizations/<organization>/projects/<project>/controls/<standard_key>/<control_key>/<format>')
