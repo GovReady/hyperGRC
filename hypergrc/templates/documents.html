@@ -11,7 +11,7 @@
 
     <div class="row">
         <div class="row col-md-12">
-            <h3>Your {{ project }} documents</h3>
+            <h3>{{ project.title }} documents</h3>
         </div>
 
         <div class="row col-md-12" style="max-height: 90%; overflow-y: auto;">
@@ -20,7 +20,6 @@
             {% endif %}
         </div>
 
-        {% if cfg.mode == "local workstation" %}
         <div class="row col-md-12" style="margin-bottom: 8px;">Displaying local path to documents</div>
         {% for document in documents %}
         <div class="row col-md-12">
@@ -28,7 +27,6 @@
           <div class="col-md-11" style="margin-bottom: 8px;">{{ document.file_path }}</div>
         </div>
         {% endfor %}
-        {% endif %}
 
         <div class="col-md-12">
             <p>&nbsp;</p>

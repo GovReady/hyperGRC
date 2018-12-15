@@ -4,6 +4,7 @@
 from .render import render_template, redirect
 from . import opencontrol
 import os
+import glob
 
 PROJECT_LIST = []
 ROUTES = []
@@ -146,6 +147,55 @@ def project(request, organization, project):
                             project=project,
                             components=components,
                             modify_msg=modify_msg)
+
+@route('/organizations/<organization>/projects/<project>/documents')
+def documents(request, organization, project):
+    """Read and list documents"""
+
+    # Create variables for documents and message
+    docs = []
+    message = ""
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # We want to be able to store documents in our repo.
+    # Temporarily hardcode the documents directory to "outputs".
+    # We are hardcoding the directory until we modify the opencontrol.yaml
+    # file to include a list of directories.
+    docs_dir = "outputs"
+    doc_dir_path = os.path.join(project["path"], docs_dir)
+
+    # If document directory does not exist, generate a message to display.
+    # If document directory exists, read all the documents and append
+    # information on each document to the list of doc objects to pass to
+    # the page to be rendered.
+    if not os.path.isdir(doc_dir_path):
+      message += "<br /> Directory {} not found in repository files".format(doc_dir_path)
+    else:
+      docs_glob = doc_dir_path.rstrip('/') + "/*"
+      for doc in glob.glob(docs_glob):
+        if "~$" in os.path.basename(doc):
+          continue
+        if os.path.isfile(doc):
+          docs.append({'name': os.path.basename(doc),
+                       'file_path': doc
+                      })
+
+      # Prepare modify page message
+      edit_dir = doc_dir_path
+      modify_msg = "To modify listed documents, change files in document directories of `{}`".format(edit_dir)
+
+      return render_template(request, 'documents.html',
+                            project=project,
+                            organization=organization,
+                            message=message,
+                            documents=docs,
+                            modify_msg=modify_msg
+                          )
 
 # Components and controls within a project
 
