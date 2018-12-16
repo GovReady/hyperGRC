@@ -5,6 +5,7 @@ from .render import render_template, redirect
 from . import opencontrol
 import os
 import glob
+import rtyaml
 
 PROJECT_LIST = []
 ROUTES = []
@@ -195,6 +196,37 @@ def documents(request, organization, project):
                             message=message,
                             documents=docs,
                             modify_msg=modify_msg
+                          )
+
+@route('/organizations/<organization>/projects/<project>/team')
+def team(request, organization, project):
+    """Show settings for the project"""
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # Read the team file
+    try:
+      with open(os.path.join(project["path"], "team", "team.yaml"), encoding="utf8") as f:
+        team_data = rtyaml.load(f)
+        team = team_data["team"]
+      message = None
+    except:
+      team = []
+      message = ("Capture your team information in the file: `{}`.".format(os.path.join(project["path"], "team", "team.yaml")))
+
+    # Prepare modify page message
+    edit_file = os.path.join(project["path"], "team", "team.yaml")
+    modify_msg = "To modify team information, update file: `{}`".format(edit_file)
+
+    return render_template(request, 'team.html',
+                          project=project,
+                          message=message,
+                          modify_msg=modify_msg,
+                          team=team
                           )
 
 @route('/organizations/<organization>/projects/<project>/settings')

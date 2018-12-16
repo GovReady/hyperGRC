@@ -16,7 +16,12 @@
       </div>
     </div>
 
-    {% for member in cfg.team %}
+    {% if message %}
+    <div class="row" style="margin-bottom: 0.5em;">
+      <div class="col-md-12">{{ message }}</div>
+    </div>
+    {% else %}
+    {% for member in team %}
     <div class="row" style="margin-bottom: 0.5em;">
       <div class="col-md-1"><span class="glyphicon glyphicon-user"></span></div>
       <div class="col-md-3">{{ member.role }}</div>
@@ -24,6 +29,7 @@
       <div class="col-md-3">{{ member.phone }}</div>
     </div>
     {% endfor %}
+    {% endif %}
     <div class="col-md-12">
       <p>&nbsp;</p>
     </div>
