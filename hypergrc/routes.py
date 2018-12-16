@@ -189,12 +189,39 @@ def documents(request, organization, project):
       edit_dir = doc_dir_path
       modify_msg = "To modify listed documents, change files in document directories of `{}`".format(edit_dir)
 
-      return render_template(request, 'documents.html',
+    return render_template(request, 'documents.html',
                             project=project,
                             organization=organization,
                             message=message,
                             documents=docs,
                             modify_msg=modify_msg
+                          )
+
+@route('/organizations/<organization>/projects/<project>/settings')
+def documents(request, organization, project):
+    """Show settings for the project"""
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # Read the version file
+    try:
+      with open("VERSION", encoding="utf8") as f:
+        HYPERGRC_VERSION=f.read().replace('\n', '')
+    except:
+      fatal_error("hyperGRC requires a VERSION file.")
+
+    # Prepare modify page message
+    edit_dir = os.path.join(project["path"], "opencontrol.yaml")
+    modify_msg = "To modify settings, update file: `{}`".format(edit_dir)
+    print(HYPERGRC_VERSION)
+    return render_template(request, 'settings.html',
+                          project=project,
+                          modify_msg=modify_msg,
+                          hypergrc_version=HYPERGRC_VERSION
                           )
 
 # Components and controls within a project
