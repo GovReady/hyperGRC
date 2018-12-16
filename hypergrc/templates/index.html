@@ -23,7 +23,7 @@
 			<h2>
 				<span class="glyphicon glyphicon-link"></span>
 				<a href="{{project.url}}" onclick="loading();">
-					{{project.title}}
+					{{project.title}} {% if project.authorization_id and project.authorization_id != "Unassigned" %}({{ project.authorization_id }}){% endif %}
 				</a>
 			</h2>
 			<p>{{project.description}}</p>
