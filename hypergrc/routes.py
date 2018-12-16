@@ -224,6 +224,24 @@ def documents(request, organization, project):
                           hypergrc_version=HYPERGRC_VERSION
                           )
 
+@route('/organizations/<organization>/projects/<project>/assessments')
+def assessments(request, organization, project):
+    """Create dummy static page showing assessments"""
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # Prepare modify page message
+    modify_msg = "This page is a feature mockup, does not yet work and cannot currently be modified."
+
+    return render_template(request, 'assessments.html',
+                            project=project,
+                            modify_msg=modify_msg
+                          )
+
 # Components and controls within a project
 
 @route('/organizations/<organization>/projects/<project>/components/<component_name>')
