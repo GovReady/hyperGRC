@@ -217,7 +217,7 @@ def documents(request, organization, project):
     # Prepare modify page message
     edit_dir = os.path.join(project["path"], "opencontrol.yaml")
     modify_msg = "To modify settings, update file: `{}`".format(edit_dir)
-    print(HYPERGRC_VERSION)
+
     return render_template(request, 'settings.html',
                           project=project,
                           modify_msg=modify_msg,
@@ -238,6 +238,24 @@ def assessments(request, organization, project):
     modify_msg = "This page is a feature mockup, does not yet work and cannot currently be modified."
 
     return render_template(request, 'assessments.html',
+                            project=project,
+                            modify_msg=modify_msg
+                          )
+
+@route('/organizations/<organization>/projects/<project>/poams')
+def poams(request, organization, project):
+    """Create dummy static page showing POA&Ms"""
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # Prepare modify page message
+    modify_msg = "This page is a feature mockup, does not yet work and cannot currently be modified."
+
+    return render_template(request, 'poams.html',
                             project=project,
                             modify_msg=modify_msg
                           )
