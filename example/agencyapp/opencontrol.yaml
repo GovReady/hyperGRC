@@ -1,6 +1,7 @@
 schema_version: 1.0.0
 name: Agency App Example System
 metadata:
+  authorization_id: EXAPP01
   description: A System Security Plan for the U.S. General Examples Administration's
     Example System following NIST SP 800-53.
   organization:

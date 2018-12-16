@@ -78,6 +78,10 @@ def load_project_from_path(project_dir):
     # unique IDs to them.
     project_id = name[0:12] + "-" + short_hash(fn)
 
+    # Read the "authorization_id" that an organization assigns to the project for
+    # enterprise tracking purposes.
+    authorization_id = opencontrol.get("metadata", {}).get("authorization_id", "Unassigned")
+
     # This is the data structure that we use throughout the application to represent projects.
     return {
         # An identifier for the project, unique within an organization. This is used to
@@ -98,6 +102,7 @@ def load_project_from_path(project_dir):
         "title": name,
         "description": description,
         "source_repository": source_repository,
+        "authorization_id": authorization_id,
 
         # Local disk path to the OpenControl root directory.
         "path": project_dir,
