@@ -14,19 +14,6 @@
 			<h3>{{ project.title }} project settings</h3>
 		</div>
 		<div class="row col-md-12">
-			<div class="col-md-1"><span class="glyphicon glyphicon-wrench"></span></div>
-			<div class="col-md-3">Mode</div>
-			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>workstation</a></div>
-		</div>
-		<div class="row col-md-12">
-			<div class="col-md-1"><span class="glyphicon glyphicon-user"></span></div>
-			<div class="col-md-3">Who are you?</div>
-			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{% if user_name %}{{ user_name }}{% else %}--{% endif %}</a></div>
-		</div>
-		<div class="row col-md-12">
-			<p>&nbsp;</p>
-		</div>
-		<div class="row col-md-12">
 			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
 			<div class="col-md-3">Organization</div>
 			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ project.organization.name }}</a></div>
@@ -71,6 +58,16 @@
 			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
 			<div class="col-md-3">hyperGRC version</div>
 			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ hypergrc_version }}</a></div>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-wrench"></span></div>
+			<div class="col-md-3">Mode</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>workstation</a></div>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-user"></span></div>
+			<div class="col-md-3">Who are you?</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{% if user_name %}{{ user_name }}{% else %}--{% endif %}</a></div>
 		</div>
 	</div>
 </div>
