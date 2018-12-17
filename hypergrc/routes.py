@@ -327,6 +327,7 @@ def component(request, organization, project, component_name):
         fam_id = (controlimpl["standard"]["id"], controlimpl["family"]["id"])
         if fam_id not in control_families:
             control_families[fam_id] = {
+              "id": controlimpl["family"]["id"],
               "name": controlimpl["family"]["name"],
               "abbrev": controlimpl["family"]["abbrev"],
               "sort_key": (controlimpl["standard"]["name"], controlimpl["family"]["sort_key"]),
@@ -359,6 +360,32 @@ def component(request, organization, project, component_name):
     total_words = sum(words)
     average_words_per_controlpart = total_words / (len(controlimpls) if len(controlimpls) > 0 else 1) # don't err if no controlimpls
 
+    # Make a sorted list of controls --- the control catalog --- that the user can
+    # draw from when adding new control implementations to the component.
+    control_catalog = []
+    for standard in standards.values():
+      for control in standard["controls"].values():
+          control = dict(control) # clone
+          control['standard'] = {
+            "id": standard["id"],
+            "name": standard["name"],
+          }
+          control['family'] = standard['families'].get(control['family'])
+          control_catalog.append(control)
+    control_catalog.sort(key = lambda control : control['sort_key'])
+
+    # Also make a sorted list of source files containing control implementation text.
+    # In OpenControl, all controls are in component.yaml. But we support breaking the
+    # controls out into separate files, and when adding a new control the user can
+    # choose which file to put it in. In case no controls are in the component.yaml
+    # file, ensure it is in the list, and make sure it comes first.
+    import os.path
+    source_files = set()
+    source_files.add(os.path.join(component['path'], 'component.yaml'))
+    for controlimpl in controlimpls:
+      source_files.add(controlimpl['source_file'])
+    source_files = sorted(source_files, key = lambda s : (not s.endswith("component.yaml"), s))
+
     # Done.
     return render_template(request, 'component.html',
                             project=project,
@@ -368,6 +395,8 @@ def component(request, organization, project, component_name):
                             control_part_count=control_part_counts,
                             total_words=total_words,
                             average_words_per_controlpart=average_words_per_controlpart,
+                            control_catalog=control_catalog, # used for creating a new control in the component
+                            source_files=source_files, # used for creating a new control in the component
                           )
 
 @route('/organizations/<organization>/projects/<project>/components/<component_name>/guide')
@@ -625,6 +654,13 @@ def update_control(request):
     project = load_project(request.form["organization"], request.form["project"])
     component = opencontrol.load_project_component(project, request.form["component"])
 
+    # Validate.
+    if not request.form.get("narrative", "").strip():
+      return "Narrative cannot be empty."
+
+    # Is this an update or the addition of a new control?
+    mode = request.form["mode"] # "update" or "new"
+
     # Iterate through the controls until a matching one is found.
     # We need the existing control so we can update it and then pass it back to
     # update_component_control.
@@ -633,6 +669,10 @@ def update_control(request):
        and controlimpl["control"]["id"] == request.form["control"] \
        and controlimpl.get("control_part") == (request.form.get("control_part") or None) \
        :
+       # We found a match.
+       if mode == "new":
+         # Don't obliterate an existing record when the user is trying to create a new one.
+         return "This control already exists."
 
        # Update the control's metadata.
        #controlimpl["summary"] = request.form.get("summary", "")
@@ -642,4 +682,18 @@ def update_control(request):
          return "OK"
 
     # The control was not found in the data files.
-    return "NOTFOUND"
+    if mode == "update":
+      return "Control being updated is missing from the project."
+
+    return opencontrol.add_component_control(component, {
+      "standard": {
+        "id": request.form["standard"],
+      },
+      "control": {
+        "id": request.form["control"],
+      },
+      "control_part": request.form.get("control_part"),
+      "narrative": request.form.get("narrative", ""),
+      "implementation_status": request.form.get("implementation_status", ""),
+      "source_file": request.form.get("source_file", ""),
+    })

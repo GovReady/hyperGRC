@@ -173,7 +173,7 @@ def load_project_components(project):
             "name": name,
 
             # Local disk path to the directory containing the component.yaml file.
-            "path": os.path.join(project["path"], component_path),
+            "path": os.path.normpath(os.path.join(project["path"], component_path)),
 
             # URL for the component in hyperGRC.
             "url": project["url"] + "/components/" + quote_plus(component_id),
@@ -380,7 +380,7 @@ def load_project_component_controls(component, standards):
 
                 # The local path to the YAML file containing this data --- which we use for finding
                 # the file we need when we want to edit the control implementation.
-                "source_file": source_file,
+                "source_file": os.path.normpath(source_file),
             }
 
             # Augment the control information from the standards if the control is found in the
@@ -526,6 +526,10 @@ def update_component_control(controlimpl):
 
         # Look for a matching control entry.
         for control in data["satisfies"]:
+            # Skip over entries that are strings -- they hold (OpenControl non-conformant) filenames.
+            if not isinstance(control, dict):
+                continue
+
             if control["standard_key"] == controlimpl["standard"]["id"] \
               and control["control_key"] == controlimpl["control"]["id"]:
 
@@ -553,3 +557,68 @@ def update_component_control(controlimpl):
                         return True
 
     return False
+
+def add_component_control(component, controlimpl):
+    # Append the control to the component. controlimpl must have
+    # a source_file key that is present in the component.yaml
+    # file or is the component.yaml file itself.
+
+    # Open the source file.
+    with open(controlimpl["source_file"], "r+", encoding="utf8") as f:
+        # Parse the content.
+        data = rtyaml.load(f)
+
+        # Create the 'satisfies' key if it doesn't exist.
+        data.setdefault("satisfies", [])
+
+        # Although we're adding it, the control record may already exist.
+        # In that case, we're adding a new narrative part. First, see if
+        # the control record already exists.
+        for control in data["satisfies"]:
+            # Skip over entries that are strings -- they hold (OpenControl non-conformant) filenames.
+            if not isinstance(control, dict):
+                continue
+            if control["standard_key"] == controlimpl["standard"]["id"] \
+              and control["control_key"] == controlimpl["control"]["id"]:
+
+                # Check that the control_part doesn't yet exist.
+                for narrative_part in control.get("narrative", []):
+                    if narrative_part.get("key") == controlimpl.get("control_part"):
+                        return "The control part already exists."
+
+                # Ok we found a match.
+                break
+        
+        else:
+            # Create a new control record.
+            control = OrderedDict([
+                ("standard_key", controlimpl["standard"]["id"]),
+                ("control_key", controlimpl["control"]["id"]),
+                ("narrative", []),
+            ])
+            data["satisfies"].append(control)
+
+        # Append a new narrative part.
+        narrative_part = OrderedDict()
+        if (controlimpl.get("control_part") or "").strip():
+            narrative_part['key'] = clean_text(controlimpl["control_part"])
+        narrative_part["text"] = clean_text(controlimpl["narrative"])
+
+        # Store implementation_status here. In OpenControl there is
+        # a `implementation_statuses` on the control. But our data
+        # model has a single implementation_status per control *part*.
+        # If the implementation status is cleared, remove the key.
+        if controlimpl["implementation_status"]:
+            narrative_part["implementation_status"] = clean_text(controlimpl["implementation_status"])
+        elif "implementation_status" in narrative_part:
+            del narrative_part["implementation_status"]
+
+        control["narrative"].append(narrative_part)
+
+        # Write back out to the data files.
+        f.seek(0);
+        f.truncate()
+        rtyaml.dump(data, f)
+
+        return "OK"
+

@@ -98,8 +98,15 @@
               <h4 class="modal-title">...</h4>
             </div>
             <div class="modal-body">
-              <b>Implementation narrative</b></br/>
-              <textarea class="narrative-input" style="width: 98%; height: 100px; padding: 8px; margin-bottom:20px;" placeholder="Describe what the components contributes to the control..."></textarea>
+              <div id="control-editor-control-group" style="margin-bottom: 1.5em">
+              <div><label for="control-editor-control">Control</label></div>
+              <div><select id="control-editor-control" class="form-control"></select></div>
+              <div style="margin-top: 1em"><label for="control-editor-control-part">Control part <span style="font-weight: normal">(optional)</span></label></div>
+              <input id="control-editor-control-part" class="form-control">
+              </div>
+
+              <div><label for="control-editor-narrative">Implementation narrative</label></div>
+              <textarea id="control-editor-narrative" class="narrative-input form-control" style="height: 100px;" placeholder="Describe what the components contributes to the control..."></textarea>
 
               {#
               <b>Summary</b><br/>
@@ -108,6 +115,17 @@
 
               <div style="margin-top: 1.5em"><label for="control-editor-implementation-status">Implementation status</label></div>
               <input id="control-editor-implementation-status" class="implementation_status-input form-control" placeholder="Unknown">
+
+              {% if source_files %}
+              <div id="control-editor-sourcefiles-group" style="margin-top: 1.5em;">
+              <div><label for="control-editor-sourcefiles">Save to</label></div>
+              <div><select id="control-editor-sourcefiles" class="form-control">
+                {% for fn in source_files %}
+                  <option>{{fn}}</option>
+                {% endfor %}
+              </select></div>
+              </div>
+              {% endif %}
 
               <div style="margin-top: 1.5em; color: #666;">
                 <!-- Hiding mockup feature links
@@ -138,12 +156,16 @@
         edit_control_current_control = control;
         edit_control_current_callback = callback;
         var modal = $('#control-editor-modal');
-        modal.find('.modal-title').text(control.control.number + (control.control_part ? (" Part " + control.control_part) : ""));
+        modal.find('.modal-title').text(
+          control.control.number + (control.control_part ? (" Part " + control.control_part) : "")
+          + " in " + control.component.name);
+        modal.find('#control-editor-control-group, #control-editor-sourcefiles-group').hide();
         modal.find('.narrative-input').val(control.narrative);
         //modal.find('.summary-input').val(control.summary);
         modal.find('.implementation_status-input').val(control.implementation_status);
         modal.find('.component-link')
-          .attr('href', control.control.url + "/grid");
+          .attr('href', control.control.url + "/grid")
+          .show();
         modal.modal();
         // resize textarea height arbitrarily small then to scrollHeight browser determined by text length
         modal.find('.narrative-input').css('height', 20 + 'px');
@@ -151,28 +173,90 @@
         modal.find('.narrative-input').css('resize', 'none');
       }
 
+      {% if control_catalog %}
+      var control_catalog = {{control_catalog|tojson}};
+      function new_control(control_default, callback) {
+        edit_control_current_control = control_default;
+        edit_control_current_callback = callback;
+
+        var modal = $('#control-editor-modal');
+        modal.find('.modal-title').text("Add Control to " + control_default.component.name);
+
+        modal.find('#control-editor-control-group, #control-editor-sourcefiles-group').show();
+        var control_list = modal.find('#control-editor-control');
+        control_list.text(''); // clear options
+        control_catalog.forEach(function(control, i) {
+          if (control_default.standard && control.standard.id != control_default.standard.id)
+            return;
+          if (control_default.family && control.family.id != control_default.family.id)
+            return;
+          var option = $("<option/>");
+          option.attr("value", i);
+          option.text(control.number + ": " + control.name);
+          control_list.append(option);
+        });
+
+        modal.find('#control-editor-control-part').val('');
+        modal.find('.narrative-input').val('');
+        //modal.find('.summary-input').val(control.summary);
+        modal.find('.implementation_status-input').val('');
+        modal.find('#control-editor-sourcefiles').val('');
+
+        modal.find('.component-link').hide();
+        modal.modal();
+        // resize textarea height arbitrarily small then to scrollHeight browser determined by text length
+        modal.find('.narrative-input').css('height', 20 + 'px');
+        modal.find('.narrative-input').css('height', modal.find('.narrative-input')[0].scrollHeight + "px");
+        modal.find('.narrative-input').css('resize', 'none');
+      }
+      {% endif %}
+
       // Save control.
       $('#control-editor-modal').on("hidden.bs.modal", function() {
+        var data;
+
+        // If this is a new control, add the standard, control ID, and control part to the
+        // data structure.
+        if (!edit_control_current_control.control) {
+          var selected_control = control_catalog[$(this).find('#control-editor-control').val()];
+          data = {
+            mode: "new",
+            component: edit_control_current_control.component.id, 
+            standard: selected_control.standard.id,
+            control: selected_control.id,
+            control_part: $('#control-editor-control-part').val(),
+            source_file: $('#control-editor-sourcefiles').val()
+          };
+
+        // Otherwise we're updating an exiting control.
+        } else {
+          data = {
+            mode: "update",
+            component: edit_control_current_control.component.id, 
+            standard: edit_control_current_control.standard.id,
+            control: edit_control_current_control.control.id,
+            control_part: edit_control_current_control.control_part,
+          };         
+        }
+
+        // General info.
+        data.organization = {{project.organization.id|tojson}};
+        data.project = {{project.id|tojson}};
+
         // Update.
-        edit_control_current_control.summary = $(this).find('.summary-input').val();
-        edit_control_current_control.narrative = $(this).find('.narrative-input').val();
-        edit_control_current_control.status = $(this).find('.implementation_status-input').val();
+        //data.summary = $(this).find('.summary-input').val();
+        data.narrative = $(this).find('.narrative-input').val();
+        data.implementation_status = $(this).find('.implementation_status-input').val();
+
+        // Cancel if trying to add something empty.
+        if (data.mode == "new" && data.narrative == "" && data.implementation_status == "")
+          return;
 
         // Send.
         $.ajax({
           url: "/update-control",
           method: "POST",
-          data: {
-            organization: {{project.organization.id|tojson}},
-            project: {{project.id|tojson}},
-            component: edit_control_current_control.component.id, 
-            standard: edit_control_current_control.standard.id,
-            control: edit_control_current_control.control.id,
-            control_part: edit_control_current_control.control_part,
-            //summary: edit_control_current_control.summary,
-            narrative: edit_control_current_control.narrative,
-            implementation_status: edit_control_current_control.implementation_status,
-          },
+          data: data,
           success: function(res) {
             // ok it's saved, unless there's an error which we should display
             if (res != "OK")

@@ -69,13 +69,22 @@
           </div>
           </div>
       {% endfor %}
+
+      <div class="card-control" style="background-color: #DDD; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:8px; height: 32px; overflow-y: hidden; border-radius: 5px;">
+        <a href="#" style="display: block; background: none; color: #555; text-decoration: none;" onclick='new_control({ component: { id: {{component.id|tojson}}, name: {{component.name|tojson}} }, standard: { id: {{ control_family.standard.id|tojson }} }, family: { id: {{ control_family.id|tojson }} } }, function() { loading(); window.location.reload(); }); return false;'>
+          Add a control...
+        </a>
+      </div>
+
     </div>
   </div><!-- /row -->
   </div><!-- /container -->
 {% endfor %}
 
-    <div style="width:340px; height:40px; background-color: #fff; border:2px dashed #aaa; margin-right: 12px; float: left; padding: 18px; border-radius: 5px; color: #999; opacity: 0.6;">
-        <h4 style="height:2em; margin-top: -8px;">+ Add another column</h4>
+    <div style="width:340px; background-color: #fff; border:2px dashed #aaa; margin-right: 12px; float: left; padding: 18px; border-radius: 5px; color: #999; opacity: 0.6;">
+        <a href="#" style="display: block; background: none; color: #555; text-decoration: none;" onclick='new_control({ component: { id: {{component.id|tojson}}, name: {{component.name|tojson}} } }, function() { loading(); window.location.reload(); }); return false;'>
+          Add another control...
+        </a>
     </div>
 
 
