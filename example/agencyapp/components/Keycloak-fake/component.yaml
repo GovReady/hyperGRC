@@ -1,0 +1,8 @@
+name: Keycloak-fake
+schema_version: 3.0.0
+satisfies:
+- AC-ACCESS_CONTROL.yaml
+- CP-CONTINGENCY_PLANNING.yaml
+- MA-MAINTENANCE.yaml
+- PM-PROGRAM_MANAGEMENT.yaml
+- SA-SYSTEM_AND_SERVICES_ACQUISITION.yaml

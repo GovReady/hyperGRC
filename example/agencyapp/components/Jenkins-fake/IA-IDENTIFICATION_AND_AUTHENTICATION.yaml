@@ -3,15 +3,15 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: IA-3
-  control_key_part: ''
   control_name: Device Identification And Authentication
   family: IA
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: Inherited
-  narrative: The the identified fails organization. Roles where software and selected
-    selection provides. Service information to reviews damage. Receiving acceptable
-    marks capability organization-defined. The system or information includes. The
-    of reviews that explicit system capability. 3 using assignment time transfer.
-    To information activities organization privileged disclosure across.
+  narrative:
+  - text: The the identified fails organization. Roles where software and selected
+      selection provides. Service information to reviews damage. Receiving acceptable
+      marks capability organization-defined. The system or information includes. The
+      of reviews that explicit system capability. 3 using assignment time transfer.
+      To information activities organization privileged disclosure across.

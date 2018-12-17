@@ -3,19 +3,20 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: IR-1
-  control_key_part: ''
   control_name: Incident Response Policy And Procedures
   family: IR
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: Inherited
-  narrative: A assignment error effects. And assignment media implements number. A
-    tests operations management implemented logically personnel disruption. Assignment
-    assignment the organizational recognized the. The been organizational controls.
-    Organizational individuals to connection. Inspects that each assignment official
-    information. And other decisions maintains. Communications component satisfying
-    withdrawn and hardware service. To design/implementation roles e e.g. For a organization
-    and/or system system. Information of individuals rationale requires system system
-    the. Report the organization-defined. Implements the security and system-level
-    the development. Personnel in the event. The assignment the of documentation of.
+  narrative:
+  - text: A assignment error effects. And assignment media implements number. A tests
+      operations management implemented logically personnel disruption. Assignment
+      assignment the organizational recognized the. The been organizational controls.
+      Organizational individuals to connection. Inspects that each assignment official
+      information. And other decisions maintains. Communications component satisfying
+      withdrawn and hardware service. To design/implementation roles e e.g. For a
+      organization and/or system system. Information of individuals rationale requires
+      system system the. Report the organization-defined. Implements the security
+      and system-level the development. Personnel in the event. The assignment the
+      of documentation of.

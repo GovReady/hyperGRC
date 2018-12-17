@@ -1,0 +1,15 @@
+name: Team
+schema_version: 3.0.0
+team:
+- name: Khalil Mack
+  role: System Owner
+  phone: (312) 555-5555
+  email: khalil.Mack@dos.gov
+- name: Jane Doe
+  role: ISSO
+  phone: (202) 555-5555
+  email: jane.doe@dos.gov
+- name: Navin Rhu
+  role: CISO
+  phone: (202) 555-5500
+  email: navin.rhu@dos.gov

@@ -3,24 +3,24 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: SA-5 (1)
-  control_key_part: ''
   control_name: Functional Properties Of Security Controls
   family: SA
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: In Place
-  narrative: Establishes organization external transitional the are identifies. Initiating
-    the that information an processes. Systems potential organization security. With
-    the logs are system assessments. Components sc-7 descriptions resulting information
-    use the required. Contingency in 1)(a assignment. Code telecommunication personnel
-    unauthorized senior-level policy the. Organization-Defined 1 networking to of
-    formats. Startup indicators automatically breadth facility. Develops the and faults.
-    Selection assignment of assignment to resolution. Information that for capability
-    with individuals or. Or appropriate organization-defined to and security. And
-    entities system associated change. Or organization-defined date organization-defined
-    strategy information reflected. Conventions and humidity assignment transmit review
-    system. For authenticates of ability. Requiring to the an documentation potential.
-    Organization-Defined selection components organization top-level the within. Inactivity
-    actual of private or. Planning the controls and. Or overwrite occurrence si-4
-    continuous system organization.
+  narrative:
+  - text: Establishes organization external transitional the are identifies. Initiating
+      the that information an processes. Systems potential organization security.
+      With the logs are system assessments. Components sc-7 descriptions resulting
+      information use the required. Contingency in 1)(a assignment. Code telecommunication
+      personnel unauthorized senior-level policy the. Organization-Defined 1 networking
+      to of formats. Startup indicators automatically breadth facility. Develops the
+      and faults. Selection assignment of assignment to resolution. Information that
+      for capability with individuals or. Or appropriate organization-defined to and
+      security. And entities system associated change. Or organization-defined date
+      organization-defined strategy information reflected. Conventions and humidity
+      assignment transmit review system. For authenticates of ability. Requiring to
+      the an documentation potential. Organization-Defined selection components organization
+      top-level the within. Inactivity actual of private or. Planning the controls
+      and. Or overwrite occurrence si-4 continuous system organization.

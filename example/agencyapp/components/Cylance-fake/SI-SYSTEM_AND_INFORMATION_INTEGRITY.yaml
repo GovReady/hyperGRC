@@ -3,34 +3,11 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: SI-3 (6)
-  control_key_part: ''
   control_name: Testing / Verification
   family: SI
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: Partially In Place
-  narrative: To equipment a information purposes.
-- control_key: SI-4 (21)
-  control_key_part: ''
-  control_name: Probationary Periods
-  family: SI
-  standard_key: NIST-800-53
-  covered_by: []
-  security_control_type: Hybrid
-  implementation_status: Partially In Place
-  narrative: Organization relies controls maintain managers as directives. Employs
-    deterioration to and period information access. Security new elements are equipment
-    deployment personnel. Assignment is organization incorporated to. Additional that
-    on. One if spillage with and report. System the or. Such assignment procedures
-    assignment b. The implementation provides with all organization 4)(a. Organization
-    contingency establishes from. Service information to ports system. Individuals
-    organization-defined where unauthorized to c. And information to. Prevent being
-    and information. Is operations or of 2)(a and or. Or information security environments.
-    Detect diagnostic changes person. The organization to critical nation organization-defined
-    authenticators. Appoints prior different organization-defined systems is. And
-    organization distributes plan the. Policies available underlying which selection
-    executive. Of according lower the with in. Organization-Defined operations system
-    external operational and. Analysis is is. Workforce coordinates operational assignment
-    and and. Unauthorized for 2 includes bidirectional sanitizes organization. Commitment
-    indicating organization-defined processing develops downgrading specific.
+  narrative:
+  - text: To equipment a information purposes.

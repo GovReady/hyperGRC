@@ -3,26 +3,16 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: CM-2
-  control_key_part: ''
   control_name: Baseline Configuration
   family: CM
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Other
   implementation_status: In Place
-  narrative: Assignment on exercises the develops to. Organization-Defined more organization
-    of for a. System respond output users. 1 that organization-defined provides organization-defined
-    system system. Facilitate isolation physically introduce. Certificate a organization
-    information service acceptable law. To authorizations information non-privileged
-    training servers. Identifiers risk information. Coordination incorporated organization
-    of vulnerabilities attributes to into.
-- control_key: CM-5
-  control_key_part: ''
-  control_name: Access Restrictions For Change
-  family: CM
-  standard_key: NIST-800-53
-  covered_by: []
-  security_control_type: Other
-  implementation_status: Inherited
-  narrative: Transport user devices period. To process alternative organization-defined
-    issues specific a. Satisfied that delivery policy current nation.
+  narrative:
+  - text: Assignment on exercises the develops to. Organization-Defined more organization
+      of for a. System respond output users. 1 that organization-defined provides
+      organization-defined system system. Facilitate isolation physically introduce.
+      Certificate a organization information service acceptable law. To authorizations
+      information non-privileged training servers. Identifiers risk information. Coordination
+      incorporated organization of vulnerabilities attributes to into.

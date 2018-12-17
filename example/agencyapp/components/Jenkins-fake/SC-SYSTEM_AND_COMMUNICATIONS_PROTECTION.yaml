@@ -3,29 +3,20 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: SC-42 (3)
-  control_key_part: ''
   control_name: Prohibit Use Of Devices
   family: SC
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Other
   implementation_status: Planned
-  narrative: Organization selection exception information. Scanning maintain process
-    the. Protection organization of risk. Assignment officials information implemented
-    information system only. In functions logout notification. Telecommunications
-    and time roles suppression. Be facilitate access procedures. Malice end switches
-    report roles. Are qualified susceptibility information and assignment due by.
-    Traffic personal the. The harmful system organization-defined received security
-    organizational. Sc-13 the the controls. System protect a assignment time by management.
-    Assignment separate assignment the as organization keys access. Of established
-    to of establishment organization 1. In the and. Assignment or for 2)(a of develops
-    associated organization. Anomalies and incident or.
-- control_key: SC-12
-  control_key_part: ''
-  control_name: Cryptographic Key Establishment And Management
-  family: SC
-  standard_key: NIST-800-53
-  covered_by: []
-  security_control_type: Hybrid
-  implementation_status: Planned
-  narrative: Assignment missions into by. Equipment by manages documents and of.
+  narrative:
+  - text: Organization selection exception information. Scanning maintain process
+      the. Protection organization of risk. Assignment officials information implemented
+      information system only. In functions logout notification. Telecommunications
+      and time roles suppression. Be facilitate access procedures. Malice end switches
+      report roles. Are qualified susceptibility information and assignment due by.
+      Traffic personal the. The harmful system organization-defined received security
+      organizational. Sc-13 the the controls. System protect a assignment time by
+      management. Assignment separate assignment the as organization keys access.
+      Of established to of establishment organization 1. In the and. Assignment or
+      for 2)(a of develops associated organization. Anomalies and incident or.

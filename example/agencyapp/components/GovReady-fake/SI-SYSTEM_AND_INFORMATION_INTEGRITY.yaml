@@ -3,26 +3,26 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: SI-4 (20)
-  control_key_part: ''
   control_name: Privileged Users
   family: SI
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: Inherited
-  narrative: Transferred sc-13 requiring controls process redundancy actions. On system
-    validation enforce. The organization-defined alerts system policies authentication
-    accurate. Trustworthiness is change information auditable where sanction. Exception
-    services to a. Analysis provides information support the developer. Information
-    operating category. Multiple policies realistic timely. Monitoring foreign advisories
-    organization system. Switches use basis b the. That terminated by software limits
-    incidents. 3)(B)(2 system service organization-defined. Information the or withdrawn
-    suspicious component and assignment. Access automatically automated a. Fire personnel
-    have and control decisions. And and support assignment the. Information the the
-    child 4)(b e.g. Management operations sites ra-3 known. Into attack system or
-    the not. And service information 1)(f model description all. The organization
-    an organization-defined. Manner organizational access to equipment. System activation
-    mechanisms selection to. Reviews ensure employs development assignment for. Credentials
-    failure protects or organization 2 information. Part individuals identifies. Perspective
-    or controls characteristics/parameters. Providers need among organization employs
-    capability a a.
+  narrative:
+  - text: Transferred sc-13 requiring controls process redundancy actions. On system
+      validation enforce. The organization-defined alerts system policies authentication
+      accurate. Trustworthiness is change information auditable where sanction. Exception
+      services to a. Analysis provides information support the developer. Information
+      operating category. Multiple policies realistic timely. Monitoring foreign advisories
+      organization system. Switches use basis b the. That terminated by software limits
+      incidents. 3)(B)(2 system service organization-defined. Information the or withdrawn
+      suspicious component and assignment. Access automatically automated a. Fire
+      personnel have and control decisions. And and support assignment the. Information
+      the the child 4)(b e.g. Management operations sites ra-3 known. Into attack
+      system or the not. And service information 1)(f model description all. The organization
+      an organization-defined. Manner organizational access to equipment. System activation
+      mechanisms selection to. Reviews ensure employs development assignment for.
+      Credentials failure protects or organization 2 information. Part individuals
+      identifies. Perspective or controls characteristics/parameters. Providers need
+      among organization employs capability a a.

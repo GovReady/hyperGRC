@@ -3,12 +3,12 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: CP-7 (5)
-  control_key_part: ''
   control_name: Equivalent Information Security Safeguards
   family: CP
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: Planned
-  narrative: Withdrawn assessment the enables the by of cabling. Across into of organization
-    2 business processes.
+  narrative:
+  - text: Withdrawn assessment the enables the by of cabling. Across into of organization
+      2 business processes.

@@ -3,12 +3,12 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: SC-37
-  control_key_part: ''
   control_name: Out-Of-Band Channels
   family: SC
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Other
   implementation_status: Partially In Place
-  narrative: In use of assignment. At to adjusts organization-defined withdrawn. Organization
-    the follow b information service verifies receipt.
+  narrative:
+  - text: In use of assignment. At to adjusts organization-defined withdrawn. Organization
+      the follow b information service verifies receipt.

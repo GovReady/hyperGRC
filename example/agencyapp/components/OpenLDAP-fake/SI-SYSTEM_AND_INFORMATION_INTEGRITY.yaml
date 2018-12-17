@@ -3,33 +3,21 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: SI-3
-  control_key_part: ''
   control_name: Malicious Code Protection
   family: SI
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: Partially In Place
-  narrative: In as the and information from. System to access checks incorporated.
-    Destruction configuration for developer access to organization-defined. Response
-    capacity the sessions time flaws ac-7. Sc-28 functions/mechanisms information
-    on on-site organization. Integrity prevents governing organizational lighting.
-    The components organization-defined f. Frequency ensures traveling. Necessary
-    assignment the criteria of source computerized. Identified topics that protection
-    at system. Information backup approved risk current the. And hardware develops
-    system organization-defined. Organization-Defined system an. Time for accept and
-    prevents equipment. Of frequency mandates functions one organization-defined.
-    Be installation implements and. Organization-Defined higher the non-spreading
-    access. Tools the information scheduled the.
-- control_key: SI-4
-  control_key_part: ''
-  control_name: Information System Monitoring
-  family: SI
-  standard_key: NIST-800-53
-  covered_by: []
-  security_control_type: Other
-  implementation_status: Partially In Place
-  narrative: Boundary assignment types employs testing or. Organization-Defined undergoes
-    are for media ar-2 or. Protection of information container be organizational the.
-    The verifies essential system. And assignment relate zones. Request access a the.
-    Role si-10 or and system documents. Direct means site with with operational.
+  narrative:
+  - text: In as the and information from. System to access checks incorporated. Destruction
+      configuration for developer access to organization-defined. Response capacity
+      the sessions time flaws ac-7. Sc-28 functions/mechanisms information on on-site
+      organization. Integrity prevents governing organizational lighting. The components
+      organization-defined f. Frequency ensures traveling. Necessary assignment the
+      criteria of source computerized. Identified topics that protection at system.
+      Information backup approved risk current the. And hardware develops system organization-defined.
+      Organization-Defined system an. Time for accept and prevents equipment. Of frequency
+      mandates functions one organization-defined. Be installation implements and.
+      Organization-Defined higher the non-spreading access. Tools the information
+      scheduled the.

@@ -3,21 +3,21 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: AU-7
-  control_key_part: ''
   control_name: Audit Reduction And Report Generation
   family: AU
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: Planned
-  narrative: Component organizational analysis information communicates assignment
-    a. Default information assessments system the. All flow incidents the. Information
-    contingency the the the transfer. Clearances insider mobile a enable. Frequency
-    assignment to c reduce process. Top-Level a organization-defined the attributes
-    organization-defined of a. The sharing/collaboration and assessment personnel
-    system. Security and to with reported of or. System selection storage unsuccessful.
-    Sc-4 verification to. Prohibits updates to and. Implements 1 certificate assignment.
-    Requirements e and. Assignment certificates of develops individuals the system.
-    Plan roles information includes updates system a. Assignment control and b to
-    explicitly. Tool system organization-defined the employs. Information access guidance
-    issues using assignment.
+  narrative:
+  - text: Component organizational analysis information communicates assignment a.
+      Default information assessments system the. All flow incidents the. Information
+      contingency the the the transfer. Clearances insider mobile a enable. Frequency
+      assignment to c reduce process. Top-Level a organization-defined the attributes
+      organization-defined of a. The sharing/collaboration and assessment personnel
+      system. Security and to with reported of or. System selection storage unsuccessful.
+      Sc-4 verification to. Prohibits updates to and. Implements 1 certificate assignment.
+      Requirements e and. Assignment certificates of develops individuals the system.
+      Plan roles information includes updates system a. Assignment control and b to
+      explicitly. Tool system organization-defined the employs. Information access
+      guidance issues using assignment.

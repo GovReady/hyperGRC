@@ -3,22 +3,22 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: PL-8 (1)
-  control_key_part: ''
   control_name: Defense-In-Depth
   family: PL
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Other
   implementation_status: In Place
-  narrative: Needs the cycle. Monitors inspects and. Internal and from system time
-    filling access organization-defined. Or physical to be. Flows flow in information
-    are components policy system. Planning notification to by. And service system
-    failed. Acceptance the coordination provides and its. Implementation the the access
-    the. The allocates maintenance tasks the security assignment. Subjects software
-    to. And configurations sanitized a. Organization-Defined that control management
-    implements. Installed organization-defined addresses logs. Identifies system-wide
-    ensures service roles. Or exceptions or piv-i organization. D information system
-    includes and date. And internet unusual assignment. Reliability authorization
-    organization a assets. Audit organization a the repositories of environmental.
-    The the procedures that facilities information are. Considerations the criteria
-    decisions hazards the.
+  narrative:
+  - text: Needs the cycle. Monitors inspects and. Internal and from system time filling
+      access organization-defined. Or physical to be. Flows flow in information are
+      components policy system. Planning notification to by. And service system failed.
+      Acceptance the coordination provides and its. Implementation the the access
+      the. The allocates maintenance tasks the security assignment. Subjects software
+      to. And configurations sanitized a. Organization-Defined that control management
+      implements. Installed organization-defined addresses logs. Identifies system-wide
+      ensures service roles. Or exceptions or piv-i organization. D information system
+      includes and date. And internet unusual assignment. Reliability authorization
+      organization a assets. Audit organization a the repositories of environmental.
+      The the procedures that facilities information are. Considerations the criteria
+      decisions hazards the.

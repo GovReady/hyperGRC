@@ -1,0 +1,8 @@
+name: Cylance-fake
+schema_version: 3.0.0
+satisfies:
+- AC-ACCESS_CONTROL.yaml
+- MA-MAINTENANCE.yaml
+- PL-PLANNING.yaml
+- SA-SYSTEM_AND_SERVICES_ACQUISITION.yaml
+- SI-SYSTEM_AND_INFORMATION_INTEGRITY.yaml

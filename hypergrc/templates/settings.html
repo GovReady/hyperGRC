@@ -4,24 +4,34 @@
 <div  id="static-page-content" class="container">
 	<div class="row item-ctl">
 		<div class="col-md-10">&nbsp;</div>
-		<div class="col-md-2" style="text-align: right;" onclick="alert('{{ item_ctl_msg }}')">
+		<div class="col-md-2" style="text-align: right;" onclick="alert('{{ modify_msg }}')">
 		  MODIFY <span class="glyphicon glyphicon-cog"></span>
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-md-12">
-			<h3>Your {{ project }} project settings</h3>
+			<h3>{{ project.title }} project settings</h3>
 		</div>
 		<div class="row col-md-12">
-			<div class="col-md-1"><span class="glyphicon glyphicon-wrench"></span></div>
-			<div class="col-md-3">Mode</div>
-			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ cfg.mode }}</a></div>
+			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
+			<div class="col-md-3">Organization</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ project.organization.name }}</a></div>
 		</div>
 		<div class="row col-md-12">
-			<div class="col-md-1"><span class="glyphicon glyphicon-user"></span></div>
-			<div class="col-md-3">Who are you?</div>
-			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{% if cfg.user_name %}{{ cfg.user_name }}{% else %}--{% endif %}</a></div>
+			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
+			<div class="col-md-3">Project</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ project.title }}</a></div>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
+			<div class="col-md-3">Description</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ project.description }}</a></div>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
+			<div class="col-md-3">Authorization ID</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ project.authorization_id }}</a></div>
 		</div>
 		<div class="row col-md-12">
 			<p>&nbsp;</p>
@@ -29,7 +39,7 @@
 		<div class="row col-md-12">
 			<div class="col-md-1"><span class="glyphicon glyphicon-link"></span></div>
 			<div class="col-md-3">Project repo</div>
-			<div class="col-md-8"><a href="{{ src_repo }}" style="color: black;" target=”_blank”>{{ cfg.src_repo }}</a></div>
+			<div class="col-md-8"><a href="{ src_repo }}" style="color: black;" target=”_blank”>{{ project.source_repository }}</a></div>
 		</div>
 
 		<div class="row col-md-12">
@@ -37,26 +47,8 @@
 		</div>
 		<div class="row col-md-12">
 			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
-			<div class="col-md-3">standards file version</div>
-			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ cfg.standard }}</a></div>
-		</div>
-		<div class="row col-md-12">
-			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
-			<div class="col-md-3">standards file</div>
-			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ cfg.standard_file }}</a></div>
-		</div>
-		<div class="row col-md-12">
-			<p>&nbsp;</p>
-		</div>
-		<div class="row col-md-12">
-			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
-			<div class="col-md-3">primary certification</div>
-			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ cfg.system.primary_certification }}</a></div>
-		</div>
-		<div class="row col-md-12">
-			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
-			<div class="col-md-3">primary certification file</div>
-			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ cfg.primary_certification_file }}</a></div>
+			<div class="col-md-3">local file path</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ project.path }}</a></div>
 		</div>
 
 		<div class="row col-md-12">
@@ -65,7 +57,17 @@
 		<div class="row col-md-12">
 			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
 			<div class="col-md-3">hyperGRC version</div>
-			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ cfg.hgrc_version }}</a></div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ hypergrc_version }}</a></div>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-wrench"></span></div>
+			<div class="col-md-3">Mode</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>workstation</a></div>
+		</div>
+		<div class="row col-md-12">
+			<div class="col-md-1"><span class="glyphicon glyphicon-user"></span></div>
+			<div class="col-md-3">Who are you?</div>
+			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{% if user_name %}{{ user_name }}{% else %}--{% endif %}</a></div>
 		</div>
 	</div>
 </div>

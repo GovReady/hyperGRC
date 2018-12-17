@@ -3,23 +3,23 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: AC-22
-  control_key_part: ''
   control_name: Publicly Accessible Content
   family: AC
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Other
   implementation_status: Inherited
-  narrative: Users by issues and 1)(b security 3)(c the. That information of of organization
-    controlling. A monitoring incorporated changed revoking. Information the a for.
-    Information roles 1)(c develops. And requirements systems site service with of
-    c. Assignment deficiencies assume. Authorizations organization-defined systems
-    organization-defined implementing specifies. Access organization-defined off team
-    security into. 5)(B audit recorded all and sessions organization-defined. Identifies
-    requiring appoints reviews that role-based. Procedures consideration indicating
-    service. Organization a system for to authorizations. Agent and a upon oversight
-    roles additional. Missions attempts organization-defined b 13)(c security. Systems
-    attributes security other or information roles. Support organizational are. Official
-    development purpose and. The access which. Implementation organization enforces.
-    Roles protection types organization-defined of. Service information the privileges
-    behalf types. System other provides system to.
+  narrative:
+  - text: Users by issues and 1)(b security 3)(c the. That information of of organization
+      controlling. A monitoring incorporated changed revoking. Information the a for.
+      Information roles 1)(c develops. And requirements systems site service with
+      of c. Assignment deficiencies assume. Authorizations organization-defined systems
+      organization-defined implementing specifies. Access organization-defined off
+      team security into. 5)(B audit recorded all and sessions organization-defined.
+      Identifies requiring appoints reviews that role-based. Procedures consideration
+      indicating service. Organization a system for to authorizations. Agent and a
+      upon oversight roles additional. Missions attempts organization-defined b 13)(c
+      security. Systems attributes security other or information roles. Support organizational
+      are. Official development purpose and. The access which. Implementation organization
+      enforces. Roles protection types organization-defined of. Service information
+      the privileges behalf types. System other provides system to.

@@ -1,0 +1,21 @@
+schema_version: 1.0.0
+name: Agency App Example System
+metadata:
+  authorization_id: EXAPP01
+  description: A System Security Plan for the U.S. General Examples Administration's
+    Example System following NIST SP 800-53.
+  organization:
+    name: U.S. General Examples Administration
+    abbreviation: USGEA
+  repository: https://github.com/GovReady/hyperGRC/tree/master/example/agencyapp
+components:
+- ./components/CentOS-fake
+- ./components/Cisco-Cloud-Rtr-fake
+- ./components/Cylance-fake
+- ./components/GovReady-fake
+- ./components/Jenkins-fake
+- ./components/Keycloak-fake
+- ./components/OpenLDAP-fake
+- ./components/SOC-Services-fake
+standards:
+- ./standards

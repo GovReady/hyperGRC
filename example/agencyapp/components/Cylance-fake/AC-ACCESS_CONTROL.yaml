@@ -3,38 +3,22 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: AC-18 (5)
-  control_key_part: ''
   control_name: Antennas / Transmission Power Levels
   family: AC
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: Partially In Place
-  narrative: Limits i.e employ presence regard and. To the and the a assignment. Facility
-    security external contingency the requirements. Mutual authentication of by improvement
-    used. Have the g actions organization pe-3. Providers information assignment frequency
-    controls of organization. Organization authorization safe frequency. System the
-    information compliance the. System boot to. Integrity applications or penetration
-    a. Access ensuring the. And users to a occur. Organization-Defined configuration/connection
-    system assignment implements and. The organization-defined or formal information
-    ensures tool the. Integrated the system that information and. System into reference
-    ac-14. Techniques eliminate feasible of plan access to. To from engineering does
-    sharing system assignment. Access analysis are remote system virtualization. Associated
-    the procedures results to the architecture e.g. System data a full. A training
-    inputs. Employs and the associated and.
-- control_key: AC-6 (6)
-  control_key_part: ''
-  control_name: Privileged Access By Non-Organizational Users
-  family: AC
-  standard_key: NIST-800-53
-  covered_by: []
-  security_control_type: Other
-  implementation_status: Planned
-  narrative: Following updates organizational information exfiltration performed that
-    the. A cryptographic of of only documentation procedures the. Use u.s and information.
-    Those the the training components. Attributes or identify tests 1 requires. Recovery
-    timely authorization service the authentication chain-related responsibility.
-    A personnel from into ensures the with. Schedule to the problems. Specification
-    controls flaw information. Organization-Defined providers to access mechanisms
-    of system. And disclosure information the.
-  summary: ~
+  narrative:
+  - text: Limits i.e employ presence regard and. To the and the a assignment. Facility
+      security external contingency the requirements. Mutual authentication of by
+      improvement used. Have the g actions organization pe-3. Providers information
+      assignment frequency controls of organization. Organization authorization safe
+      frequency. System the information compliance the. System boot to. Integrity
+      applications or penetration a. Access ensuring the. And users to a occur. Organization-Defined
+      configuration/connection system assignment implements and. The organization-defined
+      or formal information ensures tool the. Integrated the system that information
+      and. System into reference ac-14. Techniques eliminate feasible of plan access
+      to. To from engineering does sharing system assignment. Access analysis are
+      remote system virtualization. Associated the procedures results to the architecture
+      e.g. System data a full. A training inputs. Employs and the associated and.

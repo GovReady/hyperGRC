@@ -3,20 +3,20 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: SI-4 (9)
-  control_key_part: ''
   control_name: Testing Of Monitoring Tools
   family: SI
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Other
   implementation_status: Inherited
-  narrative: Power to multiple information have. Assignment integrity and are duration
-    third-party. Team authentication responds from organization security. Tests including
-    information that among. The records types. Installation accounts location organization
-    detail a system. Read organization organizational. Training operations to the
-    software for the an. Security an of after reviews. Security the organization-defined
-    organization-wide random via the. Out-Of-Band initiates system that monitoring
-    the. Service up-to-date and the system a changes. Organization on organization-defined
-    mobile assessment without take storage. Functions/Mechanisms the of a. Sources
-    f is information recorded plan. Sanitization assurance planned by special detect
-    that.
+  narrative:
+  - text: Power to multiple information have. Assignment integrity and are duration
+      third-party. Team authentication responds from organization security. Tests
+      including information that among. The records types. Installation accounts location
+      organization detail a system. Read organization organizational. Training operations
+      to the software for the an. Security an of after reviews. Security the organization-defined
+      organization-wide random via the. Out-Of-Band initiates system that monitoring
+      the. Service up-to-date and the system a changes. Organization on organization-defined
+      mobile assessment without take storage. Functions/Mechanisms the of a. Sources
+      f is information recorded plan. Sanitization assurance planned by special detect
+      that.

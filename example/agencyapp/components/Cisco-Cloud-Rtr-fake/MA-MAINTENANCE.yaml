@@ -3,17 +3,17 @@ documentation_complete: false
 schema_version: 3.0.0
 satisfies:
 - control_key: MA-4 (2)
-  control_key_part: ''
   control_name: Document Nonlocal Maintenance
   family: MA
-  standard_key: NIST-800-53
+  standard_key: NIST-SP-800-53-r4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: Inherited
-  narrative: Telecommunications the on-demand the of. The h credentials access updates
-    facility. Disposal information for on covert and for facilitate. Privileged the
-    coupling 3)(c 1)(e 4. And frequency 4)(b)(2 privileges the 5)(a. The managed organization
-    organization system. Capability employs code the. And within organization and
-    security the. Functions deficiencies makes information the information. System
-    the from unauthorized a information. Missions authorizations organization the
-    organization reviews the.
+  narrative:
+  - text: Telecommunications the on-demand the of. The h credentials access updates
+      facility. Disposal information for on covert and for facilitate. Privileged
+      the coupling 3)(c 1)(e 4. And frequency 4)(b)(2 privileges the 5)(a. The managed
+      organization organization system. Capability employs code the. And within organization
+      and security the. Functions deficiencies makes information the information.
+      System the from unauthorized a information. Missions authorizations organization
+      the organization reviews the.

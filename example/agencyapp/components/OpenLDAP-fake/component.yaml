@@ -1,0 +1,7 @@
+name: OpenLDAP-fake
+schema_version: 3.0.0
+satisfies:
+- AC-ACCESS_CONTROL.yaml
+- AU-AUDIT_AND_ACCOUNTABILITY.yaml
+- CM-CONFIGURATION_MANAGEMENT.yaml
+- SI-SYSTEM_AND_INFORMATION_INTEGRITY.yaml

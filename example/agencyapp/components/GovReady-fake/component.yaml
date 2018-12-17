@@ -1,0 +1,23 @@
+name: GovReady-fake
+schema_version: 3.0.0
+satisfies:
+- CM-CONFIGURATION_MANAGEMENT.yaml
+- PS-PERSONNEL_SECURITY.yaml
+- SA-SYSTEM_AND_SERVICES_ACQUISITION.yaml
+- SI-SYSTEM_AND_INFORMATION_INTEGRITY.yaml
+verifications:
+ - key: amcs-01
+   name: Acquia Managed Cloud snapshots documentation snapshot
+   path: evidence/screenshots/amcs-01.png
+   type: image
+   link: https://docs.acquia.com/acquia-cloud/arch/security/availability/backups/#automatic-snapshots-for-disaster-recovery
+ - key: amcs-01
+   name: Acquia Managed Cloud snapshots admin screen screenshot
+   path: evidence/screenshots/amcs-01b.png
+   type: image
+   link: https://docs.acquia.com/acquia-cloud/arch/security/availability/backups/#automatic-snapshots-for-disaster-recovery
+ - key: gsvcr-01
+   name: DNFSB.gov git repository screenshot
+   path: evidence/screenshots/gsvcr-01.png
+   type: image
+   link: https://git.civicactions.com/dnfsb/ssp-csv-to-yaml
