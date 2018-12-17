@@ -152,12 +152,15 @@ def load_project_components(project):
         if basepath:
             component_id = os.path.relpath(component_id, start=basepath)
 
-        # Start with the component's name, but
-        # truncated so that we don't have unnecessarily long URLs. Add to it a hash of the
-        # directory path containing the component so that in the unlikely case that two
-        # components share the same first 12 characters of their names, we still assign
-        # unique IDs to them.
-        #component_id = name[0:12] + "-" + short_hash(component_path)
+        if not component_id:
+            # The component directory is the only one or there is no relative path to the base
+            # path, so try again with a different strategy.
+            # Start with the component's name, but
+            # truncated so that we don't have unnecessarily long URLs. Add to it a hash of the
+            # directory path containing the component so that in the unlikely case that two
+            # components share the same first 12 characters of their names, we still assign
+            # unique IDs to them.
+            component_id = name[0:12] + "-" + short_hash(component_path)
 
         # This is the data structure that we use throughout the application to represent
         # a component.
