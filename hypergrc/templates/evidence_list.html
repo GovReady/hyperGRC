@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+  hyperGRC - {{project.title}} - Evidence
+{% endblock %}
+
+{% block content %}
+<div id="static-page-content" class="container">
+  <div class="row item-ctl">
+    <div class="col-md-10">&nbsp;</div>
+    <div class="col-md-2" style="text-align: right;" onclick="alert('{{ modify_msg }}')">
+      MODIFY <span class="glyphicon glyphicon-cog"></span>
+    </div>
+  </div>
+
+    <h1>Evidence</h1>
+
+    {% for item in evidence %}
+        <h2>
+          {{ item.name }}
+        </h2>
+        <div>defined in <a href="{{item.component.url}}">{{item.component.name}}</a></div>
+    {% endfor %}
+</div>
+{% endblock %}

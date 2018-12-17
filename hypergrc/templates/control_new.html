@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}
+  hyperGRC - {{project.title}} - Add Control to {{component.name}}
+{% endblock %}
+
+{% block content %}
+<div id="static-page-content" class="container">
+  <div class="row item-ctl">
+    <div class="col-md-10">&nbsp;</div>
+    <div class="col-md-2" style="text-align: right;" onclick="alert('{{ item_ctl_msg }}')">
+      MODIFY <span class="glyphicon glyphicon-cog"></span>
+    </div>
+  </div>
+
+    <h1>Add component to {{project.title}}</h1>
+
+    <form method="post">
+      {% if error %}
+      <p class="text-danger">{{error}}</p>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="component-name">Component Name</label>
+        <input type="text" class="form-control" id="component-name" name="component-name" value="{{default_component_name}}">
+      </div>
+      <div class="form-group">
+        <label for="component-path">Component Path</label>
+        <input type="text" class="form-control" id="component-path" name="component-path" value="{{default_component_path}}">
+        <div style="margin-top: 2px;"><small>A new directory will be created in <code>{{project.path}}</code>.</small></div>
+      </div>
+      <button type="submit" class="btn btn-default">Create</button>
+    </form>
+
+    <script>
+      // Generate path automatically.
+      var last_auto_path = {{default_component_path|tojson}};
+      function auto_path() {
+        // Stop if the user changed the path manually.
+        if ($('#component-path').val() != last_auto_path)
+          return;
+
+        // Compute good path. Get the current parent directory.
+        var parent_dir = /([^/\\]+[/\\])/.exec(last_auto_path) || "";
+        if (parent_dir)
+          parent_dir = parent_dir[1];
+
+        // Add to it the component name without spaces or other weird characters.
+        var name = $('#component-name').val().replace(/[^A-Za-z0-9-]/g, '');
+        var path = parent_dir + name;
+
+        // Update.
+        $('#component-path').val(path);
+        last_auto_path = path;
+      }
+      $('#component-name').keyup(auto_path).change(auto_path);
+    </script>
+</div>
+{% endblock %}
