@@ -152,9 +152,10 @@ def load_project_components(project):
         if basepath:
             component_id = os.path.relpath(component_id, start=basepath)
 
-        if not component_id:
+        if not component_id or not component_id.strip("./\\"):
             # The component directory is the only one or there is no relative path to the base
-            # path, so try again with a different strategy.
+            # path (i.e. component_id was empty or only dots and slashes), so try again with a
+            # different strategy. 
             # Start with the component's name, but
             # truncated so that we don't have unnecessarily long URLs. Add to it a hash of the
             # directory path containing the component so that in the unlikely case that two
