@@ -301,6 +301,23 @@ def get_matched_control(control_id, standard):
     # Control isn't found at all. Return the original control_id unchanged.
     return control_id
 
+def transform_list(array, source_file, file_loader, transformer):
+    # Loop over the elements.
+    for item in array:
+        # If an entry is a string rather than a dict, then it names a file
+        # that we should read that contains more items of the same type.
+        if isinstance(item, str):
+            # Construct the path to the file, which is relative to the file
+            # it is listed in.
+            fn = os.path.join(os.path.dirname(source_file), item)
+
+            # Parse it.
+            inner_file = file_loader(fn)
+            yield from transform_list(inner_file, fn, file_loader, transformer)
+        else:
+            # This record holds an item to transform.
+            yield from transformer(item, source_file)
+
 def load_project_component_controls(component, standards):
     # Return a generator over all of the controls implemented by the component.
     
@@ -313,121 +330,145 @@ def load_project_component_controls(component, standards):
     # but in the extended schema that we support --- this function is a helper function
     # that reads component files. It returns a generator that yields the controls implemented
     # by the component listed in a particular source file.
-    def yield_from_list(component_opencontrol, source_file):
-        # Loop over the elements in the 'satisfies' key.
-        for control in component_opencontrol.get("satisfies", []):
-            # If an entry is a string rather than a dict, then it names a file
-            # that we should read that contains a list of controls implemented.
-            # Call this helper function recursively.
-            if isinstance(control, str):
-                # Construct the path to the file, which is relative to the file
-                # it is listed in.
-                fn = os.path.join(os.path.dirname(source_file), control)
+    def file_loader(fn):
+        return load_opencontrol_yaml(fn, "component", None).get("satisfies", [])
+    def transformer(control, source_file):
+        # This record holds a control number and narrative.
+        #
+        # Actually it holds a list of narratives for one or more control *parts*.
+        # A part is like "part a", "part b", etc. We return each separately.
+        # So, an implemented "control" actually means a control *part*.
 
-                # Parse it.
-                inner_file = load_opencontrol_yaml(fn, "component", None)
-                yield from yield_from_list(inner_file, fn)
-                continue
+        # Create basic metadata for the control only based on what's in the
+        # component. This data structure is used throughout this application
+        # to represent control implementations within components.
+        control_metadata = {
+            # The component implementing the control.
+            "component": component,
 
-            # This record holds a control number and narrative.
+            # The standard that the control is a part of. See the data structure defined for
+            # standards in load_project_standards. This is a stub --- we augment it with
+            # data from load_project_standards below.
+            "standard": {
+                "id": control["standard_key"],
+                "name": control["standard_key"],
+            },
+
+            # The control family that the control is a part of. See the data structure defined for
+            # control families in load_project_standards. This is a stub --- we augment it with
+            # data from load_project_standards below.
+            "family": {
+                "id": control["control_key"].split("-")[0],
+                "abbrev": control["control_key"].split("-")[0],
+                "name": control["control_key"].split("-")[0],
+                "sort_key": control["control_key"].split("-")[0],
+            },
+
+            # The control being implemented.  Must match control structure in load_project_standards.
+            # This is a stub --- we augment it with data from load_project_standards below if the
+            # control is found in a standard.
             #
-            # Actually it holds a list of narratives for one or more control *parts*.
-            # A part is like "part a", "part b", etc. We return each separately.
-            # So, an implemented "control" actually means a control *part*.
+            # The only difference is that we add a 'url' key here to the page within this *project*
+            # for viewing everything related to this control.
+            "control": {
+                "id": control["control_key"], # matches how the control is put in the URL
+                "sort_key": (control["standard_key"], make_control_number_sort_key(control["control_key"])),
+                "number": control["control_key"],
+                "name": control.get("name", control["control_key"]), # not in OpenControl spec
+                "url": "{}/controls/{}/{}".format(
+                    component["project"]["url"],
+                    quote_plus(control["standard_key"]),
+                    quote_plus(control["control_key"]),
+                )
+            },
 
-            # Create basic metadata for the control only based on what's in the
-            # component. This data structure is used throughout this application
-            # to represent control implementations within components.
-            control_metadata = {
-                # The component implementing the control.
-                "component": component,
+            # Evidence keys.
+            "evidence": [
+                item["verification_key"]
+                for item in control.get("covered_by", [])
+                if item.get("component_key") is None # skip if evidence is defined elsewhere because we don't support that
+            ],
 
-                # The standard that the control is a part of. See the data structure defined for
-                # standards in load_project_standards. This is a stub --- we augment it with
-                # data from load_project_standards below.
-                "standard": {
-                    "id": control["standard_key"],
-                    "name": control["standard_key"],
-                },
+            # The local path to the YAML file containing this data --- which we use for finding
+            # the file we need when we want to edit the control implementation.
+            "source_file": os.path.normpath(source_file),
+        }
 
-                # The control family that the control is a part of. See the data structure defined for
-                # control families in load_project_standards. This is a stub --- we augment it with
-                # data from load_project_standards below.
-                "family": {
-                    "id": control["control_key"].split("-")[0],
-                    "abbrev": control["control_key"].split("-")[0],
-                    "name": control["control_key"].split("-")[0],
-                    "sort_key": control["control_key"].split("-")[0],
-                },
+        # Augment the control information from the standards if the control is found in the
+        # stanards. Is the standard one we know?
+        if control["standard_key"] in standards:
+            standard = standards[control["standard_key"]]
+            control_metadata["standard"]["name"] = standard["name"]
 
-                # The control being implemented.  Must match control structure in load_project_standards.
-                # This is a stub --- we augment it with data from load_project_standards below if the
-                # control is found in a standard.
-                #
-                # The only difference is that we add a 'url' key here to the page within this *project*
-                # for viewing everything related to this control.
-                "control": {
-                    "id": control["control_key"], # matches how the control is put in the URL
-                    "sort_key": (control["standard_key"], make_control_number_sort_key(control["control_key"])),
-                    "number": control["control_key"],
-                    "name": control.get("name", control["control_key"]), # not in OpenControl spec
-                    "url": "{}/controls/{}/{}".format(
-                        component["project"]["url"],
-                        quote_plus(control["standard_key"]),
-                        quote_plus(control["control_key"]),
-                    )
-                },
+            # If the control is in the standard, add its info also.
+            if control["control_key"] in standard["controls"]:
+                control_metadata["control"].update(standard["controls"][control["control_key"]])
 
-                # The local path to the YAML file containing this data --- which we use for finding
-                # the file we need when we want to edit the control implementation.
-                "source_file": os.path.normpath(source_file),
-            }
-
-            # Augment the control information from the standards if the control is found in the
-            # stanards. Is the standard one we know?
-            if control["standard_key"] in standards:
-                standard = standards[control["standard_key"]]
-                control_metadata["standard"]["name"] = standard["name"]
-
-                # If the control is in the standard, add its info also.
-                if control["control_key"] in standard["controls"]:
-                    control_metadata["control"].update(standard["controls"][control["control_key"]])
-
-                # If this is a nonstandard citation to a control, add some of the parent control's info.
-                elif get_matched_control(control["control_key"], standard) in standard["controls"]:
-                    matched_control = standard["controls"][get_matched_control(control["control_key"], standard)]
-                    print(control["control_key"], get_matched_control(control["control_key"], standard))
-                    if not control_metadata["control"].get("name"):
-                      control_metadata["control"]["name"] = matched_control["name"]
-                    if not control_metadata["control"].get("family"):
-                      control_metadata["control"]["family"] = matched_control["family"]
-                    if not control_metadata["control"].get("description"):
-                      control_metadata["control"]["description"] = matched_control["description"]
-                    
-                # If the control's family is in the standard, add its info also.
-                if control_metadata["control"].get("family") in standard["families"]:
-                    control_metadata["family"].update(standard["families"][control_metadata["control"]["family"]])
+            # If this is a nonstandard citation to a control, add some of the parent control's info.
+            elif get_matched_control(control["control_key"], standard) in standard["controls"]:
+                matched_control = standard["controls"][get_matched_control(control["control_key"], standard)]
+                print(control["control_key"], get_matched_control(control["control_key"], standard))
+                if not control_metadata["control"].get("name"):
+                  control_metadata["control"]["name"] = matched_control["name"]
+                if not control_metadata["control"].get("family"):
+                  control_metadata["control"]["family"] = matched_control["family"]
+                if not control_metadata["control"].get("description"):
+                  control_metadata["control"]["description"] = matched_control["description"]
                 
-            # For each narrative part, make a copy of the control metadata
-            # so far, add the control part, and return the combined metadata.
-            #
-            # Note that we're reading "implementation_status" from the narrative
-            # part. This is non-conformant with OpenControl which has a single
-            # implementation_statuses field on the *control*, for all control
-            # parts, which are are ignoring so far in hyperGRC.
-            import copy
-            for narrative_part in control.get("narrative", []):
-                controlimpl = dict(control_metadata)
-                controlimpl.update({
-                    "control_part": narrative_part.get("key"),
-                    "sort_key": (controlimpl["control"]["sort_key"], make_control_number_sort_key(narrative_part.get("key"))),
-                    "narrative": narrative_part["text"],
-                    "implementation_status": narrative_part.get("implementation_status") or "",
-                })
-                yield controlimpl
+            # If the control's family is in the standard, add its info also.
+            if control_metadata["control"].get("family") in standard["families"]:
+                control_metadata["family"].update(standard["families"][control_metadata["control"]["family"]])
+            
+        # For each narrative part, make a copy of the control metadata
+        # so far, add the control part, and return the combined metadata.
+        #
+        # Note that we're reading "implementation_status" from the narrative
+        # part. This is non-conformant with OpenControl which has a single
+        # implementation_statuses field on the *control*, for all control
+        # parts, which are are ignoring so far in hyperGRC.
+        import copy
+        for narrative_part in control.get("narrative", []):
+            controlimpl = dict(control_metadata)
+            controlimpl.update({
+                "control_part": narrative_part.get("key"),
+                "sort_key": (controlimpl["control"]["sort_key"], make_control_number_sort_key(narrative_part.get("key"))),
+                "narrative": narrative_part["text"],
+                "implementation_status": narrative_part.get("implementation_status") or "",
+            })
+            yield controlimpl
 
     # Yield the controls in the "satisfies" key.
-    yield from yield_from_list(component_opencontrol, fn)
+    yield from transform_list(component_opencontrol.get("satisfies", []), fn, file_loader=file_loader, transformer=transformer)
+
+def load_project_component_evidence(component):
+    # Return a generator over all of the evidence available for the component.
+    
+    # Construct the filename for the component.yaml file. The component already
+    # knows what directory it is in.
+    fn = os.path.join(component["path"], "component.yaml")
+    component_opencontrol = load_opencontrol_yaml(fn, "component", ("3.0.0",))
+
+    # Because the component.yaml file is in a sense recursive --- not actually in OpenControl
+    # but in the extended schema that we support --- this function is a helper function
+    # that reads component files. It returns a generator that yields the evidence.
+    def file_loader(fn):
+        return load_opencontrol_yaml(fn, "component", None).get("verifications", [])
+    def transformer(verification, source_file):
+        # This record holds a "verification," which is what OpenControl calls evidence.
+        # As with our other data structures, return the actual path to the evidence, not
+        # a path relative to the directory in which the evidence is defined. Also store
+        # the component and actual file this evidence was defined in.
+        yield {
+            "key": verification["key"],
+            "name": verification.get("name") or verification["key"],
+            "path": os.path.join(component["path"], verification["path"]),
+            "type": verification.get("type"),
+            "component": component,
+            "source_file": source_file,
+        }
+
+    # Yield the evidence in the "verifications" key.
+    yield from transform_list(component_opencontrol.get("verifications", []), fn, file_loader=file_loader, transformer=transformer)
 
 def get_new_component_defaults(project):
     # What is a good name and path for a new component?

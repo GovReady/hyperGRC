@@ -6,7 +6,8 @@ satisfies:
   control_name: Configuration Management Policy And Procedures
   family: CM
   standard_key: NIST-SP-800-53-r4
-  covered_by: []
+  covered_by:
+  - verification_key: amcs-01
   security_control_type: Other
   implementation_status: Inherited
   narrative:

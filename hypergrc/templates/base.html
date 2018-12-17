@@ -51,6 +51,7 @@
           <hr>
           <p><a href="{{project.url}}" title="Components" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a></p><br/>
           <p><a href="{{project.url}}/controls" title="Controls" onclick="loading();"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p><br/>
+          <p><a href="{{project.url}}/evidence" title="Evidence" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a></p><br/>
           <p><a href="{{project.url}}/documents" title="Documents" onclick="loading();"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a></p><br/>
           <p><a href="{{project.url}}/assessments" title="Assessments" onclick="loading();"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></a></p><br/>
           <p><a href="{{project.url}}/poams" title="POA&amp;Ms" onclick="loading();"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a></p><br/>
@@ -116,6 +117,18 @@
               <div style="margin-top: 1.5em"><label for="control-editor-implementation-status">Implementation status</label></div>
               <input id="control-editor-implementation-status" class="implementation_status-input form-control" placeholder="Unknown">
 
+              <div style="margin-top: 1.5em"><label>Evidence</label></div>
+              <div class="evidence-list">
+              </div>
+              <div><select class="form-control" onchange="attach_evidence(this)">
+                <option value="">attach evidence...</option>
+                {% if evidence %}
+                  {% for item in evidence %}
+                    <option value="{{item.key}}">{{item.name}}</option>
+                  {% endfor %}
+                {% endif %}
+              </select></div>
+
               {% if source_files %}
               <div id="control-editor-sourcefiles-group" style="margin-top: 1.5em;">
               <div><label for="control-editor-sourcefiles">Save to</label></div>
@@ -149,12 +162,24 @@
 
       <script>
       {% if project %}
+
+      {% if evidence %}
+      var evidence_map = {
+        {% for item in evidence %}
+          {{item.key|tojson}}: {{item.name|tojson}},
+        {% endfor %}
+      };
+      {% endif %}
+
       // Edit a control.
       var edit_control_current_control = null;
       var edit_control_current_callback = null;
       function edit_control(control, callback) {
+        // Save total control data and callback for later.
         edit_control_current_control = control;
         edit_control_current_callback = callback;
+
+        // Populate the modal.
         var modal = $('#control-editor-modal');
         modal.find('.modal-title').text(
           control.control.number + (control.control_part ? (" Part " + control.control_part) : "")
@@ -163,10 +188,21 @@
         modal.find('.narrative-input').val(control.narrative);
         //modal.find('.summary-input').val(control.summary);
         modal.find('.implementation_status-input').val(control.implementation_status);
+        
+        modal.find('.evidence-list').text(''); // clear
+        (control.evidence || []).forEach(function(item) {
+          var node = $("<li style='margin-bottom: .5em;'/>");
+          node.text(evidence_map[item]);
+          modal.find('.evidence-list').append(node);
+        })
+
         modal.find('.component-link')
           .attr('href', control.control.url + "/grid")
           .show();
+
+        // Show the modal.
         modal.modal();
+        
         // resize textarea height arbitrarily small then to scrollHeight browser determined by text length
         modal.find('.narrative-input').css('height', 20 + 'px');
         modal.find('.narrative-input').css('height', modal.find('.narrative-input')[0].scrollHeight + "px");
@@ -210,6 +246,13 @@
         modal.find('.narrative-input').css('resize', 'none');
       }
       {% endif %}
+
+      function attach_evidence(evidence_list) {
+        evidence_list = $(evidence_list);
+        if (evidence_list.val() == "") return; // nothing selected
+        edit_control_current_control.evidence.push(evidence_list.val());
+        evidence_list.val('');
+      }
 
       // Save control.
       $('#control-editor-modal').on("hidden.bs.modal", function() {

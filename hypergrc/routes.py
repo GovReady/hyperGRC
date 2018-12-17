@@ -360,6 +360,9 @@ def component(request, organization, project, component_name):
     total_words = sum(words)
     average_words_per_controlpart = total_words / (len(controlimpls) if len(controlimpls) > 0 else 1) # don't err if no controlimpls
 
+    # For editing controls, we offer a list of evidence to attach to each control.
+    evidence =  list(opencontrol.load_project_component_evidence(component))
+    
     # Make a sorted list of controls --- the control catalog --- that the user can
     # draw from when adding new control implementations to the component.
     control_catalog = []
@@ -395,6 +398,7 @@ def component(request, organization, project, component_name):
                             control_part_count=control_part_counts,
                             total_words=total_words,
                             average_words_per_controlpart=average_words_per_controlpart,
+                            evidence=evidence,
                             control_catalog=control_catalog, # used for creating a new control in the component
                             source_files=source_files, # used for creating a new control in the component
                           )
@@ -603,6 +607,32 @@ def project_control_grid(request, organization, project, standard_key, control_k
                             components=components,
                             parts=parts,
                           )
+
+
+@route('/organizations/<organization>/projects/<project>/evidence')
+def evidence(request, organization, project):
+    """List evidence in the entire project."""
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # Load its components and sort them.
+    components = list(opencontrol.load_project_components(project))
+    components.sort(key = lambda component : component["name"])
+
+    # Load all evidence.
+    evidence = sum([
+      list(opencontrol.load_project_component_evidence(component))
+      for component in components
+    ], [])
+
+    # Show the project's components.
+    return render_template(request, 'evidence_list.html',
+                            project=project,
+                            evidence=evidence)
 
 #####################################################
 # Routes for Creating and Updating Compliance Content
