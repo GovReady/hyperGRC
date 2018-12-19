@@ -5,7 +5,7 @@ satisfies:
 - control_key: SC-42 (3)
   control_name: Prohibit Use Of Devices
   family: SC
-  standard_key: NIST-SP-800-53-r4
+  standard_key: NIST SP 800-53 Revision 4
   covered_by: []
   security_control_type: Other
   implementation_status: Planned

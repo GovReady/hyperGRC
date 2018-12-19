@@ -5,7 +5,7 @@ satisfies:
 - control_key: SI-4 (9)
   control_name: Testing Of Monitoring Tools
   family: SI
-  standard_key: NIST-SP-800-53-r4
+  standard_key: NIST SP 800-53 Revision 4
   covered_by: []
   security_control_type: Other
   implementation_status: Inherited

@@ -5,7 +5,7 @@ satisfies:
 - control_key: MA-5 (3)
   control_name: Citizenship Requirements For Classified Systems
   family: MA
-  standard_key: NIST-SP-800-53-r4
+  standard_key: NIST SP 800-53 Revision 4
   covered_by: []
   security_control_type: Other
   implementation_status: Partially In Place

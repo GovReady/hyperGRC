@@ -5,7 +5,7 @@ satisfies:
 - control_key: SA-5 (1)
   control_name: Functional Properties Of Security Controls
   family: SA
-  standard_key: NIST-SP-800-53-r4
+  standard_key: NIST SP 800-53 Revision 4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: In Place

@@ -5,7 +5,7 @@ satisfies:
 - control_key: SA-4 (7)
   control_name: Niap-Approved  Protection Profiles
   family: SA
-  standard_key: NIST-SP-800-53-r4
+  standard_key: NIST SP 800-53 Revision 4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: Planned

@@ -5,7 +5,7 @@ satisfies:
 - control_key: CM-1
   control_name: Configuration Management Policy And Procedures
   family: CM
-  standard_key: NIST-SP-800-53-r4
+  standard_key: NIST SP 800-53 Revision 4
   covered_by:
   - verification_key: amcs-01
   security_control_type: Other

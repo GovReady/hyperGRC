@@ -5,7 +5,7 @@ satisfies:
 - control_key: AC-4 (16)
   control_name: Information Transfers On Interconnected Systems
   family: AC
-  standard_key: NIST-SP-800-53-r4
+  standard_key: NIST SP 800-53 Revision 4
   covered_by: []
   security_control_type: Other
   implementation_status: In Place

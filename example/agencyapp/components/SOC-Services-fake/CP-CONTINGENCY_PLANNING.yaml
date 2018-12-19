@@ -5,7 +5,7 @@ satisfies:
 - control_key: CP-7 (6)
   control_name: Inability To Return To Primary Site
   family: CP
-  standard_key: NIST-SP-800-53-r4
+  standard_key: NIST SP 800-53 Revision 4
   covered_by: []
   security_control_type: Other
   implementation_status: Planned

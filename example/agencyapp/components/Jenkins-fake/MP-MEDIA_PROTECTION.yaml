@@ -5,7 +5,7 @@ satisfies:
 - control_key: MP-4 (1)
   control_name: Cryptographic Protection
   family: MP
-  standard_key: NIST-SP-800-53-r4
+  standard_key: NIST SP 800-53 Revision 4
   covered_by: []
   security_control_type: Other
   implementation_status: Planned

@@ -5,7 +5,7 @@ satisfies:
 - control_key: CP-7 (5)
   control_name: Equivalent Information Security Safeguards
   family: CP
-  standard_key: NIST-SP-800-53-r4
+  standard_key: NIST SP 800-53 Revision 4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: Planned

@@ -232,13 +232,14 @@ def load_project_standards(project):
             # Construct the file name.
             fn3 = os.path.join(project["path"], standards_dir, standard_fn)
 
-            # The default key is based on the file name. OpenControl says something about
-            # the file being able to override this, but we don't yet support that, but
-            # we could below.
-            standard_key = os.path.splitext(os.path.basename(os.path.normpath(fn3)))[0]
-
             # Read the file..
             standard_opencontrol = load_opencontrol_yaml(fn3, "standard", None) # no schema_version is present in this file
+
+            # The 'key' of a standard is set in its 'name' field, which is weird, but so it is.
+            # If there's no name --- it's probably required, but just in case --- fall back to
+            # the filename without its extension.
+            standard_key = standard_opencontrol.get('name') \
+                or os.path.splitext(os.path.basename(os.path.normpath(fn3)))[0]
 
             # Create a dict holding information about the standard and the controls
             # within the standard.

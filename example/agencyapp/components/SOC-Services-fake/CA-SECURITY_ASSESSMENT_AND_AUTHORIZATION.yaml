@@ -5,7 +5,7 @@ satisfies:
 - control_key: CA-3 (2)
   control_name: Classified National Security System Connections
   family: CA
-  standard_key: NIST-SP-800-53-r4
+  standard_key: NIST SP 800-53 Revision 4
   covered_by: []
   security_control_type: Other
   implementation_status: Planned

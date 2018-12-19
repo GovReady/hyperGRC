@@ -5,7 +5,7 @@ satisfies:
 - control_key: IR-1
   control_name: Incident Response Policy And Procedures
   family: IR
-  standard_key: NIST-SP-800-53-r4
+  standard_key: NIST SP 800-53 Revision 4
   covered_by: []
   security_control_type: Hybrid
   implementation_status: Inherited
