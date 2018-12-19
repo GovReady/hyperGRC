@@ -564,31 +564,27 @@ def project_control_grid(request, organization, project, standard_key, control_k
               "controls": controlimpls
             })
 
-    # Sort the components and the controls within each component.
+    # For the 'grid' view...
+    # Sort the components and the controls within each component so that we can display
+    # them in columns for each component.
     components.sort(key = lambda component : component["component"]["name"])
     for component in components:
         component["controls"].sort(key = lambda controlimpl : controlimpl["sort_key"])
 
-    # In the 'grid' view, we have columns for the matched components. But in the 'combined'
-    # view we have a single text area that shows all of the control narrative text in order
-    # as it would appear in a system security plan --- i.e. sorted *first* by control part
-    # (i.e. part a, part b) and *second* by component. Our components data structure has
-    # everything sorted by part and component, but by component first. This block just
-    # rearranges it first by part. Sorry if the code isn't clear but it would be easy to redo.
-    parts = []
+    # For the 'combined' view...
+    # Sort the narratives by part first, then by component. We will have a single text area
+    # that shows what this control will look like in a system security plan. Flatten the
+    # list of control narratives and then sort.
+    narratives = []
     for component in components:
         for controlimpl in component["controls"]:
-            if len(parts) == 0 or parts[-1]["part"] != controlimpl["control_part"]:
-                parts.append({
-                    "part": controlimpl["control_part"],
-                    "components": [],
-                })
-            if len(parts[-1]["components"]) == 0 or parts[-1]["components"][-1]["component"]["id"] != controlimpl["component"]["id"]:
-                parts[-1]["components"].append({
-                    "component": controlimpl["component"],
-                    "controls": [],
-                })
-            parts[-1]["components"][-1]["controls"].append(controlimpl)
+          narratives.append({
+            "part": controlimpl["control_part"],
+            "component": component["component"],
+            "text": controlimpl["narrative"],
+          })
+    narratives.sort(key = lambda narrative : ( narrative["part"], narrative["component"]["name"] ))
+
 
     # Add URL info to the control --- it might be missing if the metadata
     # came from the standard.
@@ -605,7 +601,7 @@ def project_control_grid(request, organization, project, standard_key, control_k
                             standard=standards[standard_key],
                             control=control,
                             components=components,
-                            parts=parts,
+                            narratives=narratives,
                           )
 
 

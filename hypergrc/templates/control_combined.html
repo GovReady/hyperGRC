@@ -49,23 +49,21 @@
 
       <h2>Implementation Narrative</h2>
 
-      {% for part in parts %}
-          {% if part.part %} <!-- # there are null parts meaning the whole control, not a part -->
-            <h4>Part {{ part.part }}</h4>
+      {% for narrative in narratives %}
+          {% if loop.changed(narrative.part) %}
+            {% if narrative.part %}
+              {# there are null parts meaning the whole control, not a part #}
+              <h3>Part {{ narrative.part }}</h3>
+            {% endif %}
           {% endif %}
 
-          {% for component_info in part.components %}
-            <h5>{{ component_info.component.name }}</h5>
+          <h4>{{ narrative.component.name }}</h4>
 
-            {% for impl in component_info.controls %}
-              <div style='margin: auto auto 8px auto;'>{{ impl.narrative | nl2br | safe }}</div>
-            {% endfor %}
+          <div style='margin: auto auto 8px auto;'>{{ narrative.text | nl2br | safe }}</div>
 
-            {% if covered_by|length > 0 %}
-            <div style='margin: auto auto 8px auto;'>(Evidence: {% for cb in covered_by %} <a href="{{ cb.path }}" style="color: #333;">{{ cb.name }}</a>{%- if not loop.last -%}, {% endif %}{% if loop.last %}.{% endif %}{% endfor %})</div>
-            {% endif %}
-
-          {% endfor %}
+          {% if covered_by|length > 0 %}
+          <div style='margin: auto auto 8px auto;'>(Evidence: {% for cb in covered_by %} <a href="{{ cb.path }}" style="color: #333;">{{ cb.name }}</a>{%- if not loop.last -%}, {% endif %}{% if loop.last %}.{% endif %}{% endfor %})</div>
+          {% endif %}
 
         {% endfor %}
 
