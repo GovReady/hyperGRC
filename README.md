@@ -135,14 +135,6 @@ Although not currently conformant with the OpenControl standard, hyperGRC also a
 
 For more details, see the files in example/agencyapp.
 
-### GovReady Compliance Apps
-
-(Coming soon - content to be added)
-
-### GovReady SSP Parser
-
-(Working - content to be added)
-
 ## Development
 
 Development is easier if hyperGRC is run in a way that it restarts when any source code changes occur, so that you can see your changes immediately. `nodemon` from the Node package manager is a handy tool to do that. [Install Node](https://nodejs.org/en/download/) and then run:
