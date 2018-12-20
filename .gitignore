@@ -8,3 +8,6 @@ venv
 *.pyc
 .pyc
 __pycache__
+
+# hyperGRC local files
+.hypergrc_repos_*
