@@ -28,7 +28,7 @@ from .routes import PROJECT_LIST, ROUTES
 
 parser = argparse.ArgumentParser(description='hyperGRC')
 parser.add_argument('--bind', default="localhost:8000", help='[host:]port to bind to')
-parser.add_argument('project', nargs="*", default=["@.hypergrc_repos"], help='Path to a directory containing an opencontrol.yaml file for a system. Specify more than once to edit multiple system projects. Precede with an @-sign to read a list of directories from a newline-delimited text file.')
+parser.add_argument('project', nargs="*", default=["@repos.local"], help='Path to a directory containing an opencontrol.yaml file for a system. Specify more than once to edit multiple system projects. Precede with an @-sign to read a list of directories from a newline-delimited text file.')
 args = parser.parse_args()
 
 # Get the host and port to bind to, which are in '[host:]port' format.
@@ -51,7 +51,7 @@ for project in args.project:
     with open(project[1:], 'r') as f:
       for line in f:
         line = line.strip()
-        if line:
+        if line and not line.startswith("#"):
           PROJECT_LIST.append(line)
   else:
     # Append this argument.

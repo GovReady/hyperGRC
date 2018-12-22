@@ -1,7 +1,6 @@
 controls/
 inputs/
 outputs/\~\$*
-.hypergrc_repos
 
 # Python, virtual env
 venv
@@ -10,4 +9,5 @@ venv
 __pycache__
 
 # hyperGRC local files
-.hypergrc_repos_*
+repos.local.*
+# NOTE: `repos.local` has been set to `--skip-worktree` to ignore local changes

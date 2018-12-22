@@ -66,16 +66,16 @@ hyperGRC accepts several command-line arguments. You've already seen one: the lo
 python -m hypergrc example/agencyapp path/to/project2 ...
 ```
 
-If you do not specify any paths on the command line, hyperGRC reads a list of paths to repositories in a file named `.hypergrc_repos`, e.g.:
+If you do not specify any paths on the command line, hyperGRC reads a list of paths to repositories in a file named `repos.local`, e.g.:
 
 ```text
-.hypergrc_repos
+repos.local
 ---------------
 example/agencyapp
 path/to/project2
 ```
 
-The start as:
+Start as:
 
 ```bash
 python -m hypergrc
@@ -84,7 +84,7 @@ python -m hypergrc
 You may also specify files containing lists of paths to repositories on the command-line by preceding the listing file with an `@`-sign. The command above is equivalent to:
 
 ```bash
-python -m hypergrc @.hypergrc_repos
+python -m hypergrc @repos.local
 ```
 
 #### Other options
@@ -97,7 +97,7 @@ python -m hypergrc --bind 0.0.0.0:80
 
 ## Understanding the compliance-as-code data files
 
-OpenControl is one of the first attempts at creating a friendly structured standard for representing component to control mappings. hyperGRC reads and writes OpenControl data YAML files, including:
+OpenControl creates readable structured standard for representing component to control mappings. hyperGRC reads and writes OpenControl data YAML files, including:
 
 * A system `opencontrol.yaml` file which containins metadata about the information technology system and lists the system's components and compliance standards in use.
 * One or more `component.yaml` files which describe components of the information technology system. Each component has a name and other metadata and list of control implementations (i.e. control narrative texts).
