@@ -17,7 +17,7 @@
 
     {% for component in components %}
         <h2>
-          <a href="{{component.url}}">
+          <a href="{{component.url}}" onclick="loading();">
             <span class="glyphicon glyphicon-link"></span>
             {{ component.name }}
           </a>

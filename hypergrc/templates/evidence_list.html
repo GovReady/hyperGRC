@@ -19,7 +19,7 @@
         <h2>
           {{ item.name }}
         </h2>
-        <div>defined in <a href="{{item.component.url}}">{{item.component.name}}</a></div>
+        <div>defined in <a href="{{item.component.url}}" onclick="loading();">{{item.component.name}}</a></div>
     {% endfor %}
 </div>
 {% endblock %}
