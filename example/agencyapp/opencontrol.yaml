@@ -19,3 +19,5 @@ components:
 - ./components/SOC-Services-fake
 standards:
 - ./standards
+certifications:
+- ./certifications/fisma-low-impact.yaml

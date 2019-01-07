@@ -293,6 +293,34 @@ def load_project_standards(project):
 
     return standards
                 
+
+def load_project_certified_controls(project):
+    # Return a set of (standard_id, control_id) tuples for controls that are included
+    # in any "certification" attached to the system. A certification is a list of controls
+    # the user cares about for the system, i.e. a control selection.
+
+    certified_controls = set()
+
+    # Open the OpenControl system file (the project) and check that its schema_version
+    # is something we recognize...
+    fn1 = os.path.join(project["path"], "opencontrol.yaml")
+    system_opencontrol = load_opencontrol_yaml(fn1, "system", ("1.0.0",))
+
+    # The system optionally has a list of certifications. Load all of them.
+    for certification_fn in system_opencontrol.get("certifications", []):
+        # Construct the file name.
+        fn3 = os.path.join(project["path"], certification_fn)
+
+        # Read the file..
+        certification_opencontrol = load_opencontrol_yaml(fn3, "certification", None) # no schema_version is present in this file
+
+        # Iterate over each standard...
+        for standard_id, controls in certification_opencontrol.get("standards", {}).items():
+            for control_id in controls:
+                certified_controls.add( (standard_id, control_id) )
+
+    return certified_controls
+
 def get_matched_control(control_id, standard):
     # Sometimes control IDs refer to subparts of controls, e.g. AC-2 (a)
     # or non-standard supplemental citations, e.g. AC-2 (DHS 1.2.3). If the

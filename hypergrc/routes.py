@@ -429,8 +429,6 @@ def component_guide(request, organization, project, component_name):
 def controls(request, organization, project):
     """Show all of the controls for a project."""
 
-    import copy
-
     # Load the project.
     try:
       project = load_project(organization, project)
@@ -438,36 +436,39 @@ def controls(request, organization, project):
       return "Organization `{}` project `{}` in URL not found.".format(organization, project)
 
     # Get a list of all controls, by standard, combining both the controls listed
-    # in the standards as well as the controls in use by the components, which
-    # may be different when the components have non-standard controls.
+    # in the standards (and if listed in a certification, if present) as well as the
+    # controls in use by the components, which may be different when the components
+    # have non-standard controls or controls that are outside the control selection
+    # specified by the certifications.
 
-    # Start with the controls defined by the standards.
+    # Load all of the standards used by this project so we have metadata for
+    # controls that might be found.
 
     all_standards = opencontrol.load_project_standards(project)
-    standards = { }
+    certified_controls = opencontrol.load_project_certified_controls(project)
 
-    # Add in controls defined by the components.
-
+    # Add in controls defined by the components and group them by standard.
     # Iterate through all components in the project...
+    standards = { }
     for component in opencontrol.load_project_components(project):
 
         # Iterate through all control implementations across all components...
         for controlimpl in opencontrol.load_project_component_controls(component, all_standards):
-            # Pull in the standard for this control if we know about it.
+            # The first time we see a standard, make a record for it.
+            # If the control implementation is for an unknown standard, make a record for it
+            # by using the "standard" information attached to this control. Otherwise pull
+            # the name from the standards metadata.
             standard_key = controlimpl["standard"]["id"]
             if standard_key not in standards:
-              if standard_key in all_standards:
-                standards[standard_key] = copy.deepcopy(all_standards[standard_key])
+              standards.setdefault(standard_key, {
+                  "name": all_standards[standard_key]["name"] # This is a standard we know about.
+                          if standard_key in all_standards
+                          else controlimpl["standard"]["name"],
+              })
 
-              else:
-                # If the control implementation is for an unknown standard, make a record for it
-                # by using the "standard" information attached to this control. Make a "controls"
-                # dict to hold controls in use for this made-up standard.
-                standards[standard_key] = dict(controlimpl["standard"])
-                standards[standard_key].setdefault("controls", {})
-
-            # If the control implementation is for an unknown control, make a record for it.
+            # Make a "controls" dict to hold control implementations.
             control_key = controlimpl["control"]["id"]
+            standards[standard_key].setdefault("controls", {})
             standards[standard_key]["controls"].setdefault(control_key, controlimpl["control"])
 
             # Count up the number of components that have an implementation for the control.
@@ -477,30 +478,44 @@ def controls(request, organization, project):
             standards[standard_key]["controls"][control_key].setdefault("components", set())
             standards[standard_key]["controls"][control_key]["components"].add(component["id"])
 
-    # Make the standards a sorted list, and sort the controls within it. 'standards'
-    # is a dict mapping standard IDs to dicts holding information about it. Going
-    # forward we just need the dicts in order --- we no longer need a mapping. Same
-    # for the list of controls within each standard.
-    standards = list(standards.values())
-    standards.sort(key = lambda group : group["name"])
-    for standard in standards:
-      standard["controls"] = list(standard["controls"].values())
-      standard["controls"].sort(key = lambda control : control["sort_key"])
-
-    # Not all controls have a URL so far. The ones that have no implementations
-    # in components don't --- they came straight from the standards files and
-    # since the standards are loaded independently of projects, they don't know
-    # what project we're doing right now and so could not pre-generate a URL.
+    # Add in controls that don't have an implementation from standards we have
+    # data for. If a certification is present for the standard, only include
+    # controls in the certification. These controls won't have a 'url' field
+    # so add it. Since the standards are loaded independently of projects, these
+    # controls don't know what project we're doing right now and so could not pre-generate a URL.
     # Add a URL field now so that the template can generate links.
     from urllib.parse import quote_plus
-    for standard in standards:
-      for control in standard["controls"]:
-        if "url" not in control:
+    certified_standards = { standard_key for (standard_key, control_id) in certified_controls }
+    for standard_key, standard in all_standards.items():
+      for control in standard["controls"].values():
+        # Include this control in the table if the standard does not have a certification
+        # or if the control is in the certification.
+        if standard_key not in certified_standards or (standard_key, control["id"]) in certified_controls:
+          # Make a standard if we haven't seen it yet.
+          standards.setdefault(standard_key, {
+              "name": standard["name"],
+              "controls": {},
+          })
+
+          # Add this control.
+          standards[standard_key]["controls"].setdefault(control["id"], control)
+
+          # Set its URL.
           control["url"] = "{}/controls/{}/{}".format(
             project["url"],
             quote_plus(standard["id"]),
             quote_plus(control["id"]),
           )
+
+    # Make the standards a sorted list, and sort the controls within it. 'standards'
+    # is a dict mapping standard IDs to dicts holding information about it. Going
+    # forward we just need the dicts in order --- we no longer need a mapping. Same
+    # for the list of controls within each standard.
+    standards = list(standards.values())
+    standards.sort(key = lambda standard : standard["name"])
+    for standard in standards:
+      standard["controls"] = list(standard["controls"].values())
+      standard["controls"].sort(key = lambda control : control["sort_key"])
 
     # Prepare modify page message
     edit_dir = os.path.join(project["path"])
