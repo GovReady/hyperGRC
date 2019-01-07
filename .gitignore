@@ -9,5 +9,4 @@ venv
 __pycache__
 
 # hyperGRC local files
-repos.local.*
-# NOTE: `repos.local` has been set to `--skip-worktree` to ignore local changes
+repos.conf

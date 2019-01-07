@@ -66,14 +66,16 @@ hyperGRC accepts several command-line arguments. You've already seen one: the lo
 python -m hypergrc example/agencyapp path/to/project2 ...
 ```
 
-If you do not specify any paths on the command line, hyperGRC reads a list of paths to repositories in a file named `repos.local`, e.g.:
+If you do not specify any paths on the command line, hyperGRC reads a list of paths to repositories from a file named `repos.conf`, e.g.:
 
 ```text
-repos.local
+repos.conf
 ---------------
 example/agencyapp
 path/to/project2
 ```
+
+Create this file if it does not exist if you would like to start hyperGRC without any command-line options. An example of such a file is in [repos.conf.example](repos.conf.example).
 
 Start as:
 
@@ -84,7 +86,7 @@ python -m hypergrc
 You may also specify files containing lists of paths to repositories on the command-line by preceding the listing file with an `@`-sign. The command above is equivalent to:
 
 ```bash
-python -m hypergrc @repos.local
+python -m hypergrc @repos.conf
 ```
 
 #### Other options

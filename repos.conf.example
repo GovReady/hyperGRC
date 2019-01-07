@@ -1,5 +1,4 @@
 # List of paths to local repositories with opencontrol.yaml files
-# Git ignores local changes made to this file (set to `--skip-worktree`)
 
 # Example compliance-as-code repo
 example/agencyapp

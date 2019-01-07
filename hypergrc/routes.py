@@ -113,7 +113,7 @@ def index(request):
         org["projects"].sort(key = lambda project : project["title"])
 
     # Prepare modify page message
-    edit_file = os.path.join(os.getcwd(), "repos.local")
+    edit_file = os.path.join(os.getcwd(), "repos.conf")
     modify_msg = "To modify listed projects, change hyperGRC launch params or edit file: `{}`".format(edit_file)
 
     # Render the homepage template.
