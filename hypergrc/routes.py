@@ -429,6 +429,8 @@ def component_guide(request, organization, project, component_name):
 def controls(request, organization, project):
     """Show all of the controls for a project."""
 
+    import copy
+
     # Load the project.
     try:
       project = load_project(organization, project)
@@ -441,7 +443,8 @@ def controls(request, organization, project):
 
     # Start with the controls defined by the standards.
 
-    standards = opencontrol.load_project_standards(project)
+    all_standards = opencontrol.load_project_standards(project)
+    standards = { }
 
     # Add in controls defined by the components.
 
@@ -449,14 +452,19 @@ def controls(request, organization, project):
     for component in opencontrol.load_project_components(project):
 
         # Iterate through all control implementations across all components...
-        for controlimpl in opencontrol.load_project_component_controls(component, standards):
-            # If the control implementation is for an unknown standard, make a record for it
-            # by using the "standard" information attached to this control. Create a "controls"
-            # list within the standard if it doesn't exist where we'll store controls that
-            # have not yet been encountered.
+        for controlimpl in opencontrol.load_project_component_controls(component, all_standards):
+            # Pull in the standard for this control if we know about it.
             standard_key = controlimpl["standard"]["id"]
-            standards.setdefault(standard_key, controlimpl["standard"])
-            standards[standard_key].setdefault("controls", { })
+            if standard_key not in standards:
+              if standard_key in all_standards:
+                standards[standard_key] = copy.deepcopy(all_standards[standard_key])
+
+              else:
+                # If the control implementation is for an unknown standard, make a record for it
+                # by using the "standard" information attached to this control. Make a "controls"
+                # dict to hold controls in use for this made-up standard.
+                standards[standard_key] = dict(controlimpl["standard"])
+                standards[standard_key].setdefault("controls", {})
 
             # If the control implementation is for an unknown control, make a record for it.
             control_key = controlimpl["control"]["id"]

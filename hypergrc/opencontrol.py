@@ -400,7 +400,7 @@ def load_project_component_controls(component, standards):
         }
 
         # Augment the control information from the standards if the control is found in the
-        # stanards. Is the standard one we know?
+        # standards. Is the standard one we know?
         if control["standard_key"] in standards:
             standard = standards[control["standard_key"]]
             control_metadata["standard"]["name"] = standard["name"]
