@@ -1,4 +1,4 @@
-name: NIST-800-53 rev4
+name: NIST SP 800-53 Revision 4
 source: https://github.com/opencontrol/standards/blob/master/nist-800-53-rev4.yaml
 license: ~
 AC-1:
