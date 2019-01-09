@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}
+  hyperGRC - Add System
+{% endblock %}
+
+{% block content %}
+<div id="static-page-content" class="container">
+  <div class="row item-ctl">
+    <div class="col-md-10">&nbsp;</div>
+    {% if modify_msg %}
+    <div class="col-md-2" style="text-align: right;" onclick="alert('{{ modify_msg }}')">
+      MODIFY <span class="glyphicon glyphicon-cog"></span>
+    </div>
+    {%  endif %}
+  </div>
+
+    {% if system_name %}
+    <h1>New System Added</h1>
+
+    <div class="alert alert-danger" role="alert">
+      <b>ALMOST DONE! <u>RE-LAUNCH</u> hyperGRC!</b>
+    </div>
+
+    <p><b>Please <u>RE-LAUNCH</u> hyperGRC to view {{system_name}}.</b></p>
+
+    <p>
+      {{system_name}} has been created locally in <code>{{repo_path}}</code>
+      and been added to your <code>repo.conf</code> file. 
+      But you need to re-launch hyperGRC from the command-line to view {{system_name}}.
+    </p>
+
+    <pre>python3 -m hypergrc @repos.conf</pre>
+
+    <p>Only {{system_name}}</p>
+    <pre><code>python3 -m hypergrc "{{repo_path}}"</code></pre>
+
+    {% else %}
+    <h1>Add New System</h1>
+
+    <form method="post">
+      {% if error %}
+      <p class="text-danger">{{error}}</p>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="organization-name">Organization Name</label>
+        <input type="text" class="form-control" id="organization-name" name="organization-name" value="{{default_organization_name}}">
+      </div>
+      <div class="form-group">
+        <label for="system-name">System Name</label>
+        <input type="text" class="form-control" id="system-name" name="system-name" value="{{default_system_name}}">
+      </div>
+      <div class="form-group">
+        <label for="description">Brief Description</label>
+        <input type="text" class="form-control" id="description" name="description" value="{{default_description}}">
+      </div>
+      <div class="form-group">
+        <label for="repo-path">System Repository Path</label>
+        <input type="text" class="form-control" id="repo-path" name="repo-path" value="{{default_repo_path}}">
+        <div style="margin-top: 2px;"><small>A new directory will be created on your file system.</small></div>
+      </div>
+      <button type="submit" class="btn btn-default">Create</button>
+    </form>
+
+    <script>
+      // Generate path automatically.
+      var last_auto_path = {{default_repo_path|tojson}};
+      function auto_path() {
+        // Stop if the user changed the path manually.
+        if ($('#repo-path').val() != last_auto_path)
+          return;
+
+        // Compute good path. Get the current parent directory.
+        var parent_dir = /([/\\].*[/\\])/.exec(last_auto_path) || "";
+        if (parent_dir)
+          parent_dir = parent_dir[1];
+
+        // Add to it the component name without spaces or other weird characters.
+        var name = $('#system-name').val().replace(/[^A-Za-z0-9- ]/g, '').replace(/[ ]/g, '_');
+        var path = parent_dir + name.toLowerCase();
+
+        // Update.
+        $('#repo-path').val(path);
+        last_auto_path = path;
+      }
+      $('#system-name').keyup(auto_path).change(auto_path);
+    </script>
+    {% endif %}
+
+</div>
+{% endblock %}

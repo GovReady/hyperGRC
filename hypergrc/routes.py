@@ -657,6 +657,50 @@ def evidence(request, organization, project):
 # Routes for Creating and Updating Compliance Content
 #####################################################
 
+@route('/add-system', methods=["GET", "POST"])
+def add_system(request):
+    """Display and process form to create a system repository directory"""
+
+    if request.method == "GET":
+        # Get the default organization, system, and repo path for a new system.
+        organization_name, system_name, description, repo_path =  opencontrol.get_new_system_defaults()
+        error = None
+    else:
+        # Read the component name and path from the form fields.
+        organization_name = request.form.get("organization-name", "").strip()
+        system_name = request.form.get("system-name", "").strip()
+        description = request.form.get("description", "").strip()
+        repo_path = request.form.get("repo-path", "").strip()
+
+        # Validate.
+        if not organization_name:
+            error = "The organization name cannot be empty."
+        if not system_name:
+            error = "The system name cannot be empty."
+        if not description:
+            error = "The description cannot be empty."
+        elif not repo_path:
+            error = "The repository path cannot be empty."
+        # elif not opencontrol.validate_component_path(project, component_path):
+        #     error = "Component path already exists or is not valid."
+        else:
+            # Validation OK. Create the system.
+            created_repo_path = opencontrol.create_system(organization_name, system_name, description, repo_path)
+            print(created_repo_path)
+            return render_template(request, 'system_new.html',
+                  system_name=system_name,
+                  repo_path=created_repo_path,
+                )
+
+    # Show the form.
+    return render_template(request, 'system_new.html',
+                  default_organization_name=organization_name,
+                  default_system_name=system_name,
+                  default_description=description,
+                  default_repo_path=repo_path,
+                  error=error,
+                )
+
 @route('/organizations/<organization>/projects/<project>/add-component', methods=["GET", "POST"])
 def add_component(request, organization, project):
     # Load the project.

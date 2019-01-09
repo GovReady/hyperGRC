@@ -2,6 +2,7 @@
 
 import os.path
 import re
+import shutil
 from urllib.parse import quote_plus
 from collections import OrderedDict
 
@@ -293,7 +294,6 @@ def load_project_standards(project):
 
     return standards
                 
-
 def load_project_certified_controls(project):
     # Return a set of (standard_id, control_id) tuples for controls that are included
     # in any "certification" attached to the system. A certification is a list of controls
@@ -503,6 +503,93 @@ def load_project_component_evidence(component):
     # Yield the evidence in the "verifications" key.
     yield from transform_list(component_opencontrol.get("verifications", []), fn, file_loader=file_loader, transformer=transformer)
 
+def get_new_system_defaults():
+
+    organization_name = "My Organization"
+    system_name = "New System"
+    description = "Our shiny new IT system"
+    repo_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", system_name.lower().replace(" ","_")))
+    return organization_name, system_name, description, repo_path
+
+def get_new_config(system_name="MySystem", organization_name="MyOrg", description="My shiny new IT system"):
+    """Create the config file (opencontrol.yaml) data and return values"""
+  
+    cfg_str = """schema_version: 1.0.0
+name: AgencyApp
+metadata:
+  authorization_id: ~
+  description: Imaginary application for to show faked control narratives.
+  organization:
+    name: Department of Sobriety
+    abbreviation: DOS
+  repository: TBD
+components: []
+standards:
+- ./standards
+certifications:
+- ./certifications/fisma-low-impact.yaml
+"""
+
+    # read default opencontrol.yaml into object
+    cfg = rtyaml.load(cfg_str)
+    # customize values
+    cfg["name"] = system_name
+    cfg["metadata"]["organization"]["name"] = organization_name
+    cfg["metadata"]["description"] = description
+    cfg["metadata"]["organization"]["abbreviation"] = "".join([word[0].upper() for word in organization_name.split(" ")])
+
+    return cfg
+
+def create_system(organization_name, system_name, description, repo_path):
+    """Create a new system and its repository and return path to repo on file system"""
+
+    # make repo directory
+    if os.path.exists(repo_path):
+       print("Path {} exists".format(repo_path))
+    else:
+       os.makedirs(repo_path)
+       print("Path {} created".format(repo_path))
+
+    # get default opencontrol.yaml configuration
+    cfg = get_new_config(system_name, organization_name, description)
+    print(cfg["name"])
+    print("\npreparing system dir: {}".format(system_name))
+
+    # create various directories
+    os.makedirs(os.path.join(repo_path, "components"))
+    os.makedirs(os.path.join(repo_path, "standards"))
+    os.makedirs(os.path.join(repo_path, "certifications"))
+    os.makedirs(os.path.join(repo_path, "outputs"))
+
+    # create opencontrol.yaml config file
+    with open(os.path.join(repo_path, "opencontrol.yaml"), 'w') as outfile:
+        outfile.write(rtyaml.dump(cfg))
+        print("wrote file: {}\n".format(os.path.join(repo_path, "opencontrol.yaml")))
+
+    # populate reference directories from reference
+    shutil.copyfile(os.path.join("ref", "standards", "NIST-SP-800-53-r4.yaml"), os.path.join(repo_path, "standards", "NIST-SP-800-53-r4.yaml"))
+    print("wrote file: {}\n".format(os.path.join(repo_path, "standards", "NIST-SP-800-53-r4.yaml")))
+    shutil.copyfile(os.path.join("ref", "standards", "opencontrol.yaml"), os.path.join(repo_path, "standards", "opencontrol.yaml"))
+    print("wrote file: {}\n".format(os.path.join(repo_path, "standards", "opencontrol.yaml")))
+    # shutil.copyfile(os.path.join("ref", "standards", "hipaa-draft.yaml"), os.path.join(repo_path, cfg["standards"][0], "hipaa-draft.yaml"))
+    # print("wrote file: {}\n".format(os.path.join(repo_path, cfg["standards"][0], "hipaa-draft.yaml")))
+    shutil.copyfile(os.path.join("ref", "certifications", "fisma-low-impact.yaml"), os.path.join(repo_path, "certifications", "fisma-low-impact.yaml"))
+    print("wrote file: {}\n".format(os.path.join(repo_path, "certifications", "fisma-low-impact.yaml")))
+
+    # make stub README.md file
+    with open(os.path.join(repo_path, "README.md"), 'w') as outfile:
+        outfile.write("Machine readable representation of 800-53 control implementations for {}.\n\n# Notes\n\n".format(system_name))
+        print("wrote file: {}\n".format(os.path.join(repo_path, "README.md")))
+
+    # append repo path to repos.conf
+    # TODO - read and clean repos.conf and then append;use clean_text function?
+    with open("repos.conf", 'a') as outfile:
+        outfile.write("\n{}".format(repo_path))
+        print("appended {} to file: repos.conf\n".format(repo_path))
+
+    # Now return the path to the repository
+    return repo_path
+
 def get_new_component_defaults(project):
     # What is a good name and path for a new component?
 
@@ -572,7 +659,6 @@ def create_component(project, component_path, component_name):
             return component
 
     raise ValueError("Component {} does not exist in project {} even after creating it.".format(component_path, project["id"]))
-
 
 def clean_text(text):
   # Clean text before going into YAML. YAML gets quirky
