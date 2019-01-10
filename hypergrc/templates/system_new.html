@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-  hyperGRC - Add System
+  hyperGRC - Add Project
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,7 @@
   </div>
 
     {% if system_name %}
-    <h1>New System Added</h1>
+    <h1>New Project Added</h1>
 
     <div class="alert alert-danger" role="alert">
       <b>ALMOST DONE! <u>RE-LAUNCH</u> hyperGRC!</b>
@@ -36,7 +36,7 @@
     <pre><code>python3 -m hypergrc "{{repo_path}}"</code></pre>
 
     {% else %}
-    <h1>Add New System</h1>
+    <h1>Add Project</h1>
 
     <form method="post">
       {% if error %}

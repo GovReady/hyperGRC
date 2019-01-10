@@ -6,26 +6,23 @@
 
 {% block content %}
 <div id="static-page-content" class="container">
-  <div class="row item-ctl">
+  <div class="row item-ctl" style="margin-bottom: 12px;">
     <div class="col-md-10">&nbsp;</div>
     <div class="col-md-2" style="text-align: right;" onclick="alert('{{ modify_msg }}')">
       MODIFY <span class="glyphicon glyphicon-cog"></span>
     </div>
   </div>
 
-    <h1>{{project.title}} components</h1>
+  <div class="row">
+    <div class="col-md-9"><h1>{{project.title}} components</h1></div>
+    <div class="col-md-3" style="text-align: right;"><a href="{{project.url}}/add-component" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add Component</a></div>
+  </div>
 
     {% for component in components %}
-        <h2>
-          <a href="{{component.url}}" onclick="loading();">
-            <span class="glyphicon glyphicon-link"></span>
-            {{ component.name }}
-          </a>
-        </h2>
+      <div class="row" style="margin-bottom: 0.5em;">
+        <div class="col-md-12"><b><a href="{{component.url}}" onclick="loading();"><span class="glyphicon glyphicon-link"></span> {{ component.name }}</a></b></div>
+      </div>
     {% endfor %}
 
-    <p style="margin-top: 30px;">
-      <a href="{{project.url}}/add-component" class="btn btn-primary">Add Component...</a>
-    </p>
 </div>
 {% endblock %}
