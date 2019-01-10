@@ -606,7 +606,7 @@ def project_control_grid(request, organization, project, standard_key, control_k
             "component": component["component"],
             "text": controlimpl["narrative"],
           })
-    narratives.sort(key = lambda narrative : ( narrative["part"], narrative["component"]["name"] ))
+    narratives.sort(key = lambda narrative : ( narrative["part"] is None, narrative["part"], narrative["component"]["name"] ))
 
 
     # Add URL info to the control --- it might be missing if the metadata
