@@ -85,21 +85,14 @@ h1, h2, h3, h4, h5 {
 *******************************/
 
 .card-control-container {
-  width: 280px;
+  width: 276px;
   /*min-height:100px;*/
-  background-color: rgb(223, 227, 230);
-  margin-right: 12px;
-  float: left;
-  padding: 18px;
-  border-radius: 5px;
-  overflow-y: auto;
-
   max-height: 94%;
   background-color: rgb(223, 227, 230);
   margin-right: 12px;
   margin-bottom:20px;
   float: left;
-  padding: 18px;
+  padding: 18px 8px 8px 8px;
   border-radius: 5px;
   overflow-y: auto;
 }
@@ -139,8 +132,9 @@ h1, h2, h3, h4, h5 {
   overflow-y: auto;background-color: #cdcdcd;
   margin-right: 12px;
   float: left;
-  padding: 18px;
+  padding: 18px 8px 8px 8px;
   font-size: 0.85em;
+  border-radius: 5px;
 }
 
 .page-info-card {

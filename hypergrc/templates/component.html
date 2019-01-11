@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="components" style="overflow: auto; width: {{ (control_families|length+2) * 360 + 50 | int }}px; overflow: auto;">
+<div id="components" style="overflow: auto; width: {{ (control_families|length+2) * 360 + 50 | int }}px;">
 
 <div class="page-info-card-container" style="width:290px;">
   
@@ -46,7 +46,7 @@
       </h3>
 
       <div class="containerx">
-        <div class="row" style="overflow-x: auto; margin-left:2px; margin-right: 2px;">
+        <div style="overflow-x: auto; margin-left:2px; margin-right: 2px;">
 
       {% set outer_loop = loop %}
 
@@ -62,7 +62,7 @@
                 <div class="col-sm-12" style="padding-left: 0px;" title="{{ impl.narrative }}">
                   {{ impl.control.number }}
                   {% if impl.control_part %}<span>Part {{ impl.control_part }} </span>{% endif %}
-                  {% if impl.control.name %}&middot; {{ impl.control.name | truncate(26, true, "...") }}{% endif %}
+                  {% if impl.control.name %}&middot; {{ impl.control.name | truncate(30, true, "...") }}{% endif %}
                 </div>
               </a>
             </div>
