@@ -84,12 +84,72 @@ h1, h2, h3, h4, h5 {
 /* cards
 *******************************/
 
+.card-control-container {
+  width: 280px;
+  /*min-height:100px;*/
+  background-color: rgb(223, 227, 230);
+  margin-right: 12px;
+  float: left;
+  padding: 18px;
+  border-radius: 5px;
+  overflow-y: auto;
+
+  max-height: 94%;
+  background-color: rgb(223, 227, 230);
+  margin-right: 12px;
+  margin-bottom:20px;
+  float: left;
+  padding: 18px;
+  border-radius: 5px;
+  overflow-y: auto;
+}
+
 .card-control {
   background-color: #fff;
+  border-bottom: 1.5px solid #aaa;
+  margin-bottom: 8px;
+  padding:8px 7px 8px 6px;
+  height: 29px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  border-radius: 5px;
 }
 
 .card-control :hover {
   background-color: #eee;
+}
+
+.card-control-textlink {
+  color: #333;
+  font-weight: normal;
+  font-size: 0.85em;
+}
+
+.card-control-guidance {
+  background-color: #fff;
+  border-bottom: 1.5px solid #aaa;
+  margin-bottom: 8px;padding:12px;
+  border-radius: 5px;
+}
+
+.page-info-card-container {
+  width:340px;
+  min-height:100px;
+  max-height: 94%;
+  overflow-y: auto;background-color: #cdcdcd;
+  margin-right: 12px;
+  float: left;
+  padding: 18px;
+  font-size: 0.85em;
+}
+
+.page-info-card {
+  background-color: #fff;
+  border-bottom: 1.5px solid #aaa;
+  margin-bottom: 8px;padding:12px;
+  min-height: 82px;
+  overflow-y: auto;
+  border-radius: 5px;
 }
 
 /*******************************

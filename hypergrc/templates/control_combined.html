@@ -5,12 +5,11 @@
 {% endblock %}
 
 {% block content %}
-
 <div id="components" style="overflow: auto; width: 3600px; overflow: auto;">
 
-<div style="width:340px; min-height:100px; max-height: 94%; overflow-y: auto;background-color: #cdcdcd; margin-right: 12px; float: left; padding: 18px; border-radius: 5px;">
+<div class="page-info-card-container">
   <div>{{standard.name}}</div>
-  <h1 style="margin: 0 0 18px 0;">{{control.number}}: {{control.name}}</h4>
+  <h2 style="margin: 0 0 18px 0;">{{control.number}}: {{control.name}}</h2>
 
   <!-- button row -->
   <div class="row" style="margin-bottom: 8px;">
@@ -28,7 +27,7 @@
   </div>
 
   <!-- control guidance -->
-  <div style="background-color: #fff; border-bottom: 1.5px solid #aaa; margin-bottom: 8px;padding:12px; border-radius: 5px;">
+  <div class="card-control-guidance">
     <span style="color: #999;font-weight: bold;">Guidance</span><br/>
     <div style="max-height: 40%; overflow-y: auto;">{{ control.description | nl2br | safe  }}</div>
   </div>
@@ -40,14 +39,11 @@
   </div>
 </div>
 
-<div class="container" style="width: 760px; margin-left: 18px; background-color: white; padding: 0 30px 10px 30px;border-radius: 5px;max-height: 95%; overflow-y: auto; opacity: 0.97;">
+<div class="container" style="width: 660px; margin-left: 18px; background-color: white; padding: 0 30px 10px 30px;border-radius: 5px;max-height: 95%; overflow-y: auto; opacity: 0.97; font-size: 0.85em;">
   <div class="row" style="">
     <div id="narrative" style="">
-      <h2>Control</h2>
 
-      <p>{{ control.description | nl2br | safe  }}</p>
-
-      <h2>Implementation Narrative</h2>
+      <h2>Control Implementation Narrative</h2>
 
       {% for narrative in narratives %}
           {% if loop.changed(narrative.part) %}
