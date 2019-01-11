@@ -520,7 +520,7 @@ def controls(request, organization, project):
     # Prepare modify page message
     edit_dir = os.path.join(project["path"])
     print("edit_dir ", edit_dir)
-    modify_msg = "To modify listed controls, edit the standards directory of project path: `{}`".format(edit_dir)
+    modify_msg = "To modify listed controls, edit content in the standards and certifications directories of project path: `{}`".format(edit_dir)
 
     # Done.
     return render_template(request, 'controls.html',
@@ -607,7 +607,6 @@ def project_control_grid(request, organization, project, standard_key, control_k
             "text": controlimpl["narrative"],
           })
     narratives.sort(key = lambda narrative : ( narrative["part"] is None, narrative["part"], narrative["component"]["name"] ))
-
 
     # Add URL info to the control --- it might be missing if the metadata
     # came from the standard.
