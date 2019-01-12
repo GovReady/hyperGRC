@@ -438,7 +438,6 @@ def load_project_component_controls(component, standards):
             # If this is a nonstandard citation to a control, add some of the parent control's info.
             elif get_matched_control(control["control_key"], standard) in standard["controls"]:
                 matched_control = standard["controls"][get_matched_control(control["control_key"], standard)]
-                print(control["control_key"], get_matched_control(control["control_key"], standard))
                 if not control_metadata["control"].get("name"):
                   control_metadata["control"]["name"] = matched_control["name"]
                 if not control_metadata["control"].get("family"):
