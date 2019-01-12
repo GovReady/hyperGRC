@@ -9,31 +9,28 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="row col-md-12">
-            <h3>{{ project.title }} documents</h3>
-        </div>
+    <h3>{{ project.title }} documents</h3>
 
-        {% if documents|length == 0 %}
+    {% if documents|length == 0 %}
         {% if message %}
-        <div class="row col-md-12" style="max-height: 90%; overflow-y: auto;">{{ message }}</div>
+        <p style="max-height: 90%; overflow-y: auto;">{{ message }}</p>
         {% endif %}
-        {% else %}
-        <div class="row col-md-12" style="margin-bottom: 8px;">Displaying {{documents|length}} files from the `outputs` directory</div>
+    {% else %}
+        <p>Displaying {{documents|length}} files from the `outputs` directory</div>
 
         {% for document in documents %}
-        <div class="row col-md-12">
+        <div class="row">
           <div class="col-md-1"><span class="glyphicon glyphicon-file" style="color: #444;"></span></div>
           <div class="col-md-11" style="margin-bottom: 8px;">{{ document.file_path }}</div>
         </div>
         {% endfor %}
-        {% endif %}
-
+    {% endif %}
         <div class="col-md-12">
             <p>&nbsp;</p>
         </div>
     </div>
 
     <p><a href="{{project.url}}/ssp.md">View SSP in Markdown format &raquo;</a></p>
+
 </div>
 {% endblock %}
