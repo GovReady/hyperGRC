@@ -139,7 +139,7 @@ For more details, see the files in example/agencyapp.
 
 ## Development
 
-Development is easier if hyperGRC is run in a way that it restarts when any source code changes occur, so that you can see your changes immediately. `nodemon` from the Node package manager is a handy tool to do that. [Install Node](https://nodejs.org/en/download/) and then run:
+Development is easier if hyperGRC is run in a way that it restarts when any source code changes occur, so that you can see your changes immediately. `nodemon` from the Node package manager is a handy tool to do that. [Install Node](https://nodejs.org/en/download/) [Mac OS X users first [read this](https://gist.github.com/DanHerbert/9520689)] and then run:
 
 ```sh
 npm install -g nodemon
