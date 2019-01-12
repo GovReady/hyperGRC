@@ -1,5 +1,5 @@
 schema_version: "1.0.0"
 name: Standards for Agency App
 standards:
-  - NIST-SP-800-53-r4.yaml
+  - NIST-SP-800-53-rev4.yaml
   - hipaa-draft.yaml

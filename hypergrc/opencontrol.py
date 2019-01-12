@@ -522,7 +522,7 @@ metadata:
   repository: TBD
 components: []
 standards:
-- ./standards
+- ./standards/NIST-SP-800-53-rev4.yaml
 certifications:
 - ./certifications/fisma-low-impact.yaml
 """
@@ -564,8 +564,8 @@ def create_system(organization_name, system_name, description, repo_path):
         print("wrote file: {}\n".format(os.path.join(repo_path, "opencontrol.yaml")))
 
     # populate reference directories from reference
-    shutil.copyfile(os.path.join("ref", "standards", "NIST-SP-800-53-r4.yaml"), os.path.join(repo_path, "standards", "NIST-SP-800-53-r4.yaml"))
-    print("wrote file: {}\n".format(os.path.join(repo_path, "standards", "NIST-SP-800-53-r4.yaml")))
+    shutil.copyfile(os.path.join("ref", "standards", "NIST-SP-800-53-rev4.yaml"), os.path.join(repo_path, "standards", "NIST-SP-800-53-rev4.yaml"))
+    print("wrote file: {}\n".format(os.path.join(repo_path, "standards", "NIST-SP-800-53-rev4.yaml")))
     shutil.copyfile(os.path.join("ref", "standards", "opencontrol.yaml"), os.path.join(repo_path, "standards", "opencontrol.yaml"))
     print("wrote file: {}\n".format(os.path.join(repo_path, "standards", "opencontrol.yaml")))
     # shutil.copyfile(os.path.join("ref", "standards", "hipaa-draft.yaml"), os.path.join(repo_path, cfg["standards"][0], "hipaa-draft.yaml"))

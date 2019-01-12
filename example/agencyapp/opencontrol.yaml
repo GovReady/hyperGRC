@@ -18,6 +18,6 @@ components:
 - ./components/OpenLDAP-fake
 - ./components/SOC-Services-fake
 standards:
-- ./standards/NIST-SP-800-53-r4.yaml
+- ./standards/NIST-SP-800-53-rev4.yaml
 certifications:
 - ./certifications/fisma-low-impact.yaml
