@@ -14,19 +14,20 @@
             <h3>{{ project.title }} documents</h3>
         </div>
 
-        <div class="row col-md-12" style="max-height: 90%; overflow-y: auto;">
-            {% if message %}
-            <div class="col-md-12" style="">{{ message }}</div>
-            {% endif %}
-        </div>
+        {% if documents|length == 0 %}
+        {% if message %}
+        <div class="row col-md-12" style="max-height: 90%; overflow-y: auto;">{{ message }}</div>
+        {% endif %}
+        {% else %}
+        <div class="row col-md-12" style="margin-bottom: 8px;">Displaying {{documents|length}} files from the `outputs` directory</div>
 
-        <div class="row col-md-12" style="margin-bottom: 8px;">Displaying local path to documents</div>
         {% for document in documents %}
         <div class="row col-md-12">
           <div class="col-md-1"><span class="glyphicon glyphicon-file" style="color: #444;"></span></div>
           <div class="col-md-11" style="margin-bottom: 8px;">{{ document.file_path }}</div>
         </div>
         {% endfor %}
+        {% endif %}
 
         <div class="col-md-12">
             <p>&nbsp;</p>

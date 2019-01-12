@@ -86,6 +86,15 @@ def load_project(organization_id, project_id):
             return project
     raise ValueError("Project {} not found.".format(project_id))
 
+# Helper to retrive all document directories, included nested sub-directories
+def get_document_directories(project):
+
+  # Temporarily hardcode the documents directory to "outputs".
+  # We are hardcoding the directory until we modify the opencontrol.yaml
+  # file to include a list of directories.
+  dir_list = [x[0] for x in os.walk(os.path.join(project["path"], "outputs"))]
+  return dir_list
+
 #######################
 # Routes for Main Pages
 #######################
@@ -153,42 +162,46 @@ def project(request, organization, project):
 def documents(request, organization, project):
     """Read and list documents"""
 
-    # Create variables for documents and message
-    docs = []
-    message = ""
-
     # Load the project.
     try:
       project = load_project(organization, project)
     except ValueError:
       return "Organization `{}` project `{}` in URL not found.".format(organization, project)
 
-    # We want to be able to store documents in our repo.
-    # Temporarily hardcode the documents directory to "outputs".
-    # We are hardcoding the directory until we modify the opencontrol.yaml
-    # file to include a list of directories.
-    docs_dir = "outputs"
-    doc_dir_path = os.path.join(project["path"], docs_dir)
+    # Prepare modify page message
+    # Use our assumed hardcoded 'outputs' directory as repo's top level document directory
+    edit_dir = os.path.join(project["path"], "outputs")
+    modify_msg = "To modify listed documents, change files in document directories of `{}`".format(edit_dir)
 
-    # If document directory does not exist, generate a message to display.
-    # If document directory exists, read all the documents and append
+    # Create variables for documents and message
+    docs = []
+    message = ""
+
+    # We want to be able to store documents in our repo.
+    # If document directories exists, read all the documents and append
     # information on each document to the list of doc objects to pass to
     # the page to be rendered.
-    if not os.path.isdir(doc_dir_path):
-      message += "<br /> Directory {} not found in repository files".format(doc_dir_path)
-    else:
-      docs_glob = doc_dir_path.rstrip('/') + "/*"
-      for doc in glob.glob(docs_glob):
-        if "~$" in os.path.basename(doc):
-          continue
-        if os.path.isfile(doc):
-          docs.append({'name': os.path.basename(doc),
-                       'file_path': doc
-                      })
+    document_dirs = get_document_directories(project)
+    for doc_dir_path in document_dirs:
+      # Skip anything that is not really a directory
+      if not os.path.isdir(doc_dir_path):
+        continue
+      else:
+        # Get the files from within the directory
+        docs_glob = doc_dir_path.rstrip('/') + "/*"
+        for doc in glob.glob(docs_glob):
+          # Skip any commonly found files that are MS Word document temp files 
+          if "~$" in os.path.basename(doc):
+            continue
+          if os.path.isfile(doc):
+            # Append found document file paths to our list of documents
+            docs.append({'name': os.path.basename(doc),
+                         'file_path': doc
+                        })
 
-      # Prepare modify page message
-      edit_dir = doc_dir_path
-      modify_msg = "To modify listed documents, change files in document directories of `{}`".format(edit_dir)
+    # What? No documents found? Generate a message to display.
+    if len(docs) == 0:
+      message += "No documents are listed in your repository."
 
     return render_template(request, 'documents.html',
                             project=project,
