@@ -221,78 +221,76 @@ def load_project_standards(project):
     system_opencontrol = load_opencontrol_yaml(fn1, "system", ("1.0.0",))
 
     # The system has a list of standards. Load all of them.
-    for standards_dir in system_opencontrol["standards"]:
-
-        # Each standard is a directory containing an opencontrol file. Load the
-        # file and check that its schema_version is recognized.
-        fn2 = os.path.join(project["path"], standards_dir, "opencontrol.yaml")
-        standards_opencontrol = load_opencontrol_yaml(fn2, "standards", ("1.0.0",))
-
-        # And this file contains a list of standards YAML files...
-        for standard_fn in standards_opencontrol.get("standards", []):
-            # Construct the file name.
-            fn3 = os.path.join(project["path"], standards_dir, standard_fn)
-
-            # Read the file..
-            standard_opencontrol = load_opencontrol_yaml(fn3, "standard", None) # no schema_version is present in this file
-
-            # The 'key' of a standard is set in its 'name' field, which is weird, but so it is.
-            # If there's no name --- it's probably required, but just in case --- fall back to
-            # the filename without its extension.
-            standard_key = standard_opencontrol.get('name') \
-                or os.path.splitext(os.path.basename(os.path.normpath(fn3)))[0]
-
-            # Create a dict holding information about the standard and the controls
-            # within the standard.
-            standards[standard_key] = {
-                # A unique identifier for the standard. This is used to map URLs to standards --- it's placed in URLs like a slug.
-                "id": standard_key,
-
-                # The display name of the standard.
-                "name": standard_opencontrol["name"],
-
-                # A mapping of control IDs to controls defined by this standard.
-                "controls": {
-                    control_number: {
-                        # This data structure must match control structure in load_project_component_controls, except the URL,
-                        # which is project-specific, so we can't generate it here. See load_project_component_controls for details.
-                        "id": control_number,
-                        "sort_key": (standard_key, make_control_number_sort_key(control_number)),
-                        "number": control_number,
-                        "name": control_data["name"],
-                        "family": control_data["family"],
-                        "description": control_data["description"],
-                    }
-                    for control_number, control_data in standard_opencontrol.items()
-                    if isinstance(control_data, dict) # not the "name: " key
-                       and control_data.get('type') is None # skip the family names that we put in the file but aren't in the OpenControl standard
-                },
-
-                # A mapping of family IDs to metadata about control families. This is non-conformant with OpenControl
-                # but it is useful!
-                "families": {
-                    family_id: {
-                        # This is the data structure we use throughout the application for control families.
-
-                        # A unique identifier for the control family, unique within the standard.
-                        # These IDs
-                        "id": family_id,
-
-                        # A string that helps with ordering control families logically for display purposes.
-                        "sort_key": family_id,
-
-                        # The control family's display strings.
-                        "number": family_id,
-                        "name": family_data["name"],
-                        "abbrev": family_id,
-                    }
-                    for family_id, family_data in standard_opencontrol.items()
-                    if isinstance(family_data, dict) # not the "name: " key
-                       and family_data.get('type') == 'family' # not in OpenControl --- we've added family names to the standard
-                },
-            }
+    for standard_fn in system_opencontrol["standards"]:
+        # The path is relative to the opencontrol.yaml directory.
+        standard_fn = os.path.join(project["path"], standard_fn)
+        
+        # Each standard file contains a standard. The schema version for the
+        # standard isn't specified, so we'll assume it's the current schema
+        # version.
+        load_standard(standard_fn, "1.0.0", standards)
 
     return standards
+
+def load_standard(fn, schema_version, standards):
+    # Read the file..
+    standard_opencontrol = load_opencontrol_yaml(fn, "standard", None) # no schema_version is present in this file
+
+    # The 'key' of a standard is set in its 'name' field, which is weird, but so it is.
+    # If there's no name --- it's probably required, but just in case --- fall back to
+    # the filename without its extension.
+    standard_key = standard_opencontrol.get('name') \
+        or os.path.splitext(os.path.basename(os.path.normpath(fn3)))[0]
+
+    # Create a dict holding information about the standard and the controls
+    # within the standard.
+    standards[standard_key] = {
+        # A unique identifier for the standard. This is used to map URLs to standards --- it's placed in URLs like a slug.
+        "id": standard_key,
+
+        # The display name of the standard.
+        "name": standard_opencontrol["name"],
+
+        # A mapping of control IDs to controls defined by this standard.
+        "controls": {
+            control_number: {
+                # This data structure must match control structure in load_project_component_controls, except the URL,
+                # which is project-specific, so we can't generate it here. See load_project_component_controls for details.
+                "id": control_number,
+                "sort_key": (standard_key, make_control_number_sort_key(control_number)),
+                "number": control_number,
+                "name": control_data["name"],
+                "family": control_data["family"],
+                "description": control_data["description"],
+            }
+            for control_number, control_data in standard_opencontrol.items()
+            if isinstance(control_data, dict) # not the "name: " key
+               and control_data.get('type') is None # skip the family names that we put in the file but aren't in the OpenControl standard
+        },
+
+        # A mapping of family IDs to metadata about control families. This is non-conformant with OpenControl
+        # but it is useful!
+        "families": {
+            family_id: {
+                # This is the data structure we use throughout the application for control families.
+
+                # A unique identifier for the control family, unique within the standard.
+                # These IDs
+                "id": family_id,
+
+                # A string that helps with ordering control families logically for display purposes.
+                "sort_key": family_id,
+
+                # The control family's display strings.
+                "number": family_id,
+                "name": family_data["name"],
+                "abbrev": family_id,
+            }
+            for family_id, family_data in standard_opencontrol.items()
+            if isinstance(family_data, dict) # not the "name: " key
+               and family_data.get('type') == 'family' # not in OpenControl --- we've added family names to the standard
+        },
+    }
                 
 def load_project_certified_controls(project):
     # Return a set of (standard_id, control_id) tuples for controls that are included
