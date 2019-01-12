@@ -665,6 +665,24 @@ def evidence(request, organization, project):
                             project=project,
                             evidence=evidence)
 
+@route('/organizations/<organization>/projects/<project>/ssp.<format>')
+def ssp(request, organization, project, format):
+    """Output the complete system security plan."""
+
+    # Validate format.
+    if format not in ("md",):
+      raise ValueError()
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # Construct the SSP.
+    from .ssp import build_ssp
+    return build_ssp(project, {})
+
 #####################################################
 # Routes for Creating and Updating Compliance Content
 #####################################################

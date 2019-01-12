@@ -137,6 +137,51 @@ Although not currently conformant with the OpenControl standard, hyperGRC also a
 
 For more details, see the files in example/agencyapp.
 
+## Generating system security plans
+
+### From the command line
+
+hyperGRC includes a command-line tool to generate a partial system security plan in Markdown format. The tool concatenates all of the control narratives in an OpenControl system repository, adding headings and control descriptions.
+
+For example, to generate a system security plan for the example application stored in this repository, run:
+
+	python3 -m hypergrc.ssp -d example/agencyapp
+
+The system security plan is printed to the console. It will look like:
+
+```md
+# Agency App Example System System Security Plan
+
+# NIST SP 800-53 Revision 4
+
+## SI: System and Information Integrity
+
+### SI-3: Malicious Code Protection
+
+> The organization:
+>   a.  Employs malicious code protection mechanisms at information system entry
+> and exit points to detect and eradicate malicious code;
+>   b.  Updates...
+
+##### OpenLDAP
+
+Destruction configuration for developer access to organization-defined...
+```
+
+You will probably want to redirect the output to a file, e.g.:
+
+	python3 -m hypergrc.ssp -d example/agencyapp > ssp.md
+
+If you have [pandoc](https://pandoc.org/) installed, you could then convert the SSP into HTML or a Microsoft Word document:
+
+```sh
+pandoc -t html < ssp.md > ssp.html
+pandoc -t docx ssp.md -o ssp.docx
+```
+
+The `-d` option instructs the SSP generator to include control descriptions. You may also add `--family XX` (e.g. `--family CP`) to output only controls for the given control family.
+
+
 ## Development
 
 Development is easier if hyperGRC is run in a way that it restarts when any source code changes occur, so that you can see your changes immediately. `nodemon` from the Node package manager is a handy tool to do that. [Install Node](https://nodejs.org/en/download/) [Mac OS X users first [read this](https://gist.github.com/DanHerbert/9520689)] and then run:
