@@ -242,9 +242,28 @@ def team(request, organization, project):
                           team=team
                           )
 
+@route('/settings')
+def settings(request):
+    """Show settings"""
+
+    # Read the version file
+    try:
+      with open("VERSION", encoding="utf8") as f:
+        HYPERGRC_VERSION=f.read().replace('\n', '')
+    except:
+      fatal_error("hyperGRC requires a VERSION file.")
+
+    # Prepare modify page message
+    modify_msg = "View this page within a project for modification details."
+
+    return render_template(request, 'settings.html',
+                          modify_msg=modify_msg,
+                          hypergrc_version=HYPERGRC_VERSION
+                          )
+
 @route('/organizations/<organization>/projects/<project>/settings')
-def documents(request, organization, project):
-    """Show settings for the project"""
+def project_settings(request, organization, project):
+    """Show settings, including project settings"""
 
     # Load the project.
     try:
