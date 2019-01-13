@@ -37,18 +37,13 @@
       <div class="container-fluid" style="height: 60px;padding-top: 8px;">
         <div class="row" style="display:flex;">
           <div class="col-md-5">
-            <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230);">
-              <span class="glyphicon glyphicon-home"></span>
-              {% if project %}<b>{{ project.title }}</b>{% endif %}
-            </button>
+              <a href="/" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230); padding: 10px 13px 16px 13px;"><span class="glyphicon glyphicon-home"></span></a>
+              {% if project %}
+              <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227,230);"><b>{{ project.title }}</b>
+              </button>
+              {% endif %}
           </div>
 
-          {% if project and project.source_repository %}
-          <div class="col-md-7 ">
-            <!-- button for source of content -->
-            <a href="{{ project.source_repository }}" target="_blank"><button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230); margin-left:48px;"><b>source: {{ project.source_repository }}</b></button></a>
-          </div>
-          {% endif %}
       </div>
     </nav>
 
