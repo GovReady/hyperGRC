@@ -33,37 +33,38 @@
     </head>
     <body>
 
-    <nav class="navbar navbar-fixed-top navbar-dark bg-transparent" style="opacity: 1.0;margin-left: 60px;">
+    <nav class="navbar navbar-fixed-top navbar-dark bg-transparent" style="opacity: 1.0;margin-left: 0px;">
       <div class="container-fluid" style="height: 60px;padding-top: 8px;">
         <div class="row" style="display:flex;">
           <div class="col-md-5">
-              <a href="/" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230); padding: 10px 13px 16px 13px;"><span class="glyphicon glyphicon-home"></span></a>
+              <a href="/" class="btn btn-link btn-lg navbar-btn"><span class="glyphicon glyphicon-home"></span></a>
               {% if project %}
-              <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227,230);"><b>{{ project.title }}</b>
-              </button>
+              <a href="{{project.url}}" class="btn btn-link btn-lg navbar-btn" title="Components" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a>
+              <a href="{{project.url}}/controls" class="btn btn-link btn-lg navbar-btn" title="Controls" onclick="loading();"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+              <a href="{{project.url}}/evidence" class="btn btn-link btn-lg navbar-btn" title="Evidence" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a>
+              <a href="{{project.url}}/documents" class="btn btn-link btn-lg navbar-btn" title="Documents" onclick="loading();"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a>
+              <a href="{{project.url}}/assessments" class="btn btn-link btn-lg navbar-btn" title="Assessments" onclick="loading();"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></a>
+              <a href="{{project.url}}/poams" class="btn btn-link btn-lg navbar-btn" title="POA&amp;Ms" onclick="loading();"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a>
+              <a href="{{project.url}}/team" class="btn btn-link btn-lg navbar-btn" title="Team" onclick="loading();"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a>
               {% endif %}
-          </div>
+            </div>
 
+            <div class="col-md-2" style="font-size: 1.15em; color: #efefef;">
+              <h3 class="pull-right">hyperGRC</h3>
+            </div>
+            <div class="col-md-4">
+              &nbsp;
+            </div>
+            <div class="col-md-1">
+              <a href="{% if project %}{{project.url}}{% endif %}/settings" class="btn btn-link btn-lg navbar-btn pull-right" title="Settings" onclick="loading();"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
+            </div>
       </div>
-    </nav>
-
-      <div id="sidebar-wrapper">
-        <div id="sidebar">
-          <p><a href="/" title="Home"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></p>
-          <!-- <p><a href="/login" title="Login"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span><br/>login</a></p><br/> -->
-          {% if project %}
-          <hr>
-          <p><a href="{{project.url}}" title="Components" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a></p><br/>
-          <p><a href="{{project.url}}/controls" title="Controls" onclick="loading();"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p><br/>
-          <p><a href="{{project.url}}/evidence" title="Evidence" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span></a></p><br/>
-          <p><a href="{{project.url}}/documents" title="Documents" onclick="loading();"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span></a></p><br/>
-          <p><a href="{{project.url}}/assessments" title="Assessments" onclick="loading();"><span class="glyphicon glyphicon-check" aria-hidden="true"></span></a></p><br/>
-          <p><a href="{{project.url}}/poams" title="POA&amp;Ms" onclick="loading();"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></a></p><br/>
-          <p><a href="{{project.url}}/team" title="Team" onclick="loading();"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></p><br/>
-          <p><a href="{{project.url}}/settings" title="Settings" onclick="loading();"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></p>
-          {% endif %}
+      <div class="row" style="">
+        <div class="col-md-5" style="font-size: 1.15em; color: white;">
+            {% if project %}{{ project.title }}{% endif %}
         </div>
       </div>
+    </nav>
 
       <div id="loading">
 
@@ -80,7 +81,7 @@
 
       </div>
 
-      <div id="workspace" class="container" style="width:100%; margin: 75px 12px 10px 75px;">
+      <div id="workspace" class="container" style="width:100%; margin: 100px 12px 10px 14px;">
         <div class="row">
           {% block content %}{% endblock %}
         </div>

@@ -34,7 +34,7 @@ h1, h2, h3, h4, h5 {
   border: 1px solid #eee;
   min-height: 160px;
   opacity: 0.95;
-  height: 94%;
+  height: 92%;
   overflow: auto;
 }
 
@@ -54,30 +54,14 @@ h1, h2, h3, h4, h5 {
 }
 
 /*******************************
-/* sidebar 
+/* horizontal navbar
 *******************************/
 
-#sidebar-wrapper {
-  position: fixed;
-  left: 0px;
-  top: 0px;
-  height: 100%;
-  z-index: 100;
-  background-color: #333;
-  color: white;
-  opacity: 1.0;
-  width: 60px;
-  padding: 22px 8px 8px 8px;
-  margin: 0 0 0 0;
-  vertical-align: top;
-  text-align: center;
-  font-size: 1.5em;
-  border-right: 1px solid #121212;
-}
-
-#sidebar a:link, #sidebar a:visited {
-  color: white;
-  text-decoration: none;
+.navbar-btn, .navbar-btn:hover {
+  opacity: 0.55;
+  color: black;
+  background-color: rgb(223, 227, 230);
+  padding: 10px 13px 16px 13px;
 }
 
 /*******************************
