@@ -639,7 +639,6 @@ def project_control_grid(request, organization, project, standard_key, control_k
                             narratives=narratives,
                           )
 
-
 @route('/organizations/<organization>/projects/<project>/evidence')
 def evidence(request, organization, project):
     """List evidence in the entire project."""

@@ -519,7 +519,7 @@ metadata:
   organization:
     name: Department of Sobriety
     abbreviation: DOS
-  repository: TBD
+  repository: ~
 components: []
 standards:
 - ./standards/NIST-SP-800-53-rev4.yaml
