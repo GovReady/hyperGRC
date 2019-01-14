@@ -223,8 +223,9 @@ def document(request, organization, project, doc_file_path):
       return "Organization `{}` project `{}` in URL not found.".format(organization, project)
 
     # Compute file path to file within project directory
-    doc = os.path.join(project["path"], *doc_file_path.split(">"))
-    print("doc full path is {}".format(doc))
+    # Currently, assume documents directory is 'outputs'
+    project_doc_dir = "outputs"
+    doc = os.path.join(project["path"], project_doc_dir, *doc_file_path.split(">"))
 
     # TODO: Make sure this file exists and has no relative paths or goes to system directory
     # We aren't too worried about security when user is running on their own workstation.
