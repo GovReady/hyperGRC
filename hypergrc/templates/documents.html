@@ -19,12 +19,11 @@
         <p style="max-height: 90%; overflow-y: auto;">{{ message }}</p>
         {% endif %}
     {% else %}
-        <p>Displaying {{documents|length}} files from the `outputs` directory</p>
+        <p>{{documents|length}} project documents</p>
 
         {% for document in documents %}
         <div class="row">
-          <div class="col-md-1"><span class="glyphicon glyphicon-file" style="color: #444;"></span></div>
-          <div class="col-md-11" style="margin-bottom: 8px;">{{ document.file_path }}</div>
+          <div class="col-md-12" style="margin-bottom: 8px;"><span class="glyphicon glyphicon-file" style="color: #444;"></span> <a href="{{project.url}}/documents/?f={{ document.rel_file_path|replace('/', '>') }}" target="_blank">{{ document.rel_file_path }}</a></div>
         </div>
         {% endfor %}
     {% endif %}

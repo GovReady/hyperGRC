@@ -196,7 +196,8 @@ def documents(request, organization, project):
           if os.path.isfile(doc):
             # Append found document file paths to our list of documents
             docs.append({'name': os.path.basename(doc),
-                         'file_path': doc
+                         'file_path': doc,
+                         'rel_file_path': doc.replace(os.path.join(project["path"], "outputs/"), "")
                         })
 
     # What? No documents found? Generate a message to display.
@@ -210,6 +211,43 @@ def documents(request, organization, project):
                             documents=docs,
                             modify_msg=modify_msg
                           )
+
+@route('/organizations/<organization>/projects/<project>/documents/?f=<doc_file_path>')
+def document(request, organization, project, doc_file_path):
+    """Retrieve document from project document directory"""
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # Compute file path to file within project directory
+    doc = os.path.join(project["path"], *doc_file_path.split(">"))
+    print("doc full path is {}".format(doc))
+
+    # TODO: Make sure this file exists and has no relative paths or goes to system directory
+    # We aren't too worried about security when user is running on their own workstation.
+    if os.path.isfile(doc):
+      fn, fe = os.path.splitext(doc)
+      if fe.lower() not in [".html", ".htm", ".txt", ".conf", ".csv", ".md",
+                            ".xls", ".xlxs", ".doc", ".docx", ".jpeg", ".jpg", ".png", "gif", ".pdf"]:
+        message="Document type '{}'' of computed file request '{}' not supported.".format(fe, doc)
+        return message
+      # Retrieve document file
+      # TODO: handle doc types:
+      if fe.lower() in [".html", ".htm", ".txt", ".conf", ".csv", ".md"]:
+        with open(doc, encoding="utf8") as f:
+          data = f.read()
+        return data
+      if fe.lower() in [".xls", ".xlxs", ".doc", ".docx", ".jpeg", ".jpg", ".png", "gif", ".pdf"]:
+        with open(doc, 'rb') as f:
+          data = f.read()
+        # return data
+        return "Still learning how to serve '{}'".format(fe)
+    else:
+      message="Computed file request '{}' not found or is not a file.".format(doc)
+      return message
 
 @route('/organizations/<organization>/projects/<project>/team')
 def team(request, organization, project):
