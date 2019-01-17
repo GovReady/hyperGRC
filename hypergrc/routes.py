@@ -1,7 +1,7 @@
 # This module contains hyperGRC's routes, i.e. handlers for
 # virtual paths.
 
-from .render import render_template, redirect
+from .render import render_template, redirect, send_file
 from . import opencontrol
 import os
 import glob
@@ -231,21 +231,12 @@ def document(request, organization, project, doc_file_path):
     # We aren't too worried about security when user is running on their own workstation.
     if os.path.isfile(doc):
       fn, fe = os.path.splitext(doc)
-      if fe.lower() not in [".html", ".htm", ".txt", ".conf", ".csv", ".md",
-                            ".xls", ".xlxs", ".doc", ".docx", ".jpeg", ".jpg", ".png", "gif", ".pdf"]:
+      if fe.lower() not in [".txt", ".conf", ".csv", ".md",
+                            ".xls", ".xlsx", ".doc", ".docx", ".jpeg", ".jpg", ".png", "gif", ".pdf"]:
         message="Document type '{}'' of computed file request '{}' not supported.".format(fe, doc)
         return message
-      # Retrieve document file
-      # TODO: handle doc types:
-      if fe.lower() in [".html", ".htm", ".txt", ".conf", ".csv", ".md"]:
-        with open(doc, encoding="utf8") as f:
-          data = f.read()
-        return data
-      if fe.lower() in [".xls", ".xlxs", ".doc", ".docx", ".jpeg", ".jpg", ".png", "gif", ".pdf"]:
-        with open(doc, 'rb') as f:
-          data = f.read()
-        # return data
-        return "Still learning how to serve '{}'".format(fe)
+      else:
+        send_file(request, doc)
     else:
       message="Computed file request '{}' not found or is not a file.".format(doc)
       return message
