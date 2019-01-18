@@ -21,6 +21,9 @@
       <script src='/static/js/autosize.js'></script>
       <!-- TODO: better solution for invalidating browser css cache for static css pages -->
       <link rel="stylesheet" type="text/css" href="/static/css/base.css?r={{ range(0, 100000) | random }}">
+      {% if project %}
+      <link rel="stylesheet" type="text/css" href="{{ project.url }}/_extensions/hypergrc/static/css/repo.css">
+      {% endif %}
       <script type="text/javascript">
          // Hide loading gif div and show workspace div on page show
          // to avoid seeing loading gif displayed when browser button back button clicked

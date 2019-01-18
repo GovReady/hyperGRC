@@ -9,7 +9,7 @@
 		</div>
 	</div>
 
-	<div class="row">
+	<div class="row" style="overflow: auto;">
 	    <div class="col-md-12"><h1>Settings</h1></div>
     </div>
 
@@ -79,7 +79,10 @@
 		<div class="col-md-12">
 			<div class="col-md-1"><span class="glyphicon glyphicon-tag"></span></div>
 			<div class="col-md-3">local file path</div>
-			<div class="col-md-8"><a href="" style="color: black;" target=”_blank”>{{ project.path }}</a></div>
+		</div>
+		<div class="col-md-12">
+			<div class="col-md-1">&nbsp;</div>
+			<div class="col-md-11"><code>{{ project.path }}</code></div>
 		</div>
 	</div>
 	{% endif %}

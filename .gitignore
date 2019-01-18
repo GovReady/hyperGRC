@@ -11,3 +11,6 @@ __pycache__
 # hyperGRC local files
 repos.conf
 repos.conf*
+
+# misc
+todo_list.txt

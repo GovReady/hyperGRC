@@ -868,3 +868,23 @@ def update_control(request):
       "implementation_status": request.form.get("implementation_status", ""),
       "source_file": request.form.get("source_file", ""),
     })
+
+#####################################################
+# Routes for Customization
+#####################################################
+
+@route('/organizations/<organization>/projects/<project>/_extensions/hypergrc/static/css/repo.css')
+def custom_css(request, organization, project):
+    """Set custom css settings"""
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    return """body {
+  /*background-color: rgb(247, 247, 247);*/
+  background: url("https://upload.wikimedia.org/wikipedia/commons/f/f7/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed;
+  /*background: url("/static/img/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed; */
+}"""
