@@ -43,7 +43,8 @@
 {% for component_info in components %}
     <div class="card-control-container">
 
-      <h4 style="height:2em; margin-top: -8px;">{{component_info.component.name}}</h4>
+      <div style="font-size: .9em;">{{ project.title }}</div>
+      <h3 style="margin-top: 0px;">{{component_info.component.name}}</h3>
       <a class="btn btn-default" style="margin-bottom: 8px;" href="{{component_info.component.url}}/guide">Guide me</a>
 
       {% set outer_loop = loop %}

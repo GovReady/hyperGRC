@@ -36,10 +36,27 @@
     <nav class="navbar navbar-fixed-top navbar-dark bg-transparent" style="opacity: 1.0;margin-left: 60px;">
       <div class="container-fluid" style="height: 60px;padding-top: 8px;">
         <div class="row" style="display:flex;">
-          <div class="col-md-5">
-              <a href="/" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227, 230); padding: 10px 13px 16px 13px;"><span class="glyphicon glyphicon-home"></span></a>
+          <div class="col-md-10">
               {% if project %}
-              <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227,230);"><b>{{ project.title }}</b>
+              <a href="{{project.url}}" title="Components" onclick="loading();" type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227,230);"><b>{{ project.title }}</b></a>
+              {% else %}
+              <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227,230);"><b>Welcome to hyperGRC</b>
+              </button>
+              {% endif %}
+              {% if component %}
+              <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227,230);"><b>{{ component.name }}</b>
+              </button>
+              {% endif %}
+              {% if control %}
+              <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227,230);"><b>{{control.number}}: {{control.name}}</b>
+              </button>
+              {% endif %}
+              {% if documents %}
+              <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227,230);"><b>Documents</b>
+              </button>
+              {% endif %}
+              {% if team %}
+              <button type="button" class="btn btn-link btn-lg" style="opacity: 0.55; color: black; background-color: rgb(223, 227,230);"><b>Team</b>
               </button>
               {% endif %}
           </div>

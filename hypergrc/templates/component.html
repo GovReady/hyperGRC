@@ -9,14 +9,12 @@
 
 <div class="page-info-card-container" style="width:290px;">
   
-  <h2 style="margin: 0 0 18px 0;">{{ component.name }}</h2>
-  
-  <p>
-    <a href="{{component.url}}/guide" class="btn btn-primary">Guide Me</a>
-  </p>
+  <div>{{ project.title }} component</div>
+  <h3 style="margin: 0 0 18px 0;">{{ component.name }}</h3>
 
   <div class="page-info-card">
     <!-- <p>description here</p> -->
+    <div style="text-decoration: underline;">Component impact</div>
     <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(control_families|length) }}</div><div class="col-md-10">control families</div></div>
     <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(control_count) }}</div><div class="col-md-10">controls</div></div>
     <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(control_part_count) }}</div><div class="col-md-10">control parts</div></div>
@@ -32,6 +30,11 @@
     <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(total_words) }}</div><div class="col-md-9">total words</div></div>
     <div class="row"><div class="col-md-2" style="text-align: right;">{{ "%.1f"|format(average_words_per_controlpart) }}</div><div class="col-md-9">average words per control-part </div></div>
   </div>
+
+  <p>
+    <a href="{{component.url}}/guide" class="btn btn-primary">Guide Me</a>
+  </p>
+
 </div>
 
   {% for control_family in control_families %}
