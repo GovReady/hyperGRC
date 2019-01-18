@@ -1,6 +1,8 @@
 import re
 
 from jinja2 import Environment, FileSystemLoader, evalcontextfilter, Markup, escape
+import os.path
+
 
 jinja_env = Environment(
 	loader=FileSystemLoader(__package__ + '/templates'),
@@ -50,6 +52,40 @@ def render_template(request, template_fn, **contextvars):
 	request.send_header("Content-Type", "text/html; charset=UTF-8")
 	request.end_headers()
 	request.wfile.write(body.encode("utf8"))
+
+def send_file_response(request, file_path, data):
+    # Form and send the response
+	request.send_response(200)
+	request.send_header("Content-Type", "application/octet-stream")
+	request.send_header('Content-Disposition', 'attachment; filename=' + os.path.basename(file_path))
+
+	# Bad browsers may guess the MIME type if it thinks it is wrong or if it's
+	# application/octet-stream, and we don't want the browser to guess that
+	# it's HTML or Javascript and then execute it, since the content is
+	# untrusted.
+	request.send_header('X-Content-Type-Options', 'nosniff')
+	request.send_header('X-Download-Options', 'noopen')
+
+	# mimetype
+	request.end_headers()
+	request.wfile.write(data)
+
+def send_file(request, file_path):
+	"""Send a text or binary file"""
+
+	# Confirm file exists and send exception if file does not exist
+	try:
+		with open(file_path, 'rb') as f:
+			data = f.read()
+	except Exception as e:
+		import traceback
+		traceback.print_exc()
+		request.send_response(500)
+		request.send_header("Content-Type", "text/plain; charset=UTF-8")
+		request.end_headers()
+		request.wfile.write(b"Ooops! Something went wrong.")
+		return
+	send_file_response(request, file_path, data)
 
 def redirect(request, url):
 	request.send_response(301)
