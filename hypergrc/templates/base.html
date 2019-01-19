@@ -21,7 +21,7 @@
       <script src='/static/js/autosize.js'></script>
       <!-- TODO: better solution for invalidating browser css cache for static css pages -->
       <link rel="stylesheet" type="text/css" href="/static/css/base.css?r={{ range(0, 100000) | random }}">
-      {% if project %}
+      {% if project and project.ext_repo_css %}
       <link rel="stylesheet" type="text/css" href="{{ project.url }}/_extensions/hypergrc/static/css/repo.css">
       {% endif %}
       <script type="text/javascript">

@@ -181,6 +181,45 @@ pandoc -t docx ssp.md -o ssp.docx
 
 The `-d` option instructs the SSP generator to include control descriptions. You may also add `--family XX` (e.g. `--family CP`) to output only controls for the given control family.
 
+## Customizing project appearance
+
+The appearance of each project can be customized by adding a css file called `_extensions/hypergrc/static/css/repo.css` to the project's repository and referencing the path to the `_extensions/hypergrc` directory in the `opencontrol.yaml` file like so:
+
+```
+# ...
+standards:
+  - ./standards/NIST-SP-800-53-r4.yaml
+  - ./standards/NIST-SP-800-53-r4-privacy.yaml
+certifications:
+  - ./certifications/fisma-low-impact.yaml
+_extensions:
+  - ./_extensions/hypergrc
+```
+
+hyperGRC's includes `_extensions/hypergrc/static/css/repo.css` as the last css file loaded in the base template when the custom extension is specified in the `opencontrol.yaml` manifest and the file `repo.css` exists.
+
+#### Example project `repo.css` files
+
+Customize project with a background color in project's.
+
+```
+/* Custom project styles */
+
+body {
+  background-color: rgb(247, 247, 247);
+}
+```
+
+Customize project with a background image. Only URL loaded images are currently supported. Please respect creator's copyrights and only use properly-licensed images.
+
+```
+/* Custom project styles */
+
+body {
+  /*background-color: rgb(247, 247, 247);*/
+  background: url("https://upload.wikimedia.org/wikipedia/commons/f/f7/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed;
+}
+```
 
 ## Development
 

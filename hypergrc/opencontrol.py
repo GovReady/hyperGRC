@@ -71,6 +71,15 @@ def load_project_from_path(project_dir):
     organization_id = organization_abbrev[0:12] + "-" + short_hash(organization_name)
     source_repository = opencontrol.get("metadata", {}).get("repository")
 
+    # Read in any '_extensions' data defined in project
+    # We can have a simple feature of custom extensions by reading extra
+    # data from files. For example, we could read customized css information
+    # for the project
+    # Let's currently look for customized css information for hyperGRC
+    ext_repo_css = os.path.join(project_dir, "_extensions", "hypergrc","static", "css", "repo.css")
+    if not os.path.isfile(ext_repo_css):
+        ext_repo_css = None
+
     # Create a "project_id" that we can put into URLs. Since we don't have a database or
     # primary keys, we have to make something up. Start with the project's name, but
     # truncated so that we don't have unnecessarily long URLs. Add to it a hash of the
@@ -113,6 +122,9 @@ def load_project_from_path(project_dir):
             quote_plus(organization_id),
             quote_plus(project_id)
         ),
+
+        # Extra CSS file present (ext_repo_css)
+        "ext_repo_css" : ext_repo_css,
     }
 
 def load_project_components(project):
