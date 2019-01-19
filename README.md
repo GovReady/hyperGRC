@@ -218,6 +218,10 @@ Customize project with a background image. Only URL loaded images are currently 
 body {
   /*background-color: rgb(247, 247, 247);*/
   background: url("https://upload.wikimedia.org/wikipedia/commons/f/f7/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 ```
 
