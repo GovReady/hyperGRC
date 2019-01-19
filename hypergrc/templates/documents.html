@@ -23,7 +23,7 @@
 
         {% for document in documents %}
         <div class="row">
-          <div class="col-md-12" style="margin-bottom: 8px;"><span class="glyphicon glyphicon-file" style="color: #444;"></span> <a href="{{project.url}}/documents/?f={{ document.rel_file_path|replace('/', '>') }}" target="_blank">{{ document.rel_file_path }}</a></div>
+          <div class="col-md-12" style="margin-bottom: 8px;"><a href="{{project.url}}/documents/?f={{ document.rel_file_path|replace('/', '>') }}" target="_blank" style="color:black;"><span class="glyphicon glyphicon-file" style="color: #444;"></span> {{ document.rel_file_path }}</a></div>
         </div>
         {% endfor %}
     {% endif %}
