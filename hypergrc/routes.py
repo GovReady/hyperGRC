@@ -883,8 +883,27 @@ def custom_css(request, organization, project):
     except ValueError:
       return "Organization `{}` project `{}` in URL not found.".format(organization, project)
 
-    return """body {
-  /*background-color: rgb(247, 247, 247);*/
-  background: url("https://upload.wikimedia.org/wikipedia/commons/f/f7/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed;
-  /*background: url("/static/img/Rocky_Mountain_National_Park.jpg") no-repeat center center fixed; */
-}"""
+    doc = os.path.join(project["path"], "_extensions", "hypergrc","static", "css", "repo.css")
+
+    # Make sure this file exists and TODO: has no relative paths or goes to system directory
+    # We aren't too worried about security when user is running on their own workstation.
+    if os.path.isfile(doc):
+      try:
+        with open(doc, 'r') as f:
+          data = f.read()
+          return data
+      except Exception as e:
+        import traceback
+        traceback.print_exc()
+        request.send_response(500)
+        request.send_header("Content-Type", "text/plain; charset=UTF-8")
+        request.end_headers()
+        request.wfile.write(b"Ooops! Something went wrong.")
+        return
+    else:
+      print("file not found {}".format(doc))
+      request.send_response(404)
+      request.send_header("Content-Type", "text/plain; charset=UTF-8")
+      request.end_headers()
+      request.wfile.write(b"file not found")
+      return
