@@ -68,7 +68,7 @@
                 <div class="col-sm-12" style="padding-left: 0px;" title="{{ impl.narrative }}">
                   {{ impl.control.number }}
                   {% if impl.control_part %}<span>Part {{ impl.control_part }} </span>{% endif %}
-                  {% if impl.control.name %}&middot; {{ impl.control.name | truncate(30, true, "...") }}{% endif %}
+                  {% if impl.control.name %}&middot; {{ impl.control.name | truncate(60, true, "...") }}{% endif %}
                 </div>
               </a>
             </div>
