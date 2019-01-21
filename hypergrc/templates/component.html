@@ -21,8 +21,11 @@
 
     <br/>
     <div style="text-decoration: underline;">Current control-parts status:</div>
-    {% for status in [('x', 'y')] %}
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ status[1] }}</div><div class="col-md-10">{{ status[0] }}</div></div>
+    {% for status in ctl_i7r.keys() %}
+      <div class="row">
+        <div class="col-md-2" style="text-align: right;">{{ ctl_i7r[status] }}</div>
+        <div class="col-md-10">{{ status }}</div>
+      </div>
     {% endfor %}
 
     <br/>
