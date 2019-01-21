@@ -138,8 +138,15 @@
               <input class="summary-input" style="width: 98%; padding: 8px;" placeholder="Write something short for spreadsheets..."><br/><br/>
               #}
 
-              <div style="margin-top: 1.5em"><label for="control-editor-implementation-status">Implementation status</label></div>
-              <input id="control-editor-implementation-status" class="implementation_status-input form-control" placeholder="Unknown">
+              <div class="status-list" style="margin-top: 1.5em">
+                <label for="control-editor-implementation-status">Implementation status</label>
+              </div>
+              <div><select class="implementation_status-input form-control" id="control-editor-implementation-status" name="implementation_status-input" onchange="">
+                <option value="">set implementation status...{{ implementation_status }}</option>
+                {% for item in ["In Place", "Partially in Place", "Planned", "Not Implemented", "Not Applicable"] %}
+                <option value="{{item}}">{{item}}</option>
+                {% endfor %}
+              </select></div>
 
               <div style="margin-top: 1.5em"><label>Evidence</label></div>
               <div class="evidence-list">
@@ -338,10 +345,15 @@
       // Autoresize textarea
       autosize($('.narrative-input'));
 
-      // Update tool tip
+      // Update displayed control information
       function update_control(elem, control) {
+        // Update tool tip
         elem.find('.col-sm-12').attr('title', control.narrative);
+        // TODO Update control status
+        // alert('change glyphicon');
+        // elem.find('.ctl-i7r .glyphicon').attr('class', '.ctl-i7r .glyphicon .glyphicon-user');
       }
+
       {% endif %}
       </script>
 

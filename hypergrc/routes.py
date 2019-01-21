@@ -413,15 +413,25 @@ def component(request, organization, project, component_name):
         })
     control_part_counts = len(controlimpls)
 
-    # Compute some statistics about how many words are in the controls.
+    # Compute some statistics about how many words are in the controls,
+    # and totals on control implementation status
+    ctl_i7r = {}
     import re
     words = []
     for controlimpl in controlimpls:
         wds = len(re.split(r"\W+", controlimpl["narrative"]))
         words.append(wds)
+        # Count implementation status
+        if controlimpl["implementation_status"] in ctl_i7r.keys():
+          ctl_i7r[controlimpl["implementation_status"]] += 1
+        else:
+          ctl_i7r[controlimpl["implementation_status"]] = 1
     total_words = sum(words)
     average_words_per_controlpart = total_words / (len(controlimpls) if len(controlimpls) > 0 else 1) # don't err if no controlimpls
-
+    # Re-label status an empty implementation status key as "Not specified"
+    if "" in ctl_i7r.keys():
+       ctl_i7r["Not specified"] = ctl_i7r[""]
+       del ctl_i7r[""]
     # For editing controls, we offer a list of evidence to attach to each control.
     evidence =  list(opencontrol.load_project_component_evidence(component))
     
@@ -460,6 +470,7 @@ def component(request, organization, project, component_name):
                             control_part_count=control_part_counts,
                             total_words=total_words,
                             average_words_per_controlpart=average_words_per_controlpart,
+                            ctl_i7r=ctl_i7r,
                             evidence=evidence,
                             control_catalog=control_catalog, # used for creating a new control in the component
                             source_files=source_files, # used for creating a new control in the component

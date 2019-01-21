@@ -21,8 +21,11 @@
 
     <br/>
     <div style="text-decoration: underline;">Current control-parts status:</div>
-    {% for status in [('x', 'y')] %}
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ status[1] }}</div><div class="col-md-10">{{ status[0] }}</div></div>
+    {% for status in ctl_i7r.keys() %}
+      <div class="row">
+        <div class="col-md-2" style="text-align: right;">{{ ctl_i7r[status] }}</div>
+        <div class="col-md-10">{{ status }}</div>
+      </div>
     {% endfor %}
 
     <br/>
@@ -62,14 +65,29 @@
                 var control_{{outer_loop.index}}_{{loop.index}} = {{impl|tojson}};
               </script>
               <a href="#" class="card-control-textlink" style="" onclick="edit_control(control_{{outer_loop.index}}_{{loop.index}}, function () { update_control($('#control-{{outer_loop.index}}-{{loop.index}}'), control_{{outer_loop.index}}_{{loop.index}}); }); return false;">
-                <div class="col-sm-12" style="padding-left: 0px;" title="{{ impl.narrative }}">
+                <div class="col-sm-12" style="padding-left: 0px;;" title="{{ impl.narrative }}">
                   {{ impl.control.number }}
                   {% if impl.control_part %}<span>Part {{ impl.control_part }} </span>{% endif %}
-                  {% if impl.control.name %}&middot; {{ impl.control.name | truncate(30, true, "...") }}{% endif %}
+                  {% if impl.control.name %}&middot; {{ impl.control.name | truncate(60, true, "...") }}{% endif %}
                 </div>
               </a>
             </div>
           </div>
+            <div class="ctl-i7r row col-sm-6" style="font-size: 12px;">
+              {% if impl.implementation_status == "In Place" or impl.implementation_status == "Implemented" %}
+              <span class="glyphicon glyphicon-ok-circle" style="color: green;" title="{{ impl.implementation_status }}"></span>
+              {% elif impl.implementation_status == "Partially in Place" %}
+              <span class="glyphicon glyphicon-adjust" style="color: cyan;" title="{{ impl.implementation_status }}"></span>
+              {% elif impl.implementation_status == "Planned" %}
+              <span class="glyphicon glyphicon-record" style="color: gold;" title="{{ impl.implementation_status }}"></span>
+              {% elif impl.implementation_status == "Not Applicable" %}
+              <span class="glyphicon glyphicon-ban-circle" style="color: #888;" title="{{ impl.implementation_status }}"></span>
+              {% elif impl.implementation_status == "Not Implemented" %}
+              <span class="glyphicon glyphicon-warning-sign" style="color: red;" title="{{ impl.implementation_status }}"></span>
+              {% else %}
+              <span class="glyphicon glyphicon-question-sign" style="color: black;" title="Not specified"></span>
+              {% endif %}
+            </div>
           </div>
       {% endfor %}
 
