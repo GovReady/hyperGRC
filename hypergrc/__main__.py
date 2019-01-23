@@ -6,18 +6,22 @@
 # is invoking this application with Python 2. For this to
 # work, everything in this part must be valid Python 2
 # *and* valid Python 3.
+
 import sys
+
 def fatal_error(message):
   sys.stderr.write("hyperGRC failed to start:\n")
   sys.stderr.write(message)
   sys.stderr.write('\n')
   sys.exit(1)
+
 if (sys.version_info.major < 3) or (sys.version_info.major == 3 and sys.version_info.minor < 5):
   fatal_error("hyperGRC requires Python 3.5 or higher.")
 
 ###########################################################
 
 import os
+import time
 import argparse
 import http.server
 import socketserver
@@ -164,12 +168,27 @@ def path_matches(route_path, path):
     }
   return False
 
-# Start the HTTP server.
+# Start the HTTP server and simulated project loading
 try:
   socketserver.TCPServer.allow_reuse_address = True
   httpd = socketserver.TCPServer((BIND_HOST, int(BIND_PORT)), Handler)
-  print("hyperGRC started...")
-  print("Listening at http://{}:{}...".format(BIND_HOST, BIND_PORT))
+  sys.stdout.write("[hyperGRC] starting...\n")
+  time.sleep(.800)
+  for project in PROJECT_LIST:
+    sys.stdout.write("\r[hyperGRC] loading {}".format(project))
+    time.sleep(.150)
+    if len(PROJECT_LIST) > 1:
+      sys.stdout.write("\r"+(40+len(project))*' ')
+  if len(PROJECT_LIST) > 1:
+    sys.stdout.write("\r[hyperGRC] loading complete\n")
+  else:
+    sys.stdout.write("\n[hyperGRC] loading complete\n")
+  time.sleep(.800)
+  sys.stdout.write("[hyperGRC] `Control-C` to stop\n")
+  if len(PROJECT_LIST) > 1:
+    sys.stdout.write("[hyperGRC] hyperGRC'ing {} projects at http://{}:{}...\n".format(len(PROJECT_LIST), BIND_HOST, BIND_PORT))
+  else:
+    sys.stdout.write("[hyperGRC] hyperGRC'ing {} project at http://{}:{}...\n".format(len(PROJECT_LIST), BIND_HOST, BIND_PORT))
   httpd.serve_forever()
 except KeyboardInterrupt:
     pass
