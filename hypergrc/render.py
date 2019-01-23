@@ -2,6 +2,7 @@ import re
 
 from jinja2 import Environment, FileSystemLoader, evalcontextfilter, Markup, escape
 import os.path
+import json
 
 
 jinja_env = Environment(
@@ -91,3 +92,20 @@ def redirect(request, url):
 	request.send_response(301)
 	request.send_header("Location", url)
 	request.end_headers()
+
+def send_json_response(request, data):
+	try:
+		body = json.dumps(data, indent=2)
+	except Exception as e:
+		import traceback
+		traceback.print_exc()
+		request.send_response(500)
+		request.send_header("Content-Type", "text/plain; charset=UTF-8")
+		request.end_headers()
+		request.wfile.write(b"Ooops! Something went wrong.")
+		return
+
+	request.send_response(200)
+	request.send_header("Content-Type", "application/json")
+	request.end_headers()
+	request.wfile.write(body.encode("utf8"))
