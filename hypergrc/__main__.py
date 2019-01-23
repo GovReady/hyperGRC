@@ -172,23 +172,26 @@ def path_matches(route_path, path):
 try:
   socketserver.TCPServer.allow_reuse_address = True
   httpd = socketserver.TCPServer((BIND_HOST, int(BIND_PORT)), Handler)
-  sys.stdout.write("[hyperGRC] starting...\n")
+  COLRS = "\33[33m"
+  COLRS2 = "\33[92m"
+  COLRE = "\33[0m"
+  sys.stdout.write(COLRS+"[hyperGRC] starting...\n"+COLRE)
   time.sleep(.800)
   for project in PROJECT_LIST:
-    sys.stdout.write("\r[hyperGRC] loading {}".format(project))
+    sys.stdout.write(COLRS+"\r[hyperGRC] loading {}".format(project)+COLRE)
     time.sleep(.150)
     if len(PROJECT_LIST) > 1:
       sys.stdout.write("\r"+(40+len(project))*' ')
   if len(PROJECT_LIST) > 1:
-    sys.stdout.write("\r[hyperGRC] loading complete\n")
+    sys.stdout.write(COLRS+"\r[hyperGRC] loading complete\n"+COLRE)
   else:
-    sys.stdout.write("\n[hyperGRC] loading complete\n")
+    sys.stdout.write(COLRS+"\n[hyperGRC] loading complete\n"+COLRE)
   time.sleep(.800)
-  sys.stdout.write("[hyperGRC] `Control-C` to stop\n")
+  sys.stdout.write(COLRS+"[hyperGRC] `Control-C` to stop\n"+COLRE)
   if len(PROJECT_LIST) > 1:
-    sys.stdout.write("[hyperGRC] hyperGRC'ing {} projects at http://{}:{}...\n".format(len(PROJECT_LIST), BIND_HOST, BIND_PORT))
+    sys.stdout.write(COLRS2+"[hyperGRC] hyperGRC'ing {} projects at http://{}:{}...\n".format(len(PROJECT_LIST), BIND_HOST, BIND_PORT)+COLRE)
   else:
-    sys.stdout.write("[hyperGRC] hyperGRC'ing {} project at http://{}:{}...\n".format(len(PROJECT_LIST), BIND_HOST, BIND_PORT))
+    sys.stdout.write(COLRS2+"[hyperGRC] hyperGRC'ing {} project at http://{}:{}...\n".format(len(PROJECT_LIST), BIND_HOST, BIND_PORT)+COLRE)
   httpd.serve_forever()
 except KeyboardInterrupt:
     pass
