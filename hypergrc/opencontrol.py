@@ -679,7 +679,7 @@ def clean_text(text):
   # line.
   import re
   text = text.strip()
-  text = re.sub(r"\s+\n", "\n", text)
+  text = re.sub(r"[ \t]+\n", "\n", text)
   if not text: # empty
     return None
   if "\n" in text:
@@ -687,6 +687,11 @@ def clean_text(text):
   return text
 
 def update_component_control(controlimpl):
+    # Clean the inputs. Update controlimpl so the caller has the actual values we saved here.
+    controlimpl["narrative"] = clean_text(controlimpl["narrative"])
+    if controlimpl["implementation_status"]:
+        controlimpl["implementation_status"] = clean_text(controlimpl["implementation_status"])
+
     # The control is defined in the component.yaml file given in controlimpl["source_file"].
     # Open that file for editing, find the control record, update it, and return.
     with open(controlimpl["source_file"], "r+", encoding="utf8") as f:
@@ -707,14 +712,14 @@ def update_component_control(controlimpl):
                         
                         # Found the right entry. Update the fields.
 
-                        narrative_part["text"] = clean_text(controlimpl["narrative"])
+                        narrative_part["text"] = controlimpl["narrative"]
 
                         # Store implementation_status here. In OpenControl there is
                         # a `implementation_statuses` on the control. But our data
                         # model has a single implementation_status per control *part*.
                         # If the implementation status is cleared, remove the key.
                         if controlimpl["implementation_status"]:
-                            narrative_part["implementation_status"] = clean_text(controlimpl["implementation_status"])
+                            narrative_part["implementation_status"] = controlimpl["implementation_status"]
                         elif "implementation_status" in narrative_part:
                             del narrative_part["implementation_status"]
 
@@ -731,6 +736,13 @@ def add_component_control(component, controlimpl):
     # Append the control to the component. controlimpl must have
     # a source_file key that is present in the component.yaml
     # file or is the component.yaml file itself.
+
+    # Clean the inputs. Update controlimpl so the caller has the actual values we saved here.
+    if (controlimpl.get("control_part") or "").strip():
+        controlimpl["control_part"] = clean_text(controlimpl["control_part"])
+    controlimpl["narrative"] = clean_text(controlimpl["narrative"])
+    if controlimpl["implementation_status"]:
+        controlimpl["implementation_status"] = clean_text(controlimpl["implementation_status"])
 
     # Open the source file.
     with open(controlimpl["source_file"], "r+", encoding="utf8") as f:
@@ -770,15 +782,15 @@ def add_component_control(component, controlimpl):
         # Append a new narrative part.
         narrative_part = OrderedDict()
         if (controlimpl.get("control_part") or "").strip():
-            narrative_part['key'] = clean_text(controlimpl["control_part"])
-        narrative_part["text"] = clean_text(controlimpl["narrative"])
+            narrative_part['key'] = controlimpl["control_part"]
+        narrative_part["text"] = controlimpl["narrative"]
 
         # Store implementation_status here. In OpenControl there is
         # a `implementation_statuses` on the control. But our data
         # model has a single implementation_status per control *part*.
         # If the implementation status is cleared, remove the key.
         if controlimpl["implementation_status"]:
-            narrative_part["implementation_status"] = clean_text(controlimpl["implementation_status"])
+            narrative_part["implementation_status"] = controlimpl["implementation_status"]
         elif "implementation_status" in narrative_part:
             del narrative_part["implementation_status"]
 
@@ -788,6 +800,4 @@ def add_component_control(component, controlimpl):
         f.seek(0);
         f.truncate()
         rtyaml.dump(data, f)
-
-        return "OK"
 

@@ -57,7 +57,7 @@
               <script async>
                 var control_{{outer_loop.index}}_{{loop.index}} = {{impl|tojson}};
               </script>
-              <a href="#" class="card-control-textlink" style="" onclick="edit_control(control_{{outer_loop.index}}_{{loop.index}}, function () { update_control($('#control-{{outer_loop.index}}-{{loop.index}}'), control_{{outer_loop.index}}_{{loop.index}}); }); return false;">
+              <a href="#" class="card-control-textlink" style="" onclick="edit_control(control_{{outer_loop.index}}_{{loop.index}}, function (new_control_data) { update_control(new_control_data, $('#control-{{outer_loop.index}}-{{loop.index}}'), control_{{outer_loop.index}}_{{loop.index}}); }); return false;">
                 <div class="col-sm-12" style="padding-left: 0px;" title="{{ impl.narrative }}">
                   {{ impl.control.number }}
                   {% if impl.control_part %}<span>Part {{ impl.control_part }} </span>{% endif %}
@@ -73,4 +73,18 @@
 
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Update tool tip after a control is edited.
+  function update_control(new_control_data, elem, control) {
+    // Update our local control object with the updated data from the server.
+    control.narrative = new_control_data.narrative;
+    control.implementation_status = new_control_data.implementation_status;
+
+    // Update the UI.
+    elem.find('.col-sm-12').attr('title', control.narrative);
+  }
+</script>
 {% endblock %}

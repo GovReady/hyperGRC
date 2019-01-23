@@ -326,22 +326,19 @@
           data: data,
           success: function(res) {
             // ok it's saved, unless there's an error which we should display
-            if (res != "OK")
+            if (typeof res != "object")
               alert(res);
-            // save succeeded, so also update the current page displayed version of content
+            
+            // save succeeded and res holds the new control implementation data.
+            // update the current page displayed version of content.
             else
-              edit_control_current_callback();
+              edit_control_current_callback(res);
           }
         });
       });
 
       // Autoresize textarea
       autosize($('.narrative-input'));
-
-      // Update tool tip
-      function update_control(elem, control) {
-        elem.find('.col-sm-12').attr('title', control.narrative);
-      }
       {% endif %}
       </script>
 

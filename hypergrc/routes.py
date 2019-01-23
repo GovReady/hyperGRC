@@ -1,7 +1,7 @@
 # This module contains hyperGRC's routes, i.e. handlers for
 # virtual paths.
 
-from .render import render_template, redirect, send_file
+from .render import render_template, redirect, send_file, send_json_response
 from . import opencontrol
 import os
 import glob
@@ -850,13 +850,16 @@ def update_control(request):
        controlimpl["narrative"] = request.form.get("narrative", "")
        controlimpl["implementation_status"] = request.form.get("implementation_status", "")
        if opencontrol.update_component_control(controlimpl):
-         return "OK"
+         # If the control was updated, return it back to the user
+         # as JSON.
+         return send_json_response(request, controlimpl)
 
     # The control was not found in the data files.
     if mode == "update":
       return "Control being updated is missing from the project."
 
-    return opencontrol.add_component_control(component, {
+    # Construct a new controlimpl data structure.
+    controlimpl = {
       "standard": {
         "id": request.form["standard"],
       },
@@ -867,7 +870,13 @@ def update_control(request):
       "narrative": request.form.get("narrative", ""),
       "implementation_status": request.form.get("implementation_status", ""),
       "source_file": request.form.get("source_file", ""),
-    })
+    }
+
+    # Save it.
+    opencontrol.add_component_control(component, controlimpl)
+
+    # Return it back to the client.
+    return send_json_response(request, controlimpl)
 
 #####################################################
 # Routes for Customization
