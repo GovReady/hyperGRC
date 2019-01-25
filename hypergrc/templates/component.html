@@ -109,10 +109,7 @@
 {% block scripts %}
 <script>
   // Load and display the statistics.
-  function show_control_implementation_statistics() {
-    $.ajax({
-      url: {{component.url|tojson}}+"/statistics.json",
-      success: function(stats) {
+  function show_control_implementation_statistics(stats) {
         function add_stats(node, stats, keys) {
           node.text(''); // clear on update
           keys.forEach(function(item) {
@@ -135,10 +132,13 @@
           { key: "total_words", label: "total words" },
           { key: "average_words_per_controlpart", label: "average words per control-part " }
         ]);
+  }
 
-      }
+  function update_control_implementation_statistics() {
+    $.ajax({
+      url: {{component.url|tojson}}+"/statistics.json",
+      success: show_control_implementation_statistics
     });
-   
   }
 
   /**
@@ -166,11 +166,11 @@
     elem.find('.col-sm-12').attr('title', control.narrative);
 
     // Update stats.
-    show_control_implementation_statistics();
+    update_control_implementation_statistics();
   }
 
   $(function() {
-    show_control_implementation_statistics();
+    show_control_implementation_statistics({{stats|tojson}});
   })
 </script>
 {% endblock %}

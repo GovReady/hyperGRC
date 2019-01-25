@@ -443,6 +443,7 @@ def component(request, organization, project, component_name):
                             evidence=evidence,
                             control_catalog=control_catalog, # used for creating a new control in the component
                             source_files=source_files, # used for creating a new control in the component
+                            stats=compute_control_implementation_statistics(controlimpls),
                           )
 
 @route('/organizations/<organization>/projects/<project>/components/<component_name>/statistics.json')
