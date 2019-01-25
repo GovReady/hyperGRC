@@ -49,23 +49,23 @@
 
       {% set outer_loop = loop %}
       {% for impl in component_info.controls %}
-          <div class="card-control">
-
-          <div id="control-{{outer_loop.index}}-{{loop.index}}" class="container" style="width:100%;">
-
-            <div class="row">
+          <div class="card-control"
+               title="{{ impl.narrative }}"
+               data-variable="control_{{outer_loop.index}}_{{loop.index}}">
               <script async>
                 var control_{{outer_loop.index}}_{{loop.index}} = {{impl|tojson}};
               </script>
-              <a href="#" class="card-control-textlink" style="" onclick="edit_control(control_{{outer_loop.index}}_{{loop.index}}, function (new_control_data) { update_control(new_control_data, $('#control-{{outer_loop.index}}-{{loop.index}}'), control_{{outer_loop.index}}_{{loop.index}}); }); return false;">
-                <div class="col-sm-12" style="padding-left: 0px;" title="{{ impl.narrative }}">
+
+              <div class="card-control-textlink">
                   {{ impl.control.number }}
                   {% if impl.control_part %}<span>Part {{ impl.control_part }} </span>{% endif %}
-                  {% if impl.control.name %}&middot; {{ impl.control.name | truncate(26, true, "") }}{% endif %}
-                </div>
-              </a>
-            </div>
-          </div>
+                  {% if impl.control.name %}&middot; {{ impl.control.name | truncate(60, true, "...") }}{% endif %}
+              </div>
+
+              {% set css_class = implementation_status_css_classes.get(impl.implementation_status) %}
+              <div class="ctl-i7r">
+                <span class="{% if css_class %}{{css_class}}{% else %}implementation_status_css_classes['']{% endif %}" title="{{ impl.implementation_status }}"></span>
+              </div>
         </div>
       {% endfor %}
     </div>
@@ -77,6 +77,20 @@
 
 {% block scripts %}
 <script>
+  $('.card-control[data-variable]').click(function() {
+    // Show this element as active.
+    var elem = $(this);
+    $('.card-control').removeClass('active');
+    elem.addClass('active');
+
+    // Show editor. Then update the object that holds the current
+    // information for this control.
+    var controldata = window[elem.attr('data-variable')];
+    edit_control(controldata, function (new_control_data) {
+      update_control(new_control_data, elem, controldata);
+    });
+  })
+
   // Update tool tip after a control is edited.
   function update_control(new_control_data, elem, control) {
     // Update our local control object with the updated data from the server.
@@ -84,7 +98,12 @@
     control.implementation_status = new_control_data.implementation_status;
 
     // Update the UI.
-    elem.find('.col-sm-12').attr('title', control.narrative);
+    elem.attr('title', control.narrative);
+    var implementation_status_css_classes = {{implementation_status_css_classes|tojson}};
+    var classes = implementation_status_css_classes[new_control_data.implementation_status] || implementation_status_css_classes[''];
+    elem.find('.ctl-i7r span')
+      .attr('class', classes)
+      .attr('title', new_control_data.implementation_status);
   }
 </script>
 {% endblock %}

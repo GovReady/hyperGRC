@@ -106,15 +106,15 @@ h1, h2, h3, h4, h5 {
   overflow-y: hidden;
   overflow-x: hidden;
   border-radius: 5px;
+  cursor: pointer;
 }
 
-.card-control :hover {
+.card-control:hover {
   background-color: #eee;
 }
 
 .card-control-textlink {
   color: #333;
-  font-weight: normal;
   font-size: 0.85em;
 }
 
@@ -145,6 +145,11 @@ h1, h2, h3, h4, h5 {
   overflow-y: auto;
   border-radius: 5px;
 }
+  .page-info-card h4 {
+    font-size: inherit;
+    font-weight: normal;
+    text-decoration: underline;
+  }
 
 /*******************************
 * MODAL AS LEFT/RIGHT SIDEBAR
@@ -295,4 +300,15 @@ div#loading {
     transform: scaleY(1.0);
     -webkit-transform: scaleY(1.0);
   }
+}
+
+.color-green { color: green; }
+.color-cyan { color: cyan; }
+.color-gold { color: gold; }
+.color-grey { color: grey; }
+.color-red { color: red; }
+
+.card-control.active {
+  border: 1px solid #BBB;
+  background-color: #F3EAE5;
 }

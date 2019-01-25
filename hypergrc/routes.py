@@ -95,6 +95,16 @@ def get_document_directories(project):
   dir_list = [x[0] for x in os.walk(os.path.join(project["path"], "outputs"))]
   return dir_list
 
+implementation_status_css_classes = {
+  "In Place": "glyphicon glyphicon-ok-circle color-green",
+  "Implemented": "glyphicon glyphicon-ok-circle color-green",
+  "Partially in Place": "glyphicon glyphicon-adjust color-cyan",
+  "Planned": "glyphicon glyphicon-record color-gold",
+  "Not Applicable": "glyphicon glyphicon-ban-circle color-grey",
+  "Not Implemented": "glyphicon glyphicon-warning-sign color-red",
+  "": "glyphicon glyphicon-question-sign",
+}
+
 #######################
 # Routes for Main Pages
 #######################
@@ -406,32 +416,6 @@ def component(request, organization, project, component_name):
     for control_family in control_families:
         control_family["controls"].sort(key = lambda controlimpl : controlimpl["sort_key"])
 
-    # Get total count of controls and control parts.
-    control_count = len({
-        ( controlimpl["standard"]["name"], controlimpl["control"]["number"] )
-        for controlimpl in controlimpls
-        })
-    control_part_counts = len(controlimpls)
-
-    # Compute some statistics about how many words are in the controls,
-    # and totals on control implementation status
-    ctl_i7r = {}
-    import re
-    words = []
-    for controlimpl in controlimpls:
-        wds = len(re.split(r"\W+", controlimpl["narrative"]))
-        words.append(wds)
-        # Count implementation status
-        if controlimpl["implementation_status"] in ctl_i7r.keys():
-          ctl_i7r[controlimpl["implementation_status"]] += 1
-        else:
-          ctl_i7r[controlimpl["implementation_status"]] = 1
-    total_words = sum(words)
-    average_words_per_controlpart = total_words / (len(controlimpls) if len(controlimpls) > 0 else 1) # don't err if no controlimpls
-    # Re-label status an empty implementation status key as "Not specified"
-    if "" in ctl_i7r.keys():
-       ctl_i7r["Not specified"] = ctl_i7r[""]
-       del ctl_i7r[""]
     # For editing controls, we offer a list of evidence to attach to each control.
     evidence =  list(opencontrol.load_project_component_evidence(component))
     
@@ -466,15 +450,78 @@ def component(request, organization, project, component_name):
                             project=project,
                             component=component,
                             control_families=control_families,
-                            control_count=control_count,
-                            control_part_count=control_part_counts,
-                            total_words=total_words,
-                            average_words_per_controlpart=average_words_per_controlpart,
-                            ctl_i7r=ctl_i7r,
                             evidence=evidence,
                             control_catalog=control_catalog, # used for creating a new control in the component
                             source_files=source_files, # used for creating a new control in the component
+                            implementation_status_css_classes=implementation_status_css_classes,
+                            stats=compute_control_implementation_statistics(controlimpls),
                           )
+
+@route('/organizations/<organization>/projects/<project>/components/<component_name>/statistics.json')
+def component(request, organization, project, component_name):
+    """Return a JSON object holding statistics about the control implementations for a component."""
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+      component = opencontrol.load_project_component(project, component_name)
+    except ValueError:
+      return "Organization `{}`, project `{}`, or component `{}` in URL not found.".format(organization, project, component)
+
+    # Each control's metadata, such as control names and control family names,
+    # is loaded from standards. Load the standards first.
+    standards = opencontrol.load_project_standards(project)
+
+    # Load the component's controls.
+    controlimpls = list(opencontrol.load_project_component_controls(component, standards))
+
+    return send_json_response(request, compute_control_implementation_statistics(controlimpls))
+
+def compute_control_implementation_statistics(controlimpls):
+    # Compute some statistics about how many words are in the controls,
+    # and totals on control implementation status
+
+    import re
+
+    # Get total count of controls and control parts.
+    control_count = len({
+        ( controlimpl["standard"]["name"], controlimpl["control"]["number"] )
+        for controlimpl in controlimpls
+        })
+    control_part_counts = len(controlimpls)
+
+    # Get total count of control families.
+    control_families_count = len(set(controlimpl["family"]["id"] for controlimpl in controlimpls))
+
+    ctl_i7r = {} # Counts by status.
+    words = [] # word counts for each control
+    for controlimpl in controlimpls:
+        # Count up words.
+        wds = len(re.split(r"\W+", controlimpl["narrative"]))
+        words.append(wds)
+
+        # Count implementation status
+        if controlimpl["implementation_status"] in ctl_i7r.keys():
+          ctl_i7r[controlimpl["implementation_status"]] += 1
+        else:
+          ctl_i7r[controlimpl["implementation_status"]] = 1
+    
+    total_words = sum(words)
+    average_words_per_controlpart = total_words / (len(controlimpls) if len(controlimpls) > 0 else 1) # don't err if no controlimpls
+    
+    # Re-label status an empty implementation status key as "Not specified"
+    if "" in ctl_i7r.keys():
+       ctl_i7r["Not specified"] = ctl_i7r[""]
+       del ctl_i7r[""]
+
+    return {
+      "control_count": control_count,
+      "control_part_count": control_part_counts,
+      "control_families_count": control_families_count,
+      "total_words": total_words,
+      "average_words_per_controlpart": average_words_per_controlpart,
+      "implementation_status_counts": ctl_i7r,
+    }
 
 @route('/organizations/<organization>/projects/<project>/components/<component_name>/guide')
 def component_guide(request, organization, project, component_name):
@@ -697,6 +744,7 @@ def project_control_grid(request, organization, project, standard_key, control_k
                             control=control,
                             components=components,
                             narratives=narratives,
+                            implementation_status_css_classes=implementation_status_css_classes,
                           )
 
 @route('/organizations/<organization>/projects/<project>/evidence')
