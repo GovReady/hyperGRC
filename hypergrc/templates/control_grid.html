@@ -57,7 +57,7 @@
               <script async>
                 var control_{{outer_loop.index}}_{{loop.index}} = {{impl|tojson}};
               </script>
-              <a href="#" class="card-control-textlink" style="" onclick="edit_control(control_{{outer_loop.index}}_{{loop.index}}, function (new_control_data) { update_control(new_control_data, $('#control-{{outer_loop.index}}-{{loop.index}}'), control_{{outer_loop.index}}_{{loop.index}}); }); return false;">
+              <a href="#" class="card-control-textlink" style="" onclick="make_active_control(this); edit_control(control_{{outer_loop.index}}_{{loop.index}}, function (new_control_data) { update_control(new_control_data, $('#control-{{outer_loop.index}}-{{loop.index}}'), control_{{outer_loop.index}}_{{loop.index}}); }); return false;">
                 <div class="col-sm-12" style="padding-left: 0px;" title="{{ impl.narrative }}">
                   {{ impl.control.number }}
                   {% if impl.control_part %}<span>Part {{ impl.control_part }} </span>{% endif %}
@@ -81,6 +81,11 @@
 
 {% block scripts %}
 <script>
+  function make_active_control(elem) {
+    $('.card-control').removeClass('active');
+    $(elem).parents('.card-control').addClass('active');
+  }
+
   // Update tool tip after a control is edited.
   function update_control(new_control_data, elem, control) {
     // Update our local control object with the updated data from the server.

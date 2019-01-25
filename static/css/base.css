@@ -307,3 +307,8 @@ div#loading {
 .color-gold { color: gold; }
 .color-grey { color: grey; }
 .color-red { color: red; }
+
+.card-control.active {
+  border: 1px solid #BBB;
+  background-color: #F3EAE5;
+}
