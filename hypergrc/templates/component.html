@@ -13,25 +13,17 @@
   <h3 style="margin: 0 0 18px 0;">{{ component.name }}</h3>
 
   <div class="page-info-card">
-    <!-- <p>description here</p> -->
-    <div style="text-decoration: underline;">Component impact</div>
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(control_families|length) }}</div><div class="col-md-10">control families</div></div>
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(control_count) }}</div><div class="col-md-10">controls</div></div>
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(control_part_count) }}</div><div class="col-md-10">control parts</div></div>
+    <h4>Component impact</h4>
+    <div id="control-implementation-statistics">
+    </div>
 
-    <br/>
-    <div style="text-decoration: underline;">Current control-parts status:</div>
-    {% for status in ctl_i7r.keys() %}
-      <div class="row">
-        <div class="col-md-2" style="text-align: right;">{{ ctl_i7r[status] }}</div>
-        <div class="col-md-10">{{ status }}</div>
-      </div>
-    {% endfor %}
+    <h4>Current control-parts status:</h4>
+    <div id="control-parts-by-status">
+    </div>
 
-    <br/>
-    <div style="text-decoration: underline;">FWIW:</div>
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ "{:,}".format(total_words) }}</div><div class="col-md-9">total words</div></div>
-    <div class="row"><div class="col-md-2" style="text-align: right;">{{ "%.1f"|format(average_words_per_controlpart) }}</div><div class="col-md-9">average words per control-part </div></div>
+    <h4>Language analysis:</h4>
+    <div id="language-statistics">
+    </div>
   </div>
 
   <p>
@@ -116,6 +108,54 @@
 
 {% block scripts %}
 <script>
+  // Load and display the statistics.
+  function show_control_implementation_statistics() {
+    $.ajax({
+      url: {{component.url|tojson}}+"/statistics.json",
+      success: function(stats) {
+        function add_stats(node, stats, keys) {
+          node.text(''); // clear on update
+          keys.forEach(function(item) {
+            var n = $('<div class="row"><div class="col-md-3" style="text-align: right;"></div><div class="col-md-9"></div></div>');
+            node.append(n);
+            n.find(".col-md-3").text(stats[item.key].format(0));
+            n.find(".col-md-9").text(item.label);
+          })
+        }
+
+        add_stats($('#control-implementation-statistics'), stats, [
+          { key: "control_families_count", label: "control families" },
+          { key: "control_count", label: "controls" },
+          { key: "control_part_count", label: "control parts" }
+        ]);
+
+        add_stats($('#control-parts-by-status'), stats.implementation_status_counts, Object.keys(stats.implementation_status_counts).map(function(status) { return { key: status, label: status } } ));
+
+        add_stats($('#language-statistics'), stats, [
+          { key: "total_words", label: "total words" },
+          { key: "average_words_per_controlpart", label: "average words per control-part " }
+        ]);
+
+      }
+    });
+   
+  }
+
+  /**
+   * Number.prototype.format(demical_places, s, c).
+   * https://stackoverflow.com/a/14428340
+   */
+  Number.prototype.format = function(demical_places) {
+      var n = demical_places;
+      var x = 3; // thousands grouping
+      var s = ','; // thousands separator
+      var c = '.'; // demical marker
+      var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+          num = this.toFixed(Math.max(0, ~~n));
+
+      return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+  };
+
   // Update tool tip after a control is edited.
   function update_control(new_control_data, elem, control) {
     // Update our local control object with the updated data from the server.
@@ -124,6 +164,13 @@
 
     // Update the UI.
     elem.find('.col-sm-12').attr('title', control.narrative);
+
+    // Update stats.
+    show_control_implementation_statistics();
   }
+
+  $(function() {
+    show_control_implementation_statistics();
+  })
 </script>
 {% endblock %}

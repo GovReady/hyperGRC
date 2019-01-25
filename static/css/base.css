@@ -145,6 +145,11 @@ h1, h2, h3, h4, h5 {
   overflow-y: auto;
   border-radius: 5px;
 }
+  .page-info-card h4 {
+    font-size: inherit;
+    font-weight: normal;
+    text-decoration: underline;
+  }
 
 /*******************************
 * MODAL AS LEFT/RIGHT SIDEBAR
