@@ -49,9 +49,9 @@
       {% set outer_loop = loop %}
 
       {% for impl in control_family.controls %}
-          <div class="card-control">
+          <div class="card-control" id="control-{{outer_loop.index}}-{{loop.index}}">
 
-          <div id="control-{{outer_loop.index}}-{{loop.index}}" class="container" style="width:100%;">
+          <div class="container" style="width:100%;">
             <div class="row">
               <script async>
                 var control_{{outer_loop.index}}_{{loop.index}} = {{impl|tojson}};
@@ -153,6 +153,11 @@
 
     // Update the UI.
     elem.find('.col-sm-12').attr('title', control.narrative);
+    var implementation_status_css_classes = {{implementation_status_css_classes|tojson}};
+    var classes = implementation_status_css_classes[new_control_data.implementation_status] || implementation_status_css_classes[''];
+    elem.find('.ctl-i7r span')
+      .attr('class', classes)
+      .attr('title', new_control_data.implementation_status);
 
     // Update stats.
     update_control_implementation_statistics();

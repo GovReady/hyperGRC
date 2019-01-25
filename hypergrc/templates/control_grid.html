@@ -89,6 +89,11 @@
 
     // Update the UI.
     elem.find('.col-sm-12').attr('title', control.narrative);
+    var implementation_status_css_classes = {{implementation_status_css_classes|tojson}};
+    var classes = implementation_status_css_classes[new_control_data.implementation_status] || implementation_status_css_classes[''];
+    elem.find('.ctl-i7r span')
+      .attr('class', classes)
+      .attr('title', new_control_data.implementation_status);
   }
 </script>
 {% endblock %}
