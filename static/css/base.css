@@ -301,3 +301,9 @@ div#loading {
     -webkit-transform: scaleY(1.0);
   }
 }
+
+.color-green { color: green; }
+.color-cyan { color: cyan; }
+.color-gold { color: gold; }
+.color-grey { color: grey; }
+.color-red { color: red; }

@@ -64,19 +64,8 @@
                   {% if impl.control.name %}&middot; {{ impl.control.name | truncate(60, true, "") }}{% endif %}
                 </div>
                 <div class="ctl-i7r row col-sm-6" style="font-size: 12px;">
-                  {% if impl.implementation_status == "In Place" or impl.implementation_status == "Implemented" %}
-                  <span class="glyphicon glyphicon-ok-circle" style="color: green;" title="{{ impl.implementation_status }}"></span>
-                  {% elif impl.implementation_status == "Partially in Place" %}
-                  <span class="glyphicon glyphicon-adjust" style="color: cyan;" title="{{ impl.implementation_status }}"></span>
-                  {% elif impl.implementation_status == "Planned" %}
-                  <span class="glyphicon glyphicon-record" style="color: gold;" title="{{ impl.implementation_status }}"></span>
-                  {% elif impl.implementation_status == "Not Applicable" %}
-                  <span class="glyphicon glyphicon-ban-circle" style="color: #888;" title="{{ impl.implementation_status }}"></span>
-                  {% elif impl.implementation_status == "Not Implemented" %}
-                  <span class="glyphicon glyphicon-warning-sign" style="color: red;" title="{{ impl.implementation_status }}"></span>
-                  {% else %}
-                  <span class="glyphicon glyphicon-question-sign" style="color: black;" title="Unknown"></span>
-                  {% endif %}
+                  {% set css_class = implementation_status_css_classes.get(impl.implementation_status) %}
+                  <span class="{% if css_class %}{{css_class}}{% else %}implementation_status_css_classes['']{% endif %}" title="{{ impl.implementation_status }}"></span>
                 </div>
               </a>
             </div>

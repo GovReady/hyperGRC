@@ -95,6 +95,16 @@ def get_document_directories(project):
   dir_list = [x[0] for x in os.walk(os.path.join(project["path"], "outputs"))]
   return dir_list
 
+implementation_status_css_classes = {
+  "In Place": "glyphicon glyphicon-ok-circle color-green",
+  "Implemented": "glyphicon glyphicon-ok-circle color-green",
+  "Partially in Place": "glyphicon glyphicon-adjust color-cyan",
+  "Planned": "glyphicon glyphicon-record color-gold",
+  "Not Applicable": "glyphicon glyphicon-ban-circle color-grey",
+  "Not Implemented": "glyphicon glyphicon-warning-sign color-red",
+  "": "glyphicon glyphicon-question-sign",
+}
+
 #######################
 # Routes for Main Pages
 #######################
@@ -443,6 +453,7 @@ def component(request, organization, project, component_name):
                             evidence=evidence,
                             control_catalog=control_catalog, # used for creating a new control in the component
                             source_files=source_files, # used for creating a new control in the component
+                            implementation_status_css_classes=implementation_status_css_classes,
                             stats=compute_control_implementation_statistics(controlimpls),
                           )
 
@@ -733,6 +744,7 @@ def project_control_grid(request, organization, project, standard_key, control_k
                             control=control,
                             components=components,
                             narratives=narratives,
+                            implementation_status_css_classes=implementation_status_css_classes,
                           )
 
 @route('/organizations/<organization>/projects/<project>/evidence')
