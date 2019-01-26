@@ -36,7 +36,11 @@ After installing the few required Python libraries, start the hyperGRC server us
 
 ```sh
 $ python -m hypergrc example/agencyapp
-Listening at http://localhost:8000...
+[hyperGRC] starting...
+[hyperGRC] loading example/agencyapp
+[hyperGRC] loading complete
+[hyperGRC] `Control-C` to stop
+[hyperGRC] hyperGRC'ing 1 project at http://localhost:8000...
 ```
 
 Open the indicated URL in your web browser.
