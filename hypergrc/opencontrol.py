@@ -545,7 +545,9 @@ certifications:
     cfg["name"] = system_name
     cfg["metadata"]["organization"]["name"] = organization_name
     cfg["metadata"]["description"] = description
-    cfg["metadata"]["organization"]["abbreviation"] = "".join([word[0].upper() for word in organization_name.split(" ")])
+    cfg["metadata"]["organization"]["abbreviation"] = None
+    if organization_name:
+        cfg["metadata"]["organization"]["abbreviation"] = "".join([word[0].upper() for word in organization_name.split(" ")])
 
     return cfg
 

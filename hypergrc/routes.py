@@ -794,8 +794,8 @@ def ssp(request, organization, project, format):
 # Routes for Creating and Updating Compliance Content
 #####################################################
 
-@route('/add-system', methods=["GET", "POST"])
-def add_system(request):
+@route('/create-system', methods=["GET", "POST"])
+def create_system(request):
     """Display and process form to create a system repository directory"""
 
     if request.method == "GET":
@@ -810,12 +810,8 @@ def add_system(request):
         repo_path = request.form.get("repo-path", "").strip()
 
         # Validate.
-        if not organization_name:
-            error = "The organization name cannot be empty."
         if not system_name:
             error = "The system name cannot be empty."
-        if not description:
-            error = "The description cannot be empty."
         elif not repo_path:
             error = "The repository path cannot be empty."
         # elif not opencontrol.validate_component_path(project, component_path):

@@ -16,44 +16,50 @@
   </div>
 
     {% if system_name %}
-    <h1>New Project Added</h1>
+    <h1>New OpenControl project created</h1>
 
     <div class="alert alert-danger" role="alert">
-      <b>ALMOST DONE! <u>RE-LAUNCH</u> hyperGRC!</b>
+      <b>ALMOST DONE! <u>RE-LAUNCH</u> hyperGRC...</b>
     </div>
 
     <p><b>Please <u>RE-LAUNCH</u> hyperGRC to view {{system_name}}.</b></p>
 
     <p>
       {{system_name}} has been created locally in <code>{{repo_path}}</code>
-      and been added to your <code>repo.conf</code> file. 
-      But you need to re-launch hyperGRC from the command-line to view {{system_name}}.
+      and added to your <code>repo.conf</code> file.
     </p>
+
+    <h2><small>Re-launch hyperGRC from the command-line to view {{system_name}} in list of projects...</small></h2>
 
     <pre>python3 -m hypergrc @repos.conf</pre>
 
-    <p>Only {{system_name}}</p>
+    <h2><small>or, to view only {{system_name}}...</small></h2>
+
     <pre><code>python3 -m hypergrc "{{repo_path}}"</code></pre>
 
     {% else %}
-    <h1>Add Project</h1>
+    <h1>Create a new OpenControl project</h1>
 
     <form method="post">
       {% if error %}
       <p class="text-danger">{{error}}</p>
       {% endif %}
 
-      <div class="form-group">
-        <label for="organization-name">Organization Name</label>
-        <input type="text" class="form-control" id="organization-name" name="organization-name" value="{{default_organization_name}}">
+      <div style="margin: 24px 0px 24px 0px;">
+        <p>Your OpenControl project will contain a draft <code>opencontrol.yaml</code> file and related content.</p>
       </div>
+
       <div class="form-group">
         <label for="system-name">System Name</label>
         <input type="text" class="form-control" id="system-name" name="system-name" value="{{default_system_name}}">
       </div>
       <div class="form-group">
-        <label for="description">Brief Description</label>
+        <label for="description">Description <small>(optional)</small></label>
         <input type="text" class="form-control" id="description" name="description" value="{{default_description}}">
+      </div>
+      <div class="form-group">
+        <label for="organization-name">Organization Name <small>(optional)</small></label>
+        <input type="text" class="form-control" id="organization-name" name="organization-name" value="{{default_organization_name}}">
       </div>
       <div class="form-group">
         <label for="repo-path">System Repository Path</label>
