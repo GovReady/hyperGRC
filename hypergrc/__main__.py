@@ -32,6 +32,7 @@ from .routes import PROJECT_LIST, ROUTES
 
 parser = argparse.ArgumentParser(description='hyperGRC')
 parser.add_argument('--bind', default="localhost:8000", help='[host:]port to bind to')
+parser.add_argument('--showaddress', default=None, help='The address to recommend the user visit.')
 parser.add_argument('project', nargs="*", default=["@repos.conf"], help='Path to a directory containing an opencontrol.yaml file for a system. Specify more than once to edit multiple system projects. Precede with an @-sign to read a list of directories from a newline-delimited text file.')
 args = parser.parse_args()
 
@@ -188,10 +189,12 @@ try:
     sys.stdout.write(COLRS+"\n[hyperGRC] loading complete\n"+COLRE)
   time.sleep(.800)
   sys.stdout.write(COLRS+"[hyperGRC] `Control-C` to stop\n"+COLRE)
+  
+  url = args.showaddress or "http://{}:{}".format(BIND_HOST, BIND_PORT)
   if len(PROJECT_LIST) > 1:
-    sys.stdout.write(COLRS2+"[hyperGRC] hyperGRC'ing {} projects at http://{}:{}...\n".format(len(PROJECT_LIST), BIND_HOST, BIND_PORT)+COLRE)
+    sys.stdout.write(COLRS2+"[hyperGRC] hyperGRC'ing {} projects at {}...\n".format(len(PROJECT_LIST), url)+COLRE)
   else:
-    sys.stdout.write(COLRS2+"[hyperGRC] hyperGRC'ing {} project at http://{}:{}...\n".format(len(PROJECT_LIST), BIND_HOST, BIND_PORT)+COLRE)
+    sys.stdout.write(COLRS2+"[hyperGRC] hyperGRC'ing {} project at {}...\n".format(len(PROJECT_LIST), url)+COLRE)
   httpd.serve_forever()
 except KeyboardInterrupt:
     pass
