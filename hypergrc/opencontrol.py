@@ -271,9 +271,9 @@ def load_standard(fn, schema_version, standards):
                 "id": control_number,
                 "sort_key": (standard_key, make_control_number_sort_key(control_number)),
                 "number": control_number,
-                "name": control_data["name"],
-                "family": control_data["family"],
-                "description": control_data["description"],
+                "name": control_data.get("name"),
+                "family": control_data.get("family"),
+                "description": control_data.get("description", None),
             }
             for control_number, control_data in standard_opencontrol.items()
             if isinstance(control_data, dict) # not the "name: " key
