@@ -4,13 +4,46 @@ hyperGRC is a lightweight, in-browser tool for managing compliance-as-code repos
 
 The goal is a low-profile, hyper-useful IT GRC tool supporting compliance-as-code practices beginning with managing reusable OpenControl files for information technology systems and components.
 
-## Requirements
+## Install using Docker
+
+A `Dockerfile` is provided in this repository to launch hyperGRC in a Docker container. The `Dockerfile` is based on CentOS 7.
+
+First, get the source code and build the Docker image:
+
+```sh
+git clone https://github.com/GovReady/hyperGRC.git hypergrc
+cd hypergrc
+docker image pull centos:7
+docker image build --tag hypergrc:latest .
+```
+
+Next you will start a container using the image. When running the container, you will need to
+
+* Provide the container with access to an OpenControl repository on your workstation by mounting a volume using the docker `-v` option. The workstation path must be an [absolute directory](https://docs.docker.com/engine/reference/run/#volume-shared-filesystems), and the container path must be `/opencontrol`. In the example start command below, we use `` `pwd` `` to help form the absolute path to the example OpenControl data in this repository, but you can just set `REPOSITORY` to any absolute path.
+* Map a port on your workstation to the container using the Docker `-p` option, such as `-p 127.0.0.1:8000:8000`.
+* Start hyperGRC in ephemeral `--rm` and interactive mode `-it` so that you can end it by typing CTRL+C.
+
+```sh
+REPOSITORY=`pwd`/example/agencyapp
+docker container run -v $REPOSITORY:/opencontrol -p 127.0.0.1:8000:8000 --rm -it hypergrc:latest 
+```
+
+The visit hyperGRC at `http://127.0.0.1:8000`.
+
+Set `REPOSITORY` to the absolute path to your OpenControl repository.
+
+
+## Install locally with source code
+
+### Requirements
 
 * Python 3.5+
 * Packages listed in `requirements.txt`
 * At least one repository of OpenControl files for a system
 
-## Install
+### Getting the source code and package dependencies
+
+hyperGRC can be installed on your workstation by getting the hyperGRC source code with `git` and running it with Python. First, get the source code and install its Python package dependencies:
 
 ```sh
 git clone https://github.com/GovReady/hyperGRC.git hypergrc
@@ -20,7 +53,9 @@ pip install -r requirements.txt
 
 NOTE: You may need to adjust the command for `pip` (.e.g `pip3`) depending on how Python 3 was installed on your system.
 
-### Installing with virtualenv
+#### Installing with virtualenv
+
+You may, optionally, consider using virtualenv to keep the Python package dependencies for hyperGRC isolated from other Python software on your workstation. In that case, run instead:
 
 ```sh
 git clone https://github.com/GovReady/hyperGRC.git hypergrc
@@ -30,7 +65,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Launching
+### Launching
 
 After installing the few required Python libraries, start the hyperGRC server using the included example compliance repository for Agency App:
 
@@ -60,9 +95,9 @@ source venv/bin/activate
 python -m hypergrc example/agencyapp
 ```
 
-### Command-line options
+## Command-line options
 
-#### OpenControl repository paths
+### OpenControl repository paths
 
 hyperGRC accepts several command-line arguments. You've already seen one: the local path to the OpenControl repository. You may specify one or more paths to OpenControl repositories to open them all up within hyperGRC.
 
@@ -93,7 +128,7 @@ You may also specify files containing lists of paths to repositories on the comm
 python -m hypergrc @repos.conf
 ```
 
-#### Other options
+### Other options
 
 To bind to a host and port other than the default `localhost:8000`, use `--bind host:port`, e.g.:
 
@@ -202,7 +237,7 @@ _extensions:
 
 hyperGRC's includes `_extensions/hypergrc/static/css/repo.css` as the last css file loaded in the base template when the custom extension is specified in the `opencontrol.yaml` manifest and the file `repo.css` exists.
 
-#### Example project `repo.css` files
+### Example project `repo.css` files
 
 Customize project with a background color in project's.
 

@@ -290,15 +290,16 @@ def load_standard(fn, schema_version, standards):
                 # These IDs
                 "id": family_id,
 
-                # A string that helps with ordering control families logically for display purposes.
-                "sort_key": family_id,
+                # A value that helps with ordering control families logically for display purposes.
+                # We'll use the index that they appear in in the standard file.
+                "sort_key": i,
 
                 # The control family's display strings.
                 "number": family_id,
                 "name": family_data["name"],
                 "abbrev": family_id,
             }
-            for family_id, family_data in standard_opencontrol.items()
+            for i, (family_id, family_data) in enumerate(standard_opencontrol.items())
             if isinstance(family_data, dict) # not the "name: " key
                and family_data.get('type') == 'family' # not in OpenControl --- we've added family names to the standard
         },
