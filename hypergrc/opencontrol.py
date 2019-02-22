@@ -418,7 +418,8 @@ def load_project_component_controls(component, standards):
                 "id": control["control_key"], # matches how the control is put in the URL
                 "sort_key": (control["standard_key"], make_control_number_sort_key(control["control_key"])),
                 "number": control["control_key"],
-                "name": control.get("name", control["control_key"]), # not in OpenControl spec
+                # "name": control.get("name", control["control_key"]), # not in OpenControl spec
+                "name": control.get("name", ""), # not in OpenControl spec
                 "url": "{}/controls/{}/{}".format(
                     component["project"]["url"],
                     quote_plus(control["standard_key"]),
