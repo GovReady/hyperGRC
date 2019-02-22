@@ -136,13 +136,14 @@ h1, h2, h3, h4, h5 {
   margin-right: 12px;
   float: left;
   padding: 18px 8px 8px 8px;
-  font-size: 0.85em;
+  /*font-size: 0.85em;*/
+  font-size: 8pt;
+  font-family: trebuchet ms, sans-serif;
   border-radius: 5px;
 }
 
 .page-info-card {
   background-color: #fff;
-  border-bottom: 1.5px solid #aaa;
   margin-bottom: 8px;padding:12px;
   min-height: 82px;
   overflow-y: auto;
@@ -213,18 +214,20 @@ h1, h2, h3, h4, h5 {
 .modal-content {
   border-radius: 1;
   border: none;
-  background-color: rgb(223, 227, 230);
-  font-style: 1.2em;
 }
 
 .modal-header {
   border-bottom-color: #EEEEEE;
-  background-color: #FAFAFA;
 }
 
 .modal-content textarea, .modal-content input, .modal-content select {
   border: 1px solid #ccc;
-  background-color: rgb(223, 227, 230)
+  font-family: trebuchet ms, sans-serif;
+}
+
+#control-editor-narrative {
+  font-size: 8pt;
+  font-family: trebuchet ms, sans-serif;
 }
 
 /*******************************
