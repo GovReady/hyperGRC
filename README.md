@@ -124,8 +124,16 @@ python -m hypergrc
 
 You may also specify files containing lists of paths to repositories on the command-line by preceding the listing file with an `@`-sign. The command above is equivalent to:
 
+On Unix, Linux and MacOS:
+
 ```bash
 python -m hypergrc @repos.conf
+```
+
+On Windows with Powershell:
+
+```bash
+python -m hypergrc "@repos.conf"
 ```
 
 ### Other options
