@@ -37,9 +37,14 @@ def build_csv(project, options):
   # Write the narratives to CSV.
   import csv
   csvwriter = csv.writer(buf, delimiter=',',quotechar='"', quoting=csv.QUOTE_MINIMAL)
-  csvwriter.writerow(["Standard Name", "Control Part", "Component Name"])
+  csvwriter.writerow(["Control", "Control Part", "Standard Name", "Component Name", "Control Narrative"])
   for narrative in narratives:
 #    if narrative["control_part"] is not None:
-      csvwriter.writerow([narrative["standard"]["name"], narrative["control_part"], narrative["component"]["name"]])
+      csvwriter.writerow([narrative["control"]["id"],
+                          narrative["control_part"],
+                          narrative["standard"]["name"],
+                          narrative["component"]["name"],
+                          narrative["narrative"].strip()
+                          ])
 
   return buf.getvalue()
