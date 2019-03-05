@@ -740,7 +740,7 @@ def project_control_grid(request, organization, project, standard_key, control_k
     # Done.
     return render_template(request, 'control_{}.html'.format(format),
                             project=project,
-                            standard=standards[standard_key],
+                            standard=standards.get("standard_key", None),
                             control=control,
                             components=components,
                             narratives=narratives,
