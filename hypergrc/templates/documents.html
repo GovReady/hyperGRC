@@ -14,6 +14,10 @@
         <div class="col-md-12" style="text-align: right;"><a href="{{project.url}}/ssp.md" class="btn btn-link" target="_blank">View SSP in Markdown format &raquo;</a></div>
     </div>
 
+    <div class="row">
+        <div class="col-md-12" style="text-align: right;"><a href="{{project.url}}/ssp.csv" class="btn btn-link" target="_blank">Export SSP in CSV format &raquo;</a></div>
+    </div>
+
     {% if documents|length == 0 %}
         {% if message %}
         <p style="max-height: 90%; overflow-y: auto;">{{ message }}</p>

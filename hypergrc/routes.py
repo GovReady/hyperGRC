@@ -777,7 +777,7 @@ def ssp(request, organization, project, format):
     """Output the complete system security plan."""
 
     # Validate format.
-    if format not in ("md",):
+    if format not in ("md","csv",):
       raise ValueError()
 
     # Load the project.
@@ -787,8 +787,12 @@ def ssp(request, organization, project, format):
       return "Organization `{}` project `{}` in URL not found.".format(organization, project)
 
     # Construct the SSP.
-    from .ssp import build_ssp
-    return build_ssp(project, {})
+    if format == "md":
+        from .ssp import build_ssp
+        return build_ssp(project, {})
+    elif format == "csv":
+        from .csv import build_csv
+        return build_csv(project, {})
 
 #####################################################
 # Routes for Creating and Updating Compliance Content
