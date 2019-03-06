@@ -1,7 +1,7 @@
 # This module contains hyperGRC's routes, i.e. handlers for
 # virtual paths.
 
-from .render import render_template, redirect, send_file, send_json_response
+from .render import render_template, redirect, send_file, send_file_response, send_json_response
 from . import opencontrol
 import os
 import glob
@@ -791,8 +791,14 @@ def ssp(request, organization, project, format):
         from .ssp import build_ssp
         return build_ssp(project, {})
     elif format == "csv":
+        from datetime import datetime
+        file_path = "exported-controls-{}Z.csv".format(
+          datetime.utcnow()
+          .isoformat(timespec="seconds")
+          .replace(':', '')
+          )
         from .csv import build_csv
-        return build_csv(project, {})
+        send_file_response(request, file_path, build_csv(project, {}).encode('utf-8'))
 
 #####################################################
 # Routes for Creating and Updating Compliance Content
