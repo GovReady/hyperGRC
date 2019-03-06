@@ -54,18 +54,19 @@ def render_template(request, template_fn, **contextvars):
 	request.end_headers()
 	request.wfile.write(body.encode("utf8"))
 
-def send_file_response(request, file_path, data):
+def send_file_response(request, file_path, data, content_type="application/octet-stream"):
     # Form and send the response
 	request.send_response(200)
-	request.send_header("Content-Type", "application/octet-stream")
+	request.send_header("Content-Type", content_type)
 	request.send_header('Content-Disposition', 'attachment; filename=' + os.path.basename(file_path))
 
-	# Bad browsers may guess the MIME type if it thinks it is wrong or if it's
-	# application/octet-stream, and we don't want the browser to guess that
-	# it's HTML or Javascript and then execute it, since the content is
-	# untrusted.
-	request.send_header('X-Content-Type-Options', 'nosniff')
-	request.send_header('X-Download-Options', 'noopen')
+	if content_type == "application/octet-stream":
+		# Bad browsers may guess the MIME type if it thinks it is wrong or if it's
+		# application/octet-stream, and we don't want the browser to guess that
+		# it's HTML or Javascript and then execute it, since the content is
+		# untrusted.
+		request.send_header('X-Content-Type-Options', 'nosniff')
+		request.send_header('X-Download-Options', 'noopen')
 
 	# mimetype
 	request.end_headers()

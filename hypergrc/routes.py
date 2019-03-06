@@ -798,7 +798,7 @@ def ssp(request, organization, project, format):
           .replace(':', '')
           )
         from .csv import build_csv
-        send_file_response(request, file_path, build_csv(project, {}).encode('utf-8'))
+        send_file_response(request, file_path, build_csv(project, {}).encode('utf-8'), "text/csv")
 
 #####################################################
 # Routes for Creating and Updating Compliance Content
