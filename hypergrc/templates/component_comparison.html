@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}
+  hyperGRC - Compare Components
+{% endblock %}
+
+{% block content %}
+<div id="static-page-content" class="container">
+  <div class="row item-ctl" style="margin-bottom: 12px;">
+    <div class="col-md-10">&nbsp;</div>
+    <div class="col-md-2">&nbsp;</div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-9"><h1>Compare components</h1></div>
+  </div>
+
+  <div class="row" style="margin-bottom: 12px;">
+    <div class="col-md-12">
+      <div class="col-md-1"><b>Control</b></div>
+      <div class="col-md-11">
+        <div class="col-md-12">
+          <div class="col-md-4">
+            <b>Component (Project)</b>
+          </div>
+          <div class="col-md-8">
+            <b>Control narrative</b>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" style="font-size: 0.7em;">
+  {% for control in controls %}
+    <div class="col-md-12">
+      <div class="col-md-1" style="">{{ control }}</div>
+      <div class="col-md-11" style="border: 0px solid black;">
+        {% for component in components %}
+        <div class="col-md-12" style="border-top: 0.5px solid gray;">
+          <div class="col-md-4">
+            {{ component.name }} ({{ component.project.title }})
+          </div>
+          <div class="col-md-8">
+            <!-- {{ component.controls }} -->
+            {% if control in component.controls %}
+              <div>{{ component.controls[control].narrative }}</div>
+            {% else %}
+              <div>n/a</div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      
+    </div>
+    <div class="col-md-12"><p>&nbsp;</p></div>
+ {% endfor %}
+</div>
+{% endblock %}

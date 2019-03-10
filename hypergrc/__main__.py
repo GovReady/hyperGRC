@@ -111,8 +111,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
       self.form = urllib.parse.parse_qs(body)
 
       # parse_qs yields { key: [value1, value2] } but multi-valued keys
-      # aren't typically used, so simplify to { key: value }.
-      self.form = { key: value[0] for key, value in self.form.items() }
+      # aren't typically used, so simplify to { key: value } when 
+      # key's value isn't multi-valued.
+      self.form = { key: value[0] if len(value) == 1 else value for key, value in self.form.items() }
       return True
 
   # Handle a request (for something other than a static file).

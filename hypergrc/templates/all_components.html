@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}
+  hyperGRC - All Components
+{% endblock %}
+
+{% block content %}
+<div id="static-page-content" class="container">
+  <div class="row item-ctl" style="margin-bottom: 12px;">
+    <div class="col-md-10">&nbsp;</div>
+    <div class="col-md-2" style="text-align: right;" onclick="alert('{{ modify_msg }}')">
+      MODIFY <span class="glyphicon glyphicon-cog"></span>
+    </div>
+  </div>
+
+  <form method="post" action="/component-comparison">
+  <div class="row">
+    <div class="col-md-9"><h1>All components across your projects</h1></div>
+    <div class="col-md-3" style="text-align: right;"><button type="submit" class="btn btn-primary">Compare components</button></div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">Compilation of components from all your projects. Select components to compare their controls.
+    </div>
+  </div>
+  
+    <fieldset> 
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Component</th>
+          <th>Compare</th>
+          <th>Project</th>
+        </tr>
+      </thead>
+    {% for component in components %}
+      <tr>
+        <td>{{ loop.index0 + 1 }}</td>
+        <td>
+          <div class="row" style="margin-bottom: 0.5em;">
+          <div class="col-md-12"><b><a href="{{ component.url }}" onclick="loading();">{{ component.name }}</a></b></div>
+        </div>
+        </td>
+        <td>
+          <div class="checkbox" style="text-align: center;">
+            <input type="checkbox" name="component_selected" value="{{ component.url }}">
+          </div>
+        </td>
+        <td><a href="{{ component.project.url }}">{{ component.project.title }}</a></td>
+      </tr>
+    {% endfor %}
+    </table>
+    <fieldset> 
+  </form>
+
+</div>
+{% endblock %}

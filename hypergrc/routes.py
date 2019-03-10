@@ -944,6 +944,95 @@ def update_control(request):
     return send_json_response(request, controlimpl)
 
 #####################################################
+# Routes for Component Analysis Across Projects
+#####################################################
+
+@route('/all-components')
+def all_components(request):
+  """Show all components across all projects"""
+
+  # Create an array to store project objects
+  components = [ ]
+
+  # Iterate through all of the projects
+  for project in load_projects():
+    components.extend(list(opencontrol.load_project_components(project)))
+
+  components.sort(key = lambda component : component["name"])
+
+  # Prepare modify page message
+  modify_msg = "Displayed components taken from loaded projects. To modify listed components, change hyperGRC launch parameters to show different projects."
+
+  return render_template(request, 'all_components.html',
+                         components=components,
+                         modify_msg=modify_msg
+                        )
+
+@route('/component-comparison', methods=['POST'])
+def component_comparison(request):
+  """Compare the respective controls of components"""
+
+  # Super set of controls
+  super_control_list = set()
+  components = [ ]
+  if "component_selected" in request.form:
+    component_urls = request.form["component_selected"]
+    for component_url in component_urls:
+
+      from urllib.parse import unquote_plus
+      empty, org_l, organization, project_l, project, components_l, component_name = component_url.split("/")
+      organization = unquote_plus(organization)
+      project = unquote_plus(project)
+      component_name = unquote_plus(component_name)
+
+      # Load the project.
+      try:
+        project = load_project(organization, project)
+      except ValueError:
+        return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+      # Load the component.
+      try:
+        component = opencontrol.load_project_component(project, component_name)
+      except ValueError:
+        return "Component `{}` in URL not found in project.".format(component_name)
+
+      # Each control's metadata, such as control names and control family names,
+      # is loaded from standards. Load the standards first.
+      standards = opencontrol.load_project_standards(project)
+
+      # Load the component's controls.
+      controlimpls = list(opencontrol.load_project_component_controls(component, standards))
+
+      # extract control ids
+      component_control_ids = ["{}{}".format(c["control"]["id"], "" if c["control_part"] == None else " part "+c["control_part"]) for c in controlimpls]
+      super_control_list = super_control_list.union(set(component_control_ids))
+
+      # Add key to each control
+      controlimpls_new = {}
+      for c in controlimpls:
+        if c["control_part"] == None:
+          new_id = c["control"]["id"]
+        else:
+          new_id = c["control"]["id"] + " part " + c["control_part"]
+        controlimpls_new[new_id] = c
+
+      # Update components
+      components.append({ "organization": organization, "project": project, "name": component_name, "controls": controlimpls_new })
+
+  else:
+    components = []
+    # Remind people to select components if no components selected.
+
+  controls = list(super_control_list)
+  controls.sort()
+
+  return render_template(request, 'component_comparison.html',
+                         components=components,
+                         controls=controls
+                        )
+
+#####################################################
 # Routes for Customization
 #####################################################
 

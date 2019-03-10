@@ -71,8 +71,8 @@
         <div id="sidebar">
           <p><a href="/" title="Home"><span class="glyphicon glyphicon-home" aria-hidden="true"></span><span class="small-menu">Home</span></a></p>
           <!-- <p><a href="/login" title="Login"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span><br/>login</a></p><br/> -->
-          {% if project %}
           <hr>
+          {% if project %}
           <p><a href="{{project.url}}" title="Components" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span><span class="small-menu" style="margin-left:-5px;">Components</span></a></p><br/>
           <p><a href="{{project.url}}/controls" title="Controls" onclick="loading();"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="small-menu">Controls</span></a></p><br/>
           <p><a href="{{project.url}}/evidence" title="Evidence" onclick="loading();"><span class="glyphicon glyphicon-th" aria-hidden="true"></span><span class="small-menu">Evidence</span></a></p><br/>
@@ -80,8 +80,13 @@
           <!-- <p><a href="{{project.url}}/assessments" title="Assessments" onclick="loading();"><span class="glyphicon glyphicon-check" aria-hidden="true"></span><span class="small-menu">Assessments</span></a></p><br/> -->
           <!-- <p><a href="{{project.url}}/poams" title="POA&amp;Ms" onclick="loading();"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span><span class="small-menu">POA&Ms</span></a></p><br/> -->
           <p><a href="{{project.url}}/team" title="Team" onclick="loading();"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="small-menu">Team</span></a></p><br/>
+          {% endif %}
+          <p><a href="/all-components" title="All components" onclick="loading();"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span><br /><span class="small-menu">Component<br />Summary</span></a></p>
+          {% if project %}
           <p><a href="{{project.url}}/settings" title="Settings" onclick="loading();"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span><span class="small-menu">Settings</span></a></p>
           {% endif %}
+
+
         </div>
       </div>
 
