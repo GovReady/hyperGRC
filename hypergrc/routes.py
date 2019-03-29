@@ -800,6 +800,32 @@ def ssp(request, organization, project, format):
         from .csv import build_csv
         send_file_response(request, file_path, build_csv(project, {}).encode('utf-8'), "text/csv")
 
+@route('/organizations/<organization>/projects/<project>/components/<component_name>/app.yaml')
+def component_app_export(request, organization, project, component_name):
+    """Export app.yaml file for a component"""
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # Load the component.
+    try:
+      component = opencontrol.load_project_component(project, component_name)
+    except ValueError:
+      return "Component `{}` in URL not found in project.".format(component_name)
+
+    from datetime import datetime
+    file_path = "app-{}Z.yaml".format(
+      datetime.utcnow()
+      .isoformat(timespec="seconds")
+      .replace(':', '')
+      )
+    from .app_yaml import build_app
+    send_file_response(request, file_path, build_app(component, {}).encode("utf-8"), "application/x-yaml")
+
+
 #####################################################
 # Routes for Creating and Updating Compliance Content
 #####################################################
