@@ -1,4 +1,4 @@
-# Construct system security plans from project data.
+# Construct system security plans from project data in csv
 
 from . import opencontrol
 
