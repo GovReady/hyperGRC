@@ -261,14 +261,34 @@ def team(request, organization, project):
     except ValueError:
       return "Organization `{}` project `{}` in URL not found.".format(organization, project)
 
+    teams = {}
     # Read the team file
     try:
       with open(os.path.join(project["path"], "team", "team.yaml"), encoding="utf8") as f:
         team_data = rtyaml.load(f)
-        team = team_data["team"]
+        # Follow the code pattern from opencontrol.transform list
+        # to parse a team file that references other team file
+        # so we can refactor and combine in the future
+        source_file = os.path.join(project["path"], "team")
+        array = team_data["team"]
+        for item in array:
+        # If an entry is a string rather than a dict, then it names a file
+        # that we should read that contains more items of the same type.
+          if isinstance(item, str):
+            # Construct the path to the file, which is relative to the file
+            # it is listed in.
+            fn = os.path.join(os.path.dirname(source_file), "team", item)
+            inner_team = opencontrol.load_opencontrol_yaml(fn, "team", None)
+            inner_team_name = inner_team.get("name", team_data.get("name")+"-"+item)
+            inner_team_team = inner_team.get("team", [])
+            teams[inner_team_name] = inner_team_team
+          else:
+            # Only one team and captured in team.yaml file
+            teams[team_data.get("name")] = team_data.get("team", [])
+
       message = None
     except:
-      team = []
+      teams = []
       message = ("Capture your team information in the file: `{}`.".format(os.path.join(project["path"], "team", "team.yaml")))
 
     # Prepare modify page message
@@ -279,7 +299,7 @@ def team(request, organization, project):
                           project=project,
                           message=message,
                           modify_msg=modify_msg,
-                          team=team
+                          teams=teams
                           )
 
 @route('/settings')

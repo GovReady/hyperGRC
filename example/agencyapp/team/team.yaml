@@ -1,15 +1,18 @@
-name: Team
+name: Agency App Team
 schema_version: 3.0.0
 team:
 - name: Khalil Mack
   role: System Owner
-  phone: (312) 555-5555
-  email: khalil.Mack@dos.gov
+  reference:
+  - name: https://agency.atlassian.net/wiki/spaces/SO/pages/88047664/agencyapp/team
+    date: 2018-11-30
 - name: Jane Doe
   role: ISSO
-  phone: (202) 555-5555
-  email: jane.doe@dos.gov
+  reference:
+  - name: https://agency.atlassian.net/wiki/spaces/SO/pages/88047664/agencyapp/team
+    date: 2018-11-30
 - name: Navin Rhu
   role: CISO
-  phone: (202) 555-5500
-  email: navin.rhu@dos.gov
+  reference:
+  - name: https://agency.atlassian.net/wiki/spaces/SO/pages/88047664/agencyapp/team
+    date: 2018-11-30
