@@ -21,13 +21,16 @@
       <div class="col-md-12">{{ message }}</div>
     </div>
     {% else %}
-    {% for member in team %}
-    <div class="row" style="margin-bottom: 0.5em;">
-      <div class="col-md-1"><span class="glyphicon glyphicon-user"></span></div>
-      <div class="col-md-3">{{ member.role }}</div>
-      <div class="col-md-4"><a href="mailto:{{ member.email }}" style="color: black;">{{ member.name }}</a></div>
-      <div class="col-md-3">{{ member.phone }}</div>
-    </div>
+
+    {% for team in teams %}
+      <h3>{{ team }} team</h3>
+      {% for member in teams[team] %}
+      <div class="row" style="margin-bottom: 0.5em;">
+        <div class="col-md-1"><span class="glyphicon glyphicon-user"></span></div>
+        <div class="col-md-5">{{ member.role }}</div>
+        <div class="col-md-3"><a href="mailto:{{ member.email }}" style="color: black;">{{ member.name }}</a></div>
+      </div>
+      {% endfor %}
     {% endfor %}
     {% endif %}
     <div class="col-md-12">
