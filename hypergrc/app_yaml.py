@@ -49,5 +49,5 @@ def build_app(component, options):
 #                           ])
   # buf.write(component)
   # return buf.getvalue()
-  print("componenyaml\n", rtyaml.dump(component))
+  # print("componenyaml\n", rtyaml.dump(component))
   return rtyaml.dump(component)

@@ -833,17 +833,34 @@ def component_app_export(request, organization, project, component_name):
     # Load the component.
     try:
       component = opencontrol.load_project_component(project, component_name)
+      # print("component: ", component)
     except ValueError:
       return "Component `{}` in URL not found in project.".format(component_name)
 
-    from datetime import datetime
-    file_path = "app-{}Z.yaml".format(
-      datetime.utcnow()
-      .isoformat(timespec="seconds")
-      .replace(':', '')
-      )
+    # Each control's metadata, such as control names and control family names,
+    # is loaded from standards. Load the standards first.
+    standards = opencontrol.load_project_standards(project)
+
+    # Load the component's controls.
+    controlimpls = list(opencontrol.load_project_component_controls(component, standards))
+    # print("## YAML", rtyaml.dump(controlimpls))
+
     from .app_yaml import build_app
-    send_file_response(request, file_path, build_app(component, {}).encode("utf-8"), "application/x-yaml")
+    component_yaml = build_app(controlimpls, None)
+
+    # from datetime import datetime
+    # file_path = "app-{}Z.yaml".format(
+    #   datetime.utcnow()
+    #   .isoformat(timespec="seconds")
+    #   .replace(':', '')
+    #   )
+    # send_file_response(request, file_path, build_app(controlimpls, {}).encode("utf-8"), "application/x-yaml")
+    return render_template(request, 'govready-q_format.html',
+                            project=project,
+                              component=component,
+                            controlimpls=controlimpls,
+                            component_yaml=component_yaml,
+                          )
 
 
 #####################################################

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div  id="static-page-content" class="container">
+  <div class="row item-ctl">
+    <div class="col-md-10">&nbsp;</div>
+    <div class="col-md-2" style="text-align: right;">
+      &nbsp;
+    </div>
+  </div>
+
+  <div class="row" style="overflow: auto;">
+      <div class="col-md-12"><h1>GovReady-Q app.yaml and output template files</h1></div>
+    </div>
+
+    <div class="col-md-12">
+
+      <div>file: apps/{{ component.id }}/app.yaml</div>
+      <pre>id: app
+title: {{ component.name }}
+type: project
+version: 0.5
+icon: app.png
+catalog:
+  category: TBD
+  vendor: {{ component.project.organization.name }} 
+  vendor_url: TBD
+  status: stub
+  version: 0.2
+  source_url: {{ component.source_repository }}
+  description:
+    short: |
+      {{ component.project.organization.name }} {{ component.name }}
+  recommended_for:
+  - key_short: Org
+    value: Small
+  - key_short: Tech
+    value: Sophisticated
+  - key_short: Role
+    value: PM
+introduction:
+  format: markdown
+  template: |
+    Compliance app for {{ component.project.organization.name }} {{ component.name }}
+questions:
+- id: overview
+  title: Overview
+  prompt: |
+    Compliance app for {{ component.project.organization.name }} {{ component.name }}
+  type: interstitial
+
+output:
+{% for ci in controlimpls %}- templates/nist_80053rev4_ssp_{{ ci.control.id }}.md
+{% endfor %}
+</pre>
+
+      {% for ci in controlimpls %}
+        <div>file: apps/{{ component.id }}/templates/nist_80053rev4_ssp_{{ ci.control.id }}_[PART_TBD].md</div>
+        <pre>id: nist_80053rev4_ssp_{{ ci.control.id }}_[PART_TBD]
+title: NIST 800-53 rev4 SSP {{ ci.control.id }} [PART_TBD]
+format: md
+...
+
+{{ ci.narrative }}
+
+</pre>
+      {% endfor %}
+      <!-- <pre>{{ component_yaml }}</pre> -->
+    </div>
+
+  </div>
+{% endblock %}
