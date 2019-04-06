@@ -23,7 +23,7 @@ args = parser.parse_args()
 # Process each file on the command line.
 for fn in args.files:
 	# Read and parse the YAML file.
-	with open(fn) as f:
+	with open(fn, encoding="utf8") as f:
 		in_text = f.read()
 		data = rtyaml.load(in_text)
 
