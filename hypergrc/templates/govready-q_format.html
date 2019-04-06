@@ -15,6 +15,13 @@
 
     <div class="col-md-12">
 
+      <div>create files</div>
+      <pre>mkdir -p "apps/{{ component.id }}" "apps/{{ component.id }}/templates"
+mkdir -p "apps/{{ component.id }}" "apps/{{ component.id }}/assets"
+touch "apps/{{ component.id }}/app.yaml"
+touch {% for ci in controlimpls %}"apps/{{ component.id }}/templates/nist_80053rev4_ssp_{{ ci.control.id }}.md" {% endfor %}
+</pre>
+
       <div>file: apps/{{ component.id }}/app.yaml</div>
       <pre>id: app
 title: {{ component.name }}
@@ -58,7 +65,7 @@ output:
         <div>file: apps/{{ component.id }}/templates/nist_80053rev4_ssp_{{ ci.control.id }}_[PART_TBD].md</div>
         <pre>id: nist_80053rev4_ssp_{{ ci.control.id }}_[PART_TBD]
 title: NIST 800-53 rev4 SSP {{ ci.control.id }} [PART_TBD]
-format: md
+format: markdown
 ...
 
 {{ ci.narrative }}
