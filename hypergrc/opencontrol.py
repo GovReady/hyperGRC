@@ -291,8 +291,14 @@ def load_standard(fn, schema_version, standards):
                 "id": family_id,
 
                 # A value that helps with ordering control families logically for display purposes.
-                # We'll use the index that they appear in in the standard file.
-                "sort_key": i,
+                # We'll use the index that they appear in in the standard file. All sort_keys must
+                # be comparable, so we can't use integers here and then strings in another place
+                # (we also assemble control family sort_keys for unrecognized controls down below)
+                # because integers and strings are not comparable. To get around this, we'll make
+                # every sort_key for a control family a *tuple* and we'll ensure all of the tuples
+                # are comparable by requiring the first element to be a string and the second
+                # element to be an integer.
+                "sort_key": ("", i),
 
                 # The control family's display strings.
                 "number": family_id,
@@ -400,12 +406,15 @@ def load_project_component_controls(component, standards):
 
             # The control family that the control is a part of. See the data structure defined for
             # control families in load_project_standards. This is a stub --- we augment it with
-            # data from load_project_standards below.
+            # data from load_project_standards below. But in case the control doesn't come from
+            # a known standard, we will end up just using the data we construct here that is
+            # inferred from the component's control implementation data. See load_project_standards
+            # for the requirements for sort_key.
             "family": {
                 "id": control["control_key"].split("-")[0],
                 "abbrev": control["control_key"].split("-")[0],
                 "name": control["control_key"].split("-")[0],
-                "sort_key": control["control_key"].split("-")[0],
+                "sort_key": (control["control_key"].split("-")[0], 0),
             },
 
             # The control being implemented.  Must match control structure in load_project_standards.
@@ -804,4 +813,3 @@ def add_component_control(component, controlimpl):
         f.seek(0);
         f.truncate()
         rtyaml.dump(data, f)
-
