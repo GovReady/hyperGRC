@@ -148,7 +148,7 @@ def load_project_components(project):
     for component_path in component_paths:
         # Load the component.yaml file and check that the schema_version of each component is recognized.
         fn2 = os.path.join(project["path"], component_path, "component.yaml")
-        component = load_opencontrol_yaml(fn2, "component", ("3.0.0",))
+        component = load_opencontrol_yaml(fn2, "component", ("3.0.0","3.1.0",))
 
         # Get the component name. If there is no name, fall back to the directory name.
         name = component.get("name") or os.path.splitext(os.path.basename(os.path.normpath(component_path)))[0]
@@ -368,7 +368,7 @@ def load_project_component_controls(component, standards):
     # Construct the filename for the component.yaml file. The component already
     # knows what directory it is in.
     fn = os.path.join(component["path"], "component.yaml")
-    component_opencontrol = load_opencontrol_yaml(fn, "component", ("3.0.0",))
+    component_opencontrol = load_opencontrol_yaml(fn, "component", ("3.0.0","3.1.0",))
 
     # Because the component.yaml file is in a sense recursive --- not actually in OpenControl
     # but in the extended schema that we support --- this function is a helper function
@@ -490,7 +490,7 @@ def load_project_component_evidence(component):
     # Construct the filename for the component.yaml file. The component already
     # knows what directory it is in.
     fn = os.path.join(component["path"], "component.yaml")
-    component_opencontrol = load_opencontrol_yaml(fn, "component", ("3.0.0",))
+    component_opencontrol = load_opencontrol_yaml(fn, "component", ("3.0.0","3.1.0",))
 
     # Because the component.yaml file is in a sense recursive --- not actually in OpenControl
     # but in the extended schema that we support --- this function is a helper function
