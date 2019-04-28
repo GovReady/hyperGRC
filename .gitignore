@@ -1,6 +1,7 @@
 controls/
 inputs/
 outputs/\~\$*
+.vscode/
 
 # Python, virtual env
 venv
