@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div  id="static-page-content" class="container">
+  <div class="row item-ctl">
+    <div class="col-md-10">&nbsp;</div>
+    <div class="col-md-2" style="text-align: right;">
+      &nbsp;
+    </div>
+  </div>
+
+  <div class="row" style="overflow: auto;">
+    <div class="col-md-12"><h1>Generated GovReady-Q module.yaml file</h1></div>
+  </div>
+
+  <div class="col-md-12">
+    {% set component_id = component.id|replace(" ","_")|replace("-","_")|replace(".","_")|replace("[","_")|replace("]","_")|replace("(","_")|replace(")","_")|replace("__","_")|replace(",","_") %}
+    <p>
+      The following files have been generated at 
+      <code>{{ output_dir }}/{{ component_id }}</code>
+    </p>
+
+    <p class="warning">WARNING: Underscore replacement is better in actual files and trailing "_" have been removed (e.g., `nist_80053rev4_ssp_CM_2_1_.md`)"</p>
+
+    <div>Directories</div>
+    <pre>{{ output_dir }}/{{ component.id }}</pre>
+    <div><code>{{ output_dir }}/{{ component_id }}.yaml</code></div>
+    <div></div>
+    <pre>id: {{ component.id }}
+title: {{ component.name }}
+questions:
+- id: overview
+  title: Overview
+  prompt: |
+    Compliance app for {{ component.project.organization.name }} {{ component.name }}
+  type: interstitial
+
+output:
+  {% for ci in controlimpls %}{% set control_id = ci.control.id|replace(" ","_")|replace("-","_")|replace(".","_")|replace("[","_")|replace("]","_")|replace("(","_")|replace(")","_")|replace("__","_") %}- id: nist_80053rev4_ssp_{{ control_id }}
+    title: NIST 800-53 rev4 SSP {{ control_id }}
+    format: markdown
+    template: |
+      {{ ci.narrative }}
+  {% endfor %}
+</pre>
+
+  </div>
+</div>
+{% endblock %}

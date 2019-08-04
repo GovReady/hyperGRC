@@ -3,6 +3,8 @@
 
 from .render import render_template, redirect, send_file, send_file_response, send_json_response
 from . import opencontrol
+from . import app_yaml
+from . import module_yaml
 import os
 import glob
 import rtyaml
@@ -432,7 +434,7 @@ def component(request, organization, project, component_name):
 
     # Sort the families and then the controls within them.
     control_families = list(control_families.values())
-    control_families.sort(key = lambda controlfamily : controlfamily["sort_key"])
+    control_families.sort(key = lambda controlfamily : ( controlfamily["sort_key"] is not None ))
     for control_family in control_families:
         control_family["controls"].sort(key = lambda controlimpl : controlimpl["sort_key"])
 
@@ -845,8 +847,16 @@ def component_app_export(request, organization, project, component_name):
     controlimpls = list(opencontrol.load_project_component_controls(component, standards))
     # print("## YAML", rtyaml.dump(controlimpls))
 
-    from .app_yaml import build_app
-    component_yaml = build_app(controlimpls, None)
+    component_yaml = app_yaml.build_app(controlimpls, None)
+
+    # Identify a directory to write the files
+    output_dir = "/tmp"
+
+    # Write app files to file system
+    app_yaml.create_app_dirs(component, output_dir)
+
+    # Create implementation files
+    app_yaml.create_app_implementation_files(controlimpls, output_dir)
 
     # from datetime import datetime
     # file_path = "app-{}Z.yaml".format(
@@ -855,11 +865,55 @@ def component_app_export(request, organization, project, component_name):
     #   .replace(':', '')
     #   )
     # send_file_response(request, file_path, build_app(controlimpls, {}).encode("utf-8"), "application/x-yaml")
+
     return render_template(request, 'govready-q_format.html',
                             project=project,
-                              component=component,
+                            component=component,
                             controlimpls=controlimpls,
                             component_yaml=component_yaml,
+                            output_dir=output_dir
+                          )
+
+@route('/organizations/<organization>/projects/<project>/components/<component_name>/module.yaml')
+def component_module_export(request, organization, project, component_name):
+    """Export module.yaml file for a component"""
+
+    # Load the project.
+    try:
+      project = load_project(organization, project)
+    except ValueError:
+      return "Organization `{}` project `{}` in URL not found.".format(organization, project)
+
+    # Load the component.
+    try:
+      component = opencontrol.load_project_component(project, component_name)
+      # print("component: ", component)
+    except ValueError:
+      return "Component `{}` in URL not found in project.".format(component_name)
+
+    # Each control's metadata, such as control names and control family names,
+    # is loaded from standards. Load the standards first.
+    standards = opencontrol.load_project_standards(project)
+
+    # Load the component's controls.
+    controlimpls = list(opencontrol.load_project_component_controls(component, standards))
+    # print("## YAML", rtyaml.dump(controlimpls))
+
+    # component_yaml = module_yaml.build_app(controlimpls, None)
+    component_yaml = rtyaml.dump(controlimpls)
+
+    # Identify a directory to write the files
+    output_dir = "/tmp"
+
+    # Write app files to file system
+    module_yaml.create_module_yaml(component, controlimpls, output_dir)
+
+    return render_template(request, 'govready-q_module_format.html',
+                            project=project,
+                            component=component,
+                            controlimpls=controlimpls,
+                            component_yaml=component_yaml,
+                            output_dir=output_dir
                           )
 
 
@@ -1133,3 +1187,4 @@ def custom_css(request, organization, project):
       request.end_headers()
       request.wfile.write(b"file not found")
       return
+
