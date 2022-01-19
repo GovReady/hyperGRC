@@ -14,7 +14,7 @@ ENV LANGUAGE en_US:en
 
 # Install required system packages. Python 3.6 is available in IUS.
 RUN  \
-   yum -y install https://centos7.iuscommunity.org/ius-release.rpm \
+   yum -y install https://repo.ius.io/ius-release-el7.rpm \
 && yum -y update \
 && yum -y install \
 	python36u python36u-pip \
